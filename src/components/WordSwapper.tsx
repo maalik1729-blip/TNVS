@@ -56,10 +56,12 @@ export function WordSwapper() {
   };
 
   return (
-    <span className="inline-flex flex-wrap items-baseline select-none">
+    <span className="block select-none">
       {language === "ta" ? (
-        <span className="flex flex-wrap items-center gap-y-1">
-          <span className="relative inline-block min-w-[210px] sm:min-w-[250px] md:min-w-[290px] lg:min-w-[320px] h-[1.3em] overflow-hidden align-middle whitespace-nowrap">
+        <span className="flex flex-col sm:flex-row sm:items-center sm:gap-x-2">
+          <span className="relative inline-block h-[1.3em] overflow-hidden align-middle whitespace-nowrap">
+            {/* Invisible spacer to reserve exact width naturally */}
+            <span className="invisible select-none" aria-hidden="true">{currentWord}</span>
             <AnimatePresence mode="wait">
               <motion.span
                 key={currentWord}
@@ -73,13 +75,15 @@ export function WordSwapper() {
               </motion.span>
             </AnimatePresence>
           </span>
-          <span className="ml-1 whitespace-nowrap">தேவையான அனைத்தும்.</span>
+          <span className="whitespace-nowrap">தேவையான அனைத்தும்.</span>
         </span>
       ) : (
-        <span className="flex flex-wrap items-center gap-y-1">
+        <span className="flex flex-col sm:flex-row sm:items-center sm:gap-x-2">
           <span className="inline-flex items-center whitespace-nowrap">
             <span>Everything a</span>
-            <span className="relative inline-block min-w-[95px] sm:min-w-[125px] md:min-w-[155px] lg:min-w-[185px] h-[1.3em] overflow-hidden align-middle mx-1.5 md:mx-2">
+            <span className="relative inline-block h-[1.3em] overflow-hidden align-middle mx-1.5 md:mx-2 whitespace-nowrap">
+              {/* Invisible spacer to reserve exact width naturally */}
+              <span className="invisible select-none" aria-hidden="true">{currentWord}</span>
               <AnimatePresence mode="wait">
                 <motion.span
                   key={currentWord}
