@@ -15,7 +15,7 @@ async function getConnection() {
   return mysql.createConnection(DB_CONFIG);
 }
 
-export const APIRoute = createFileRoute("/api/voter-search" as any)({
+export const Route = createFileRoute("/api/voter-search")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {

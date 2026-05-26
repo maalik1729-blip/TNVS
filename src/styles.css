@@ -687,6 +687,28 @@
     transform-origin: top center;
     will-change: transform, filter;
   }
+
+  /* Responsive grid for statistics cards on extra small screens */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media (max-width: 380px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Responsive card padding for statistics cards */
+  .stats-card-padding {
+    padding: 1.25rem;
+  }
+  @media (max-width: 400px) {
+    .stats-card-padding {
+      padding: 0.875rem 1rem;
+    }
+  }
 }
 
 

@@ -495,10 +495,10 @@ function Wings() {
               </p>
 
               {/* Statistics Panel */}
-              <div className="mt-8 grid grid-cols-2 gap-4 max-w-md">
+              <div className="mt-8 stats-grid max-w-md">
                 <button
                   onClick={handleStatsZoneClick}
-                  className="group relative overflow-hidden bg-gradient-to-br from-white to-blue-50/30 border border-blue-100/80 rounded-2xl p-5 shadow-xs hover:shadow-md hover:shadow-blue-500/5 hover:border-blue-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
+                  className="group relative overflow-hidden bg-gradient-to-br from-white to-blue-50/30 border border-blue-100/80 rounded-2xl stats-card-padding shadow-xs hover:shadow-md hover:shadow-blue-500/5 hover:border-blue-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
                 >
                   <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-blue-500/10 group-hover:scale-110 pointer-events-none" />
                   <div className="flex justify-between items-start">
@@ -517,7 +517,7 @@ function Wings() {
                 </button>
                 <button
                   onClick={handleStatsDistrictClick}
-                  className="group relative overflow-hidden bg-gradient-to-br from-white to-amber-50/30 border border-amber-100/80 rounded-2xl p-5 shadow-xs hover:shadow-md hover:shadow-amber-500/5 hover:border-amber-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
+                  className="group relative overflow-hidden bg-gradient-to-br from-white to-amber-50/30 border border-amber-100/80 rounded-2xl stats-card-padding shadow-xs hover:shadow-md hover:shadow-amber-500/5 hover:border-amber-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
                 >
                   <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-amber-500/10 group-hover:scale-110 pointer-events-none" />
                   <div className="flex justify-between items-start">

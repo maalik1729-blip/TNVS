@@ -18,6 +18,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiVoterSearchRouteImport } from './routes/api/voter-search'
 
 const WingsRoute = WingsRouteImport.update({
   id: '/wings',
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVoterSearchRoute = ApiVoterSearchRouteImport.update({
+  id: '/api/voter-search',
+  path: '/api/voter-search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
+  '/api/voter-search': typeof ApiVoterSearchRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
+  '/api/voter-search': typeof ApiVoterSearchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
+  '/api/voter-search': typeof ApiVoterSearchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/voter-id'
     | '/wings'
+    | '/api/voter-search'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/voter-id'
     | '/wings'
+    | '/api/voter-search'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/voter-id'
     | '/wings'
+    | '/api/voter-search'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   VoterIdRoute: typeof VoterIdRoute
   WingsRoute: typeof WingsRoute
+  ApiVoterSearchRoute: typeof ApiVoterSearchRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/voter-search': {
+      id: '/api/voter-search'
+      path: '/api/voter-search'
+      fullPath: '/api/voter-search'
+      preLoaderRoute: typeof ApiVoterSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   VoterIdRoute: VoterIdRoute,
   WingsRoute: WingsRoute,
+  ApiVoterSearchRoute: ApiVoterSearchRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
