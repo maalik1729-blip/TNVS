@@ -49,15 +49,16 @@ export default defineConfig(({ command }) => {
     },
     build: {
       cssCodeSplit: true,
-      chunkSizeWarningLimit: 500,
+      chunkSizeWarningLimit: 600,
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes("framer-motion")) return "framer-motion";
-            if (id.includes("lucide-react")) return "lucide";
-            if (id.includes("@tanstack/react-router") || id.includes("@tanstack/react-query") || id.includes("@tanstack/query-core")) return "tanstack";
-            if (id.includes("@radix-ui")) return "radix";
-            if (id.includes("node_modules")) return "vendor";
+            // Only split true leaf-node libs that have no imports back into
+            // the @tanstack bootstrap chain. Never split @tanstack/* — those
+            // packages form a circular import graph that deadlocks in production.
+            if (id.includes("node_modules/framer-motion")) return "framer-motion";
+            if (id.includes("node_modules/lucide-react")) return "lucide";
+            if (id.includes("node_modules/@radix-ui")) return "radix";
           },
         },
       },
@@ -69,8 +70,6 @@ export default defineConfig(({ command }) => {
         "react/jsx-runtime",
         "@tanstack/react-router",
         "@tanstack/react-query",
-        "framer-motion",
-        "lucide-react",
         "sonner",
       ],
     },

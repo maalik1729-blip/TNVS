@@ -1,5 +1,8 @@
 import server from "../dist/server/server.js";
 
+// Tell Vercel this function can run up to 30s (Pro) or 10s (Hobby)
+export const config = { maxDuration: 30 };
+
 export default async function handler(req, res) {
   try {
     // 1. Construct URL
