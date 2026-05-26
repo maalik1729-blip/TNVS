@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from "react";
+import { useRef, useEffect, useState, type ComponentType } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -32,7 +32,79 @@ const STACK_OFFSET  = 32;   // stack spacing per card
 // ─── Component ───────────────────────────────────────────────────────────────
 export function StackedServices({ services }: StackedServicesProps) {
   const { t } = useLanguage();
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const hoveredIdxRef = useRef<number | null>(null);
+
+  // Sync ref with hover state so the scroll event loop always has instant, non-stale state access
+  const setHovered = (val: number | null) => {
+    setHoveredIdx(val);
+    hoveredIdxRef.current = val;
+    // Dispatch a mock scroll event to trigger high-performance DOM redraws instantly
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("scroll"));
+    }
+  };
+
+  useEffect(() => {
+    const cards = cardRefs.current;
+    if (!cards.length) return;
+
+    const onScroll = () => {
+      const isMobile = window.innerWidth < 768;
+
+      cards.forEach((card, i) => {
+        if (!card) return;
+        const innerCard = card.firstElementChild as HTMLElement;
+        if (!innerCard) return;
+
+        if (isMobile) {
+          // Reset custom styles completely on mobile to follow native relative layout flow
+          innerCard.style.transform = "none";
+          innerCard.style.filter = "none";
+          innerCard.style.boxShadow = "0 10px 30px -10px oklch(0.20 0.025 252 / 0.15)";
+          return;
+        }
+
+        const cardRect = card.getBoundingClientRect();
+        const stickyTop = HEADER_OFFSET + i * STACK_OFFSET;
+
+        // How far past its sticky-top coordinate is the card?
+        const pushed = Math.max(0, stickyTop - cardRect.top);
+        const cardH  = Math.max(cardRect.height, 1);
+        const progress = Math.min(1, pushed / cardH);
+
+        // Scroll-driven stacking card scale down and dimming formula
+        const isLast = i === services.length - 1;
+        const scrollScale = isLast ? 1 : 1 - progress * 0.04;
+        const scrollDim = isLast ? 1 : 1 - progress * 0.15;
+
+        // Hover pop-out calculations
+        const isHovered = hoveredIdxRef.current === i;
+        const hoverScale = isHovered ? 1.02 : 1;
+        const hoverTranslateY = isHovered ? -8 : 0;
+        const hoverTranslateX = isHovered ? 8 : 0;
+
+        // Combine scroll scale with hover scale and translate
+        const finalScale = scrollScale * hoverScale;
+        
+        innerCard.style.transform = `scale(${finalScale}) translateY(${hoverTranslateY}px) translateX(${hoverTranslateX}px)`;
+        innerCard.style.filter = `brightness(${scrollDim})`;
+        innerCard.style.boxShadow = isHovered
+          ? "0 25px 50px -12px oklch(0.20 0.025 252 / 0.25)"
+          : "0 10px 30px -10px oklch(0.20 0.025 252 / 0.15)";
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [services]);
 
   // Dynamically assign appropriate illustration or photograph to each service card
   const getCardImage = (idx: number, to: string) => {
@@ -43,31 +115,28 @@ export function StackedServices({ services }: StackedServicesProps) {
   };
 
   return (
-    <div className="relative space-y-6 md:space-y-0 md:pb-[140px] w-full">
+    <div className="relative space-y-6 md:space-y-0 md:pb-[180px] w-full">
       {services.map((s, idx) => (
         <div
           key={s.e}
-          className="md:sticky transition-all duration-300"
+          ref={(el) => { cardRefs.current[idx] = el; }}
+          className="md:sticky"
           style={{
             top: `${HEADER_OFFSET + idx * STACK_OFFSET}px`,
             zIndex: hoveredIdx === idx ? 100 : 10 + idx,
-            // Spacing before cards begin stacking
-            paddingBottom: idx < services.length - 1 ? "1.5rem" : 0,
+            // Spacing offset before cards begin stacking
+            paddingBottom: idx < services.length - 1 ? "2rem" : 0,
           }}
         >
           <Link
             to={s.to}
             id={`service-card-${idx}`}
-            onMouseEnter={() => setHoveredIdx(idx)}
-            onMouseLeave={() => setHoveredIdx(null)}
+            onMouseEnter={() => setHovered(idx)}
+            onMouseLeave={() => setHovered(null)}
             className="card-base card-interactive group flex flex-col md:flex-row items-stretch overflow-hidden w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 bg-card border border-border shadow-2xl transition duration-300"
             style={{
               borderRadius: "1.5rem",
               borderTop: `3px solid oklch(${0.55 + idx * 0.08} 0.14 ${252 - idx * 30} / ${0.35 + idx * 0.05})`,
-              transform: hoveredIdx === idx ? "scale(1.02) translateY(-6px) translateX(6px)" : "none",
-              boxShadow: hoveredIdx === idx 
-                ? "0 25px 50px -12px oklch(0.20 0.025 252 / 0.25)" 
-                : "0 10px 30px -10px oklch(0.20 0.025 252 / 0.15)",
             }}
           >
             {/* Left Side: Crisp, highly readable text layout */}
