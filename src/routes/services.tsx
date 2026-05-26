@@ -216,7 +216,7 @@ function Services() {
         </div>
       </section>
 
-      <Section className="py-10 sm:py-14" style={{ paddingBottom: "280px" }}>
+      <Section className="py-10 sm:py-14 pb-[280px]">
         <div className="space-y-12 sm:space-y-16">
           {cats.map((cat, idx) => (
             <div
