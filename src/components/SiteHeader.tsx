@@ -61,17 +61,34 @@ export function SiteHeader() {
   // Close mobile menu on route change
   useEffect(() => { setOpen(false); }, [loc.pathname]);
 
-  // ESC closes mobile menu + lock body scroll
+  // ESC closes mobile menu + lock body & html scroll
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", handler);
-    document.body.style.overflow = "hidden";
+
+    const root = document.documentElement;
+    const body = document.body;
+
+    const prevRootOverflow = root.style.overflow;
+    const prevRootHeight   = root.style.height;
+    const prevBodyOverflow = body.style.overflow;
+    const prevBodyHeight   = body.style.height;
+
+    // Lock scrolling on both elements to fully disable scroll chaining on iOS Safari
+    root.style.overflow = "hidden";
+    root.style.height   = "100%";
+    body.style.overflow = "hidden";
+    body.style.height   = "100%";
+
     return () => {
       document.removeEventListener("keydown", handler);
-      document.body.style.overflow = "";
+      root.style.overflow = prevRootOverflow;
+      root.style.height   = prevRootHeight;
+      body.style.overflow = prevBodyOverflow;
+      body.style.height   = prevBodyHeight;
     };
   }, [open]);
 
@@ -253,6 +270,7 @@ export function SiteHeader() {
               WebkitBackdropFilter: "blur(24px) saturate(200%)",
               borderLeft: "1px solid var(--drawer-border)",
               boxShadow: "var(--drawer-shadow)",
+              overscrollBehavior: "contain", // prevent background overscroll rubber-banding
             }}
           >
             {/* Drawer Header */}
