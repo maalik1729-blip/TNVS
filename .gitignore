@@ -42,3 +42,7 @@ dist-ssr
 *.webm
 *.wav
 *.ogg
+
+# Compiled assets
+public/assets/
+

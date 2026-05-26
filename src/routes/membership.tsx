@@ -90,23 +90,24 @@ const WING_CATEGORIES = [
   },
   {
     id: "agricultural",
-    nameEn: "Agricultural & Food",
+    nameEn: "Agricultural & Food Industry",
     nameTa: "விவசாயம் மற்றும் உணவுப் பிரிவுகள்",
-    wings: ["agriculture", "fishery", "nursery", "forest-timber", "food-restaurants", "fmcg-traders", "dairy-farmers"]
+    wings: ["agriculture", "restaurant-owners", "marine-business", "tribal-entrepreneurs", "distributors"]
   },
   {
     id: "industrial",
-    nameEn: "Industrial & Trade",
+    nameEn: "Industrial & Manufacturing Trade",
     nameTa: "தொழில் மற்றும் வர்த்தகப் பிரிவுகள்",
-    wings: ["manufacturers", "real-estate", "infrastructure-builders", "electrical-hardware", "logistics-distributors", "export-import", "textile-weavers", "printing-packaging", "gold-jewellery"]
+    wings: ["manufacturers", "import-export", "weavers", "printing-press", "computer-mobile", "insurance-finance"]
   },
   {
     id: "public",
-    nameEn: "Public & Social Services",
+    nameEn: "Public & General Services",
     nameTa: "பொது மற்றும் சமூகப் பிரிவுகள்",
-    wings: ["labour", "differently-abled", "pharmacy-druggists", "education-academics", "tourism-travel", "sports-fitness", "handloom-handicrafts", "small-retailers", "hospitality-hoteliers"]
+    wings: ["labour", "differently-abled", "transgender-entrepreneurs", "pharmacists", "educators", "tourism-transport", "sports-business", "shop-owners", "street-vendors", "hotels-lodgings", "beauty-fitness", "central-govt-relations", "state-govt-relations", "cottage-industry", "digital-advertisers"]
   }
 ];
+
 
 function Membership() {
   const { t, language } = useLanguage();
