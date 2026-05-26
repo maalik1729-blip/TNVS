@@ -6,12 +6,12 @@ import {
   CheckCircle, Sparkles, Phone, Coins,
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useRef, useEffect } from "react";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { WordSwapper } from "@/components/WordSwapper";
 import { HorizontalSteps } from "@/components/HorizontalSteps";
 import { TestimonialCarousel } from "@/components/TestimonialCarousel";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { StackedServices } from "@/components/StackedServices";
 import {
   Accordion,
   AccordionContent,
@@ -65,44 +65,8 @@ const faqs = [
   }
 ];
 
+// MockupCard is now in @/components/MockupCard.tsx
 // Only 3 top services on homepage — full list on /services
-const MockupCard = () => {
-  return (
-    <div className="relative w-full aspect-[1.586/1] bg-gradient-to-br from-slate-900 via-slate-800 to-primary text-gold rounded-xl p-4 shadow-xl border border-slate-700/50 overflow-hidden group/mockup transition-all duration-500 hover:scale-[1.03] hover:-rotate-1 select-none">
-      {/* Background Saffron Gold Accent Corner */}
-      <div className="absolute top-0 right-0 w-24 h-24 bg-gold/10 rounded-full blur-2xl" />
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-1.5">
-          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-            <span className="text-[8px] font-bold text-white">TN</span>
-          </div>
-          <div className="leading-none">
-            <div className="text-[7px] font-semibold text-white uppercase tracking-wider">TNVS</div>
-            <div className="text-[5px] text-slate-400">TRADER UNION</div>
-          </div>
-        </div>
-        <div className="text-[6px] font-mono text-gold-foreground bg-gold px-1.5 py-0.5 rounded leading-none font-bold">
-          ACTIVE MEMBER
-        </div>
-      </div>
-      {/* Body Details */}
-      <div className="mt-5 flex gap-2.5 items-center">
-        {/* Mock Avatar */}
-        <div className="w-9 h-9 rounded-full bg-slate-700/60 border border-slate-600/50 flex items-center justify-center overflow-hidden shrink-0">
-          <Users className="w-4 h-4 text-slate-400" />
-        </div>
-        <div className="space-y-0.5 min-w-0">
-          <div className="text-[9px] font-bold text-white truncate">Senthil Kumar</div>
-          <div className="text-[6px] text-slate-400 font-mono">TNVS-RJE38271A</div>
-          <div className="text-[6px] text-slate-400">District: Chennai</div>
-        </div>
-      </div>
-      {/* Footer stripe */}
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-gold to-primary" />
-    </div>
-  );
-};
 
 const TOP_SERVICES = [
   {
@@ -154,113 +118,6 @@ const HOW_IT_WORKS = [
   { n: "03", t: "பணம் செலுத்தவும்", e: "Pay the fee",        td: "பாதுகாப்பான UPI கட்டணம் — ₹500/ஆண்டு.", d: "Secure UPI payment — ₹500/year." },
   { n: "04", t: "சான்றிதழ் பெறு", e: "Get certificate",      td: "உடனடி டிஜிட்டல் சான்றிதழ் + EPIC அடையாள அட்டை.", d: "Instant digital certificate + EPIC ID." },
 ];
-
-// Stacked Service Cards — scroll-driven scale + opacity "physical stack" effect
-function StackedServiceCards({ t }: { t: (ta: string, en: string) => string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  useEffect(() => {
-    const CARD_HEIGHT = 240;
-    const HEADER_OFFSET = 96;
-    const MAX_SCALE_REDUCTION = 0.06; // each card behind shrinks by up to 6%
-    const MAX_OPACITY_REDUCTION = 0.16; // each card behind dims by up to 16%
-
-    function onScroll() {
-      const container = containerRef.current;
-      if (!container) return;
-
-      cardRefs.current.forEach((card, idx) => {
-        if (!card) return;
-        const stickyTop = HEADER_OFFSET + idx * 32;
-        const rect = card.getBoundingClientRect();
-        const distanceFromTop = rect.top - stickyTop;
-
-        // How many subsequent cards are stacked on top of this one
-        let stackDepth = 0;
-        for (let j = idx + 1; j < cardRefs.current.length; j++) {
-          const nextCard = cardRefs.current[j];
-          if (!nextCard) continue;
-          const nextRect = nextCard.getBoundingClientRect();
-          const nextStickyTop = HEADER_OFFSET + j * 32;
-          const nextFromTop = nextRect.top - nextStickyTop;
-          // If the next card has started to overlap this one
-          if (nextFromTop <= 0) {
-            const progress = Math.min(1, Math.abs(nextFromTop) / CARD_HEIGHT);
-            stackDepth += progress;
-          }
-        }
-
-        const scaleValue = Math.max(0.88, 1 - stackDepth * MAX_SCALE_REDUCTION);
-        const opacityValue = Math.max(0.72, 1 - stackDepth * MAX_OPACITY_REDUCTION);
-        const translateY = Math.min(0, stackDepth * -6);
-
-        card.style.transform = `scale(${scaleValue}) translateY(${translateY}px)`;
-        card.style.opacity = String(opacityValue);
-      });
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <div ref={containerRef} className="relative max-w-4xl mx-auto py-8" style={{ paddingBottom: `${TOP_SERVICES.length * 48}px` }}>
-      {TOP_SERVICES.map((s, idx) => (
-        <div
-          key={s.e}
-          className="sticky w-full"
-          style={{ top: `${96 + idx * 32}px`, zIndex: idx + 10 }}
-        >
-          <div
-            ref={(el) => { cardRefs.current[idx] = el; }}
-            style={{ transformOrigin: "center top", transition: "transform 0.15s ease-out, opacity 0.15s ease-out", willChange: "transform, opacity" }}
-          >
-            <Link
-              to={s.to}
-              className="card-base card-interactive group p-6 sm:p-8 flex flex-col md:flex-row justify-between items-center gap-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 w-full min-h-[220px] bg-card border border-border transition-all duration-300"
-              style={{
-                boxShadow: `0 ${8 + idx * 4}px ${32 + idx * 8}px -4px oklch(0.20 0.025 252 / ${0.10 + idx * 0.04})`,
-                borderRadius: "1.25rem",
-              }}
-            >
-              {/* Left: icon + text */}
-              <div className="space-y-4 flex-1 text-left">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/8 grid place-items-center text-primary group-hover:bg-primary group-hover:text-white transition shrink-0">
-                    <s.i className="w-6 h-6" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2.5 flex-wrap">
-                      <h3 className="font-display text-xl font-semibold text-ink">{t(s.t, s.e)}</h3>
-                      {s.badge && (
-                        <span className="text-[10px] font-bold text-primary bg-primary/8 border border-primary/20 px-2 py-0.5 rounded-full uppercase tracking-wide">
-                          {s.badge}
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed max-w-xl font-tamil">{t(s.td, s.d)}</p>
-                  </div>
-                </div>
-                <div className="pt-2 pl-16 inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all">
-                  {t("தொடரவும்", "Proceed")}
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </div>
-              </div>
-              {/* Right: mockup card visual */}
-              {s.isTall && (
-                <div className="w-full md:w-[280px] shrink-0 mt-4 md:mt-0">
-                  <MockupCard />
-                </div>
-              )}
-            </Link>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function Home() {
   const { language, t } = useLanguage();
@@ -422,7 +279,7 @@ function Home() {
       {/* HOW IT WORKS — Horizontal scroll-linked steps */}
       <HorizontalSteps />
 
-      {/* TOP SERVICES — Scroll-driven stacked cards */}
+      {/* TOP 3 SERVICES */}
       <Section className="pt-10 pb-16 border-t border-border">
         <ScrollReveal direction="up" blur className="flex items-end justify-between flex-wrap gap-4 mb-10">
           <div>
@@ -440,7 +297,9 @@ function Home() {
           </Link>
         </ScrollReveal>
 
-        <StackedServiceCards t={t} />
+        <div className="max-w-4xl mx-auto py-8">
+          <StackedServices services={TOP_SERVICES} />
+        </div>
       </Section>
 
       {/* TESTIMONIALS SECTION */}
