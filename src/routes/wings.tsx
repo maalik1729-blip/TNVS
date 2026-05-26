@@ -570,35 +570,37 @@ function Wings() {
                           {deptWings.map((w, index) => {
                             const Icon = w.icon;
                             return (
-                              <motion.div
+                              <Link
                                 key={w.id}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.2, delay: Math.min(index * 0.02, 0.15) }}
-                                className="card-base card-interactive group p-5 md:p-6 flex flex-col justify-between min-h-[190px]"
+                                to="/membership"
+                                search={{ wing: w.id }}
+                                className="block text-left h-full cursor-pointer focus:outline-none"
                               >
-                                <div className="space-y-3">
-                                  <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white">
-                                    <Icon className="w-4 h-4" />
+                                <motion.div
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.2, delay: Math.min(index * 0.02, 0.15) }}
+                                  className="card-base card-interactive group p-5 md:p-6 flex flex-col justify-between min-h-[190px] h-full"
+                                >
+                                  <div className="space-y-3">
+                                    <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white">
+                                      <Icon className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="font-display font-bold text-sm md:text-base text-slate-800 leading-snug">
+                                      {language === "ta" ? w.nameTa : w.nameEn}
+                                    </h3>
+                                    <p className="text-xs text-slate-500 leading-relaxed font-tamil">
+                                      {language === "ta" ? w.descriptionTa : w.descriptionEn}
+                                    </p>
                                   </div>
-                                  <h3 className="font-display font-bold text-sm md:text-base text-slate-800 leading-snug">
-                                    {language === "ta" ? w.nameTa : w.nameEn}
-                                  </h3>
-                                  <p className="text-xs text-slate-500 leading-relaxed font-tamil">
-                                    {language === "ta" ? w.descriptionTa : w.descriptionEn}
-                                  </p>
-                                </div>
-                                
-                                <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between">
-                                  <Link
-                                    to="/membership"
-                                    search={{ wing: w.id }}
-                                    className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline transition-all cursor-pointer min-h-[44px] py-1.5"
-                                  >
-                                    {t("சேர / Join", "Join Wing")} <ArrowRight className="w-3.5 h-3.5" />
-                                  </Link>
-                                </div>
-                              </motion.div>
+                                  
+                                  <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between">
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary group-hover:underline transition-all">
+                                      {t("சேர / Join", "Join Wing")} <ArrowRight className="w-3.5 h-3.5" />
+                                    </span>
+                                  </div>
+                                </motion.div>
+                              </Link>
                             );
                           })}
                         </AnimatePresence>

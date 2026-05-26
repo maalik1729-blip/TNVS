@@ -226,34 +226,45 @@ function Services() {
               </span>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {cat.items.map((s) => (
-                <div key={s.e} className="relative card-base card-interactive group p-6 flex flex-col justify-between min-h-[220px]">
-                  {s.e === "New Membership" && (
-                    <span className="absolute -top-3 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm animate-pulse">
-                      {t("இங்கே தொடங்கவும் · START HERE", "START HERE")}
-                    </span>
-                  )}
-                  <div>
-                    <div className="w-11 h-11 rounded-lg bg-primary/8 grid place-items-center text-primary transition-colors group-hover:bg-primary group-hover:text-white"><s.i className="w-5 h-5" /></div>
-                    <h3 className="mt-4 font-display text-lg font-semibold text-ink">{t(s.t, s.e)}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{t(s.d, s.de)}</p>
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-slate-50">
-                    {s.to ? (
-                      <Link to={s.to} className="inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all">
-                        {t("செல்க", "Apply / Go")} <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    ) : (
-                      <button
-                        onClick={() => openModal(s.modalType!, t(s.t, s.e))}
-                        className="inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all"
-                      >
-                        {t("விண்ணப்பிக்க", "Request / Apply")} <ArrowRight className="w-4 h-4" />
-                      </button>
+              {cat.items.map((s) => {
+                const CardContent = (
+                  <>
+                    {s.e === "New Membership" && (
+                      <span className="absolute -top-3 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm animate-pulse z-10">
+                        {t("இங்கே தொடங்கவும் · START HERE", "START HERE")}
+                      </span>
                     )}
-                  </div>
-                </div>
-              ))}
+                    <div className="text-left w-full">
+                      <div className="w-11 h-11 rounded-lg bg-primary/8 grid place-items-center text-primary transition-colors group-hover:bg-primary group-hover:text-white shrink-0"><s.i className="w-5 h-5" /></div>
+                      <h3 className="mt-4 font-display text-lg font-semibold text-ink leading-tight">{t(s.t, s.e)}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{t(s.d, s.de)}</p>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between w-full">
+                      <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all">
+                        {s.to ? t("செல்க", "Apply / Go") : t("விண்ணப்பிக்க", "Request / Apply")} <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </>
+                );
+
+                return s.to ? (
+                  <Link
+                    key={s.e}
+                    to={s.to}
+                    className="relative card-base card-interactive group p-6 flex flex-col justify-between min-h-[220px] text-left cursor-pointer focus:outline-none"
+                  >
+                    {CardContent}
+                  </Link>
+                ) : (
+                  <button
+                    key={s.e}
+                    onClick={() => openModal(s.modalType!, t(s.t, s.e))}
+                    className="relative card-base card-interactive group p-6 flex flex-col justify-between min-h-[220px] text-left cursor-pointer focus:outline-none w-full bg-white"
+                  >
+                    {CardContent}
+                  </button>
+                );
+              })}
             </div>
           </div>
         ))}
