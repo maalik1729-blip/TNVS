@@ -34,11 +34,22 @@ export function StackedServices({ services }: StackedServicesProps) {
   const { t } = useLanguage();
   const wrapperRef  = useRef<HTMLDivElement>(null);
   const cardRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
   const [scales, setScales]       = useState<number[]>(() => services.map(() => 1));
   const [dims, setDims]           = useState<number[]>(() => services.map(() => 1));
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     const cards = cardRefs.current;
     if (!cards.length) return;
 
@@ -68,7 +79,7 @@ export function StackedServices({ services }: StackedServicesProps) {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [services]);
+  }, [services, isMobile]);
 
   // Dynamically assign appropriate illustration or photograph to each service card
   const getCardImage = (idx: number, to: string) => {
@@ -79,20 +90,22 @@ export function StackedServices({ services }: StackedServicesProps) {
   };
 
   return (
-    <div ref={wrapperRef} className="relative" style={{ paddingBottom: "180px" }}>
+    <div ref={wrapperRef} className="relative" style={{ paddingBottom: isMobile ? "0px" : "180px" }}>
       {services.map((s, idx) => (
         <div
           key={s.e}
           ref={(el) => { cardRefs.current[idx] = el; }}
           className="stacked-card-wrapper"
           style={{
-            position: "sticky",
-            top: `${HEADER_OFFSET + idx * STACK_OFFSET}px`,
+            position: isMobile ? "relative" : "sticky",
+            top: isMobile ? "auto" : `${HEADER_OFFSET + idx * STACK_OFFSET}px`,
             zIndex: hoveredIdx === idx ? 100 : 10 + idx,
-            marginBottom: idx < services.length - 1 ? "1.5rem" : 0,
-            transform: `scale(${scales[idx] ?? 1}) translateY(${hoveredIdx === idx ? "-8px" : "0px"})`,
-            filter: `brightness(${dims[idx] ?? 1})`,
-            transition: "transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
+            marginBottom: idx < services.length - 1 ? (isMobile ? "1.5rem" : "2rem") : 0,
+            transform: isMobile 
+              ? "none" 
+              : `scale(${scales[idx] ?? 1}) translateY(${hoveredIdx === idx ? "-12px" : "0px"}) translateX(${hoveredIdx === idx ? "12px" : "0px"})`,
+            filter: isMobile ? "none" : `brightness(${dims[idx] ?? 1})`,
+            transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease",
           }}
         >
           <Link
