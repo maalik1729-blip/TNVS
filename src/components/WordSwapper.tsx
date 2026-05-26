@@ -58,7 +58,7 @@ export function WordSwapper() {
   return (
     <span className="block select-none">
       {language === "ta" ? (
-        <span className="flex flex-col sm:flex-row sm:items-center sm:gap-x-2">
+        <span className="flex flex-col lg:flex-row lg:items-center lg:gap-x-2">
           <span className="relative inline-block h-[1.3em] overflow-hidden align-middle whitespace-nowrap">
             {/* Invisible spacer to reserve exact width naturally */}
             <span className="invisible select-none" aria-hidden="true">{currentWord}</span>
@@ -78,7 +78,7 @@ export function WordSwapper() {
           <span className="whitespace-nowrap">தேவையான அனைத்தும்.</span>
         </span>
       ) : (
-        <span className="flex flex-col sm:flex-row sm:items-center sm:gap-x-2">
+        <span className="flex flex-col lg:flex-row lg:items-center lg:gap-x-2">
           <span className="inline-flex items-center whitespace-nowrap">
             <span>Everything a</span>
             <span className="relative inline-block h-[1.3em] overflow-hidden align-middle mx-1.5 md:mx-2 whitespace-nowrap">
