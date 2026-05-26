@@ -130,7 +130,7 @@ export function SiteHeader() {
 
         {/* Announcement ticker bar */}
         <div className="bg-primary text-white border-b border-primary-foreground/5 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 lg:gap-4">
             <span className="text-xs font-semibold font-tamil flex items-center gap-1.5 shrink-0 select-none border-r border-white/20 pr-4">
               <span aria-hidden="true" className="text-gold">✦</span>
               {language === "ta" ? "பதிவு எண். 2012/TNVS" : "Reg. No. 2012/TNVS"}
@@ -166,7 +166,7 @@ export function SiteHeader() {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
 
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group" aria-label="Tamil Nadu Vanigargalin Sangamam — Home">
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Tamil Nadu Vanigargalin Sangamam — Home">
             <img
               src={templeLogo}
               alt="TNVS Logo"
@@ -185,7 +185,7 @@ export function SiteHeader() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
+          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1 min-w-0 shrink" aria-label="Main navigation">
             {NAV.map((n) => {
               const active = loc.pathname === n.to;
               return (
@@ -194,11 +194,11 @@ export function SiteHeader() {
                   to={n.to}
                   aria-current={active ? "page" : undefined}
                   className={[
-                    "relative px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg",
+                    "relative px-2 lg:px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg whitespace-nowrap",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                     active
-                      ? "text-primary after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-gold after:rounded-full"
-                      : "text-slate-500 hover:text-primary hover:bg-slate-50/70 after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-gold after:rounded-full after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300",
+                      ? "text-primary after:absolute after:bottom-0 after:left-1.5 after:right-1.5 after:h-[2px] after:bg-gold after:rounded-full"
+                      : "text-slate-500 hover:text-primary hover:bg-slate-50/70 after:absolute after:bottom-0 after:left-1.5 after:right-1.5 after:h-[2px] after:bg-gold after:rounded-full after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300",
                   ].join(" ")}
                 >
                   {language === "ta" ? n.label : n.en}
@@ -208,7 +208,7 @@ export function SiteHeader() {
           </nav>
 
           {/* Desktop Right Controls */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-1 lg:gap-2 shrink-0">
 
             {/* Language Toggle */}
             <button
@@ -224,17 +224,25 @@ export function SiteHeader() {
 
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
             >
               <User className="w-3.5 h-3.5" aria-hidden="true" />
               {language === "ta" ? "எனது கணக்கு" : "My Account"}
             </Link>
+            {/* Icon-only My Account for md breakpoint (saves space) */}
+            <Link
+              to="/dashboard"
+              className="lg:hidden inline-flex items-center justify-center p-2 text-slate-600 hover:text-primary transition min-h-[44px] min-w-[44px] rounded-lg"
+              aria-label={language === "ta" ? "எனது கணக்கு" : "My Account"}
+            >
+              <User className="w-4 h-4" aria-hidden="true" />
+            </Link>
 
             <Link
               to="/membership"
-              className="btn-primary select-none cursor-pointer"
+              className="btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-3 py-2 min-h-[44px]"
             >
-              {language === "ta" ? "உறுப்பினர் சேர்க்கை" : "Apply for Membership"}
+              {language === "ta" ? "இணைவு" : "Join Now"}
             </Link>
           </div>
 
