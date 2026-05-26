@@ -3,7 +3,7 @@ import { Section, SectionLabel } from "@/components/Section";
 import templeLogo from "@/assets/temple-logo.png";
 import {
   Award, ShieldCheck, Users, IdCard, ArrowRight,
-  CheckCircle, Sparkles, Phone, Coins,
+  CheckCircle, Sparkles, Phone, Coins, Play,
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
@@ -281,6 +281,46 @@ function Home() {
 
         <div className="max-w-4xl mx-auto py-8">
           <StackedServices services={TOP_SERVICES} />
+        </div>
+      </Section>
+
+      {/* WATCH OUR STORY — VIDEO SECTION */}
+      <Section className="py-16 border-t border-border">
+        <div className="max-w-4xl mx-auto">
+          <ScrollReveal direction="up" className="text-center mb-8">
+            <SectionLabel>{t("எங்கள் கதை", "Our Story")}</SectionLabel>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl font-semibold text-slate-800">
+              {t("சங்கமத்தை பற்றி அறிந்துகொள்ளுங்கள்", "Watch Our Story")}
+            </h2>
+            <p className="mt-3 text-muted-foreground text-sm md:text-base max-w-xl mx-auto font-tamil">
+              {t(
+                "தமிழ்நாடு வணிகர்களின் சங்கமம் எப்படி உருவானது, என்ன செய்கிறது என்பதை இந்த காணொளியில் அறியுங்கள்.",
+                "Learn how Tamil Nadu Vanigargalin Sangamam was founded, what we stand for, and how we serve traders across the state."
+              )}
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal direction="up" delay={0.1}>
+            <div className="relative rounded-2xl overflow-hidden shadow-xl border border-slate-200/60 bg-slate-900">
+              <video
+                src="/welcome_video.mp4"
+                controls
+                preload="none"
+                poster="/favicon.png"
+                className="w-full block aspect-video object-cover"
+                aria-label={t(
+                  "தமிழ்நாடு வணிகர்களின் சங்கமம் வரவேற்பு காணொளி",
+                  "Tamil Nadu Vanigargalin Sangamam welcome video"
+                )}
+              />
+              {/* Play overlay — browser hides this once controls are clicked */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-lg">
+                  <Play className="w-7 h-7 text-white fill-white" aria-hidden="true" />
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </Section>
 
