@@ -396,33 +396,32 @@ function VoterIdPage() {
   };
 
   return (
-    <div>
+    <div className="relative min-h-screen overflow-x-hidden">
       {/* Hero */}
       <section className="border-b border-border bg-secondary/40">
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <div className="mb-4">
+        <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+          <div className="mb-3 sm:mb-4">
             <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-all">
               <ArrowLeft className="w-3.5 h-3.5" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
             </Link>
           </div>
           <SectionLabel>தமிழ்நாடு வணிகர்களின் சங்கமம்</SectionLabel>
-          <h1 className="mt-3 font-display text-3xl md:text-4xl font-semibold text-ink">
+          <h1 className="mt-3 font-display font-semibold text-ink">
             Sangamam Membership Card Generator
           </h1>
-          <p className="font-tamil text-lg text-foreground/70 mt-1">சங்கம அட்டை உருவாக்கி</p>
-          <p className="mt-3 text-sm text-muted-foreground max-w-xl">
-            Fill in your details to instantly generate a printable Tamilnadu Vanigargalin Sangamam
-            (TNVS) membership ID card — Front and Back.
+          <p className="font-tamil text-base sm:text-lg text-foreground/70 mt-1">சங்கம அட்டை உருவாக்கி</p>
+          <p className="mt-3 text-sm text-muted-foreground max-w-xl font-tamil leading-relaxed">
+            {t("பதிவு விவரங்களை உள்ளிட்டு, சங்கமத்தின் உத்தியோகபூர்வ உறுப்பினர் அட்டையை முன்பக்க மற்றும் பின்பக்கத்துடன் உடனடியாக உருவாக்குங்கள்.", "Fill in your details to instantly generate a printable Tamilnadu Vanigargalin Sangamam (TNVS) membership ID card — Front and Back.")}
           </p>
         </div>
       </section>
 
-      <Section className="py-10">
+      <Section className="py-6 sm:py-10">
         <div className="max-w-3xl mx-auto">
           {/* Form Card */}
-          <div className="paper rounded-xl p-6 md:p-8 mb-10 border border-border shadow-sm">
-            <div className="mb-6 border-b border-border pb-4">
-              <h2 className="text-xl font-display font-semibold flex items-center gap-2">
+          <div className="paper rounded-xl p-4 sm:p-6 md:p-8 mb-8 sm:mb-10 border border-border shadow-sm">
+            <div className="mb-5 sm:mb-6 border-b border-border pb-4">
+              <h2 className="font-display font-semibold flex items-center gap-2">
                 <UserPlus className="w-5 h-5 text-primary" /> Member Details
               </h2>
               <p className="text-sm text-muted-foreground mt-1">Enter the member's information below.</p>
@@ -433,20 +432,20 @@ function VoterIdPage() {
               <label className="block text-xs font-semibold text-primary uppercase tracking-wider mb-2">
                 {t("உறுப்பினர் தேடல் (விருப்பத்தேர்வு)", "Search Member Database (Optional)")}
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   placeholder={t("EPIC ID அல்லது பெயரை உள்ளிடவும்...", "Enter EPIC ID or name...")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleSearch())}
-                  className="flex-1 border border-input bg-background rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="flex-1 border border-input bg-background rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 min-h-[44px]"
                 />
                 <button
                   type="button"
                   onClick={handleSearch}
                   disabled={isSearching}
-                  className="bg-primary/10 text-primary hover:bg-primary/20 px-4 py-2 rounded-md text-sm font-medium transition shrink-0"
+                  className="bg-primary text-white hover:bg-primary/95 px-4 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px]"
                 >
                   {isSearching ? t("தேடுகிறது...", "Searching...") : t("தேடுக", "Search")}
                 </button>
@@ -454,7 +453,7 @@ function VoterIdPage() {
                   <button
                     type="button"
                     onClick={() => setShowForm(true)}
-                    className="bg-muted text-muted-foreground hover:bg-muted/80 px-4 py-2 rounded-md text-sm font-medium transition shrink-0"
+                    className="bg-muted text-muted-foreground hover:bg-muted/80 px-4 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px]"
                   >
                     {t("தவிர்க்கவும்", "Enter Manually")}
                   </button>
@@ -727,17 +726,17 @@ function VoterIdPage() {
                     <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
                   </label>
                 </div>
-                <div className="pt-4 flex justify-between">
-                  <button type="button" onClick={() => setFormStep(1)} className="bg-muted text-muted-foreground px-6 py-2.5 rounded-md font-medium hover:bg-muted/80 transition shadow-sm">
-                    {t("பின்செல்க", "Back")}
-                  </button>
-                  <button type="submit" className="bg-primary text-primary-foreground px-6 py-2.5 rounded-md font-medium hover:bg-primary/90 transition shadow-sm">
-                    {t("அடையாள அட்டை உருவாக்கு", "Generate ID Card")}
-                  </button>
-                </div>
-              </>
-            )}
-          </form>
+                  <div className="pt-4 flex justify-between">
+                    <button type="button" onClick={() => setFormStep(1)} className="bg-muted text-muted-foreground px-5 py-2.5 rounded-md font-semibold hover:bg-muted/80 transition shadow-sm min-h-[44px]">
+                      {t("பின்செல்க", "Back")}
+                    </button>
+                    <button type="submit" className="bg-primary text-primary-foreground px-5 py-2.5 rounded-md font-semibold hover:bg-primary/90 transition shadow-sm min-h-[44px]">
+                      {t("அடையாள அட்டை உருவாக்கு", "Generate ID Card")}
+                    </button>
+                  </div>
+                </>
+              )}
+            </form>
             )}
           </div>
 
@@ -809,14 +808,14 @@ function VoterIdPage() {
               >
                 <div className="gov-stripe h-1" />
                 <div className="p-6 md:p-8">
-                  <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 border-b border-slate-100 pb-5">
                     <div>
                       <SectionLabel>ID Card Generated · அட்டை தயார்</SectionLabel>
-                      <h2 className="mt-1 font-display text-2xl font-semibold">{selected.VOTER_NAME.replace(/\s*-\s*$/, "").trim()}</h2>
-                      <p className="font-mono text-sm text-primary mt-0.5">{`TNVS-${selected.EPIC_NO.replace(/[^A-Z0-9]/gi,"").toUpperCase().slice(-6)}${parseInt(selected.SERIAL_NO||"1").toString(16).padStart(2,"0").toUpperCase()}`}</p>
+                      <h2 className="mt-1.5 font-display text-xl sm:text-2xl font-bold">{selected.VOTER_NAME.replace(/\s*-\s*$/, "").trim()}</h2>
+                      <p className="font-mono text-xs sm:text-sm text-primary mt-0.5">{`TNVS-${selected.EPIC_NO.replace(/[^A-Z0-9]/gi,"").toUpperCase().slice(-6)}${parseInt(selected.SERIAL_NO||"1").toString(16).padStart(2,"0").toUpperCase()}`}</p>
                     </div>
                     <div className="flex flex-wrap gap-2 items-center">
-                      {shareMsg && <span className="text-xs text-primary font-medium">{shareMsg}</span>}
+                      {shareMsg && <span className="text-xs text-primary font-medium w-full md:w-auto">{shareMsg}</span>}
                       <Link
                         to="/membership"
                         search={{
@@ -827,15 +826,15 @@ function VoterIdPage() {
                           assembly: selected.ASSEMBLY_NAME || "",
                           address: selected.POLLING_STATION_ADDRESS || "",
                         }}
-                        className="inline-flex items-center gap-2 bg-slate-950 text-gold px-4 py-2.5 rounded-md font-semibold text-xs hover:bg-slate-900 transition shadow-sm border border-slate-800"
+                        className="inline-flex items-center justify-center gap-2 bg-slate-950 text-gold px-3.5 py-2 rounded-md font-semibold text-xs hover:bg-slate-900 transition shadow-sm border border-slate-800 min-h-[38px] w-full sm:w-auto"
                       >
                         🌟 Premium Member Card
                       </Link>
-                      <button onClick={handleShare} className="inline-flex items-center gap-2 border border-border bg-card px-4 py-2.5 rounded-md font-medium text-sm hover:bg-muted transition">
-                        <Share2 className="w-4 h-4" /> நண்பரைப் பரிந்துரை / Share
+                      <button onClick={handleShare} className="inline-flex items-center justify-center gap-2 border border-border bg-card px-3.5 py-2 rounded-md font-semibold text-xs sm:text-sm hover:bg-muted transition min-h-[38px] w-full sm:w-auto">
+                        <Share2 className="w-3.5 h-3.5" /> Share
                       </button>
-                      <button onClick={handlePrint} className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-md font-medium hover:bg-primary/90 transition">
-                        <Printer className="w-4 h-4" /> Print / Download PDF
+                      <button onClick={handlePrint} className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-semibold text-xs sm:text-sm hover:bg-primary/90 transition min-h-[38px] w-full sm:w-auto">
+                        <Printer className="w-3.5 h-3.5" /> Print / PDF
                       </button>
                     </div>
                   </div>

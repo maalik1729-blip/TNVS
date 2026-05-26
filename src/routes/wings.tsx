@@ -366,7 +366,7 @@ function Wings() {
   }, [activeOfficers, zoneQuery]);
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-x-hidden">
       {/* Header section with tab switcher */}
       <section className="border-b border-slate-200/60 bg-white">
         <div className="max-w-7xl mx-auto px-4 py-10 md:py-12">
@@ -448,7 +448,8 @@ function Wings() {
               </div>
 
               {/* Category Filter Tabs */}
-              <div className="mt-6 flex gap-2 flex-wrap pb-1 overflow-x-auto">
+              <div className="mt-4 sm:mt-6 scroll-x pb-2">
+                <div className="flex gap-2 min-w-max md:min-w-0 md:flex-wrap">
                 <button
                   onClick={() => setSelectedDept("all")}
                   className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[44px] border ${
@@ -472,6 +473,7 @@ function Wings() {
                     {language === "ta" ? dept.nameTa : dept.nameEn}
                   </button>
                 ))}
+                </div>
               </div>
             </div>
           ) : (
@@ -565,7 +567,7 @@ function Wings() {
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         <AnimatePresence>
                           {deptWings.map((w, index) => {
                             const Icon = w.icon;

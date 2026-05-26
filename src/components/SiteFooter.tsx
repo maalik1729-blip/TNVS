@@ -9,10 +9,10 @@ export function SiteFooter() {
       {/* Saffron/Gold stripe */}
       <div className="gov-stripe h-[3px]" aria-hidden="true" />
       
-      <div className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-5 gap-10">
+      <div className="max-w-7xl mx-auto px-4 py-10 md:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10">
         
         {/* Main Logo section */}
-        <div className="md:col-span-2 space-y-4">
+        <div className="sm:col-span-2 lg:col-span-2 space-y-4">
           <h3 className="font-display text-xl font-bold text-white">Tamil Nadu Vanigargalin Sangamam</h3>
           <div className="font-tamil text-xs text-slate-300 mt-1">தமிழ்நாடு வணிகர்களின் சங்கமம்</div>
           
@@ -103,7 +103,7 @@ export function SiteFooter() {
 
       {/* Footer Bottom copyright section */}
       <div className="border-t border-slate-800/80 bg-slate-950/40">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-xs text-slate-400 flex flex-wrap justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 py-4 text-xs text-slate-400 flex flex-col sm:flex-row flex-wrap justify-between gap-2">
           <span>© {new Date().getFullYear()} TN Vanigargalin Sangamam. {t("அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.", "All rights reserved.")}</span>
           <span className="font-semibold text-slate-300 text-xs">{t("தமிழ்நாடு அரசு · பதிவுசெய்யப்பட்ட சங்கம்", "Government of Tamil Nadu · Registered Society")}</span>
         </div>

@@ -203,29 +203,29 @@ function Services() {
   };
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-x-hidden">
       <section className="border-b border-border bg-secondary/40">
-        <div className="max-w-7xl mx-auto px-4 py-16">
+        <div className="max-w-7xl mx-auto px-4 py-10 sm:py-14 md:py-16">
           <SectionLabel>{t("சேவைகள்", "Services")}</SectionLabel>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold max-w-3xl">
+          <h1 className="mt-3 sm:mt-4 font-display font-semibold max-w-3xl">
             {t("அனைத்து வணிகர்களுக்காகவும், அனைத்து மாவட்டங்களிலும் உருவாக்கப்பட்டது.", "Built for every vanigar, across every district.")}
           </h1>
-          <p className="mt-4 text-muted-foreground max-w-2xl font-tamil text-[15px] leading-relaxed">
+          <p className="mt-3 sm:mt-4 text-muted-foreground max-w-2xl font-tamil text-sm sm:text-[15px] leading-relaxed">
             {t("தமிழ்நாடு முழுவதும் உள்ள அனைத்து வியாபாரிகளின் நலனுக்கான 9 உத்தியோகபூர்வ சேவைகள் — ஒரே இடத்தில்.", "Nine official services for the welfare of all traders across Tamil Nadu — all in one place.")}
           </p>
         </div>
       </section>
 
-      <Section className="py-14 space-y-16">
+      <Section className="py-10 sm:py-14 space-y-12 sm:space-y-16">
         {cats.map((cat) => (
           <div key={cat.label}>
-            <div className="flex items-baseline justify-between border-b-2 border-primary/20 pb-3 mb-6">
-              <h2 className="font-display text-2xl font-bold text-ink">{t(cat.label, cat.labelEn)}</h2>
-              <span className="text-xs text-muted-foreground bg-white border border-slate-200 px-2.5 py-1 rounded-full font-medium">
+            <div className="flex items-baseline justify-between border-b-2 border-primary/20 pb-3 mb-5 sm:mb-6">
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-ink">{t(cat.label, cat.labelEn)}</h2>
+              <span className="text-xs text-muted-foreground bg-white border border-slate-200 px-2.5 py-1 rounded-full font-medium whitespace-nowrap ml-2">
                 {cat.items.length} {t("சேவைகள்", "services")}
               </span>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {cat.items.map((s) => {
                 const CardContent = (
                   <>
@@ -236,7 +236,7 @@ function Services() {
                     )}
                     <div className="text-left w-full">
                       <div className="w-11 h-11 rounded-lg bg-primary/8 grid place-items-center text-primary transition-colors group-hover:bg-primary group-hover:text-white shrink-0"><s.i className="w-5 h-5" /></div>
-                      <h3 className="mt-4 font-display text-lg font-semibold text-ink leading-tight">{t(s.t, s.e)}</h3>
+                      <h3 className="mt-3 sm:mt-4 font-display text-base sm:text-lg font-semibold text-ink leading-tight">{t(s.t, s.e)}</h3>
                       <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{t(s.d, s.de)}</p>
                     </div>
                     <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between w-full">
@@ -251,7 +251,7 @@ function Services() {
                   <Link
                     key={s.e}
                     to={s.to}
-                    className="relative card-base card-interactive group p-6 flex flex-col justify-between min-h-[220px] text-left cursor-pointer focus:outline-none"
+                    className="relative card-base card-interactive group p-5 sm:p-6 flex flex-col justify-between min-h-[200px] sm:min-h-[220px] text-left cursor-pointer focus:outline-none"
                   >
                     {CardContent}
                   </Link>
@@ -259,7 +259,7 @@ function Services() {
                   <button
                     key={s.e}
                     onClick={() => openModal(s.modalType!, t(s.t, s.e))}
-                    className="relative card-base card-interactive group p-6 flex flex-col justify-between min-h-[220px] text-left cursor-pointer focus:outline-none w-full bg-white"
+                    className="relative card-base card-interactive group p-5 sm:p-6 flex flex-col justify-between min-h-[200px] sm:min-h-[220px] text-left cursor-pointer focus:outline-none w-full bg-white"
                   >
                     {CardContent}
                   </button>
@@ -283,7 +283,7 @@ function Services() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[calc(100vh-40px)] md:max-h-[85vh] focus:outline-none"
+              className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[calc(100dvh-32px)] focus:outline-none"
             >
               {/* Header */}
               <div className="bg-primary text-primary-foreground px-6 py-4 flex items-center justify-between">

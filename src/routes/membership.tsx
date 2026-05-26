@@ -419,7 +419,7 @@ function Membership() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <section className="border-b border-slate-200/60 bg-white shadow-xs">
         <div className="max-w-5xl mx-auto px-4 py-8 md:py-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -447,9 +447,10 @@ function Membership() {
       <div className="max-w-5xl mx-auto px-4 py-10">
         
         {/* Sleek Horizontal badges Stepper (Timeline) */}
-        <div className="mb-10 bg-white rounded-2xl border border-slate-200/60 p-4 md:p-5 shadow-xs">
-          <div className="relative flex items-center justify-between overflow-x-auto pb-2 gap-4">
-            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-100 -translate-y-1/2 hidden md:block" />
+        <div className="mb-8 sm:mb-10 bg-white rounded-2xl border border-slate-200/60 p-3 sm:p-4 md:p-5 shadow-xs">
+          <div className="scroll-x">
+            <div className="relative flex items-center justify-between min-w-max md:min-w-0 pb-1 gap-3 sm:gap-4 px-1">
+              <div className="absolute top-5 left-0 right-0 h-0.5 bg-slate-100 hidden md:block" />
             {STEPS.map((s, i) => {
               const done = step > s.n, active = step === s.n;
               return (
@@ -472,11 +473,12 @@ function Membership() {
                 </div>
               );
             })}
+            </div>
           </div>
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 md:p-10 shadow-sm min-h-[460px] flex flex-col justify-between">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-10 shadow-sm min-h-[420px] sm:min-h-[460px] flex flex-col justify-between">
           <AnimatePresence mode="wait">
             <motion.div key={step} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} transition={{duration:0.2}}>
 

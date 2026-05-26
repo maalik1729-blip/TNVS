@@ -41,7 +41,7 @@ export function WordSwapper() {
       y: 0,
       opacity: 1,
       transition: {
-        y: { type: "spring", stiffness: 260, damping: 20 },
+        y: { type: "spring" as const, stiffness: 260, damping: 20 },
         opacity: { duration: 0.25 },
       },
     },
@@ -49,7 +49,7 @@ export function WordSwapper() {
       y: -20,
       opacity: 0,
       transition: {
-        y: { type: "spring", stiffness: 260, damping: 20 },
+        y: { type: "spring" as const, stiffness: 260, damping: 20 },
         opacity: { duration: 0.25 },
       },
     },
@@ -58,8 +58,8 @@ export function WordSwapper() {
   return (
     <span className="inline-flex flex-wrap items-baseline select-none">
       {language === "ta" ? (
-        <span className="inline-flex flex-wrap items-center">
-          <span className="relative inline-block min-w-[210px] sm:min-w-[250px] md:min-w-[290px] lg:min-w-[320px] h-[1.3em] overflow-hidden align-middle">
+        <span className="flex flex-wrap items-center gap-y-1">
+          <span className="relative inline-block min-w-[210px] sm:min-w-[250px] md:min-w-[290px] lg:min-w-[320px] h-[1.3em] overflow-hidden align-middle whitespace-nowrap">
             <AnimatePresence mode="wait">
               <motion.span
                 key={currentWord}
@@ -73,26 +73,28 @@ export function WordSwapper() {
               </motion.span>
             </AnimatePresence>
           </span>
-          <span className="ml-1">தேவையான அனைத்தும்.</span>
+          <span className="ml-1 whitespace-nowrap">தேவையான அனைத்தும்.</span>
         </span>
       ) : (
-        <span className="inline-flex flex-wrap items-center">
-          <span>Everything a </span>
-          <span className="relative inline-block min-w-[95px] sm:min-w-[125px] md:min-w-[155px] lg:min-w-[185px] h-[1.3em] overflow-hidden align-middle mx-1.5 md:mx-2">
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={currentWord}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="absolute left-0 top-0 w-full text-left font-display animate-text-gradient bg-clip-text text-transparent bg-gradient-to-r from-gold via-amber-500 to-orange-500 bg-[length:200%_auto]"
-              >
-                {currentWord}
-              </motion.span>
-            </AnimatePresence>
+        <span className="flex flex-wrap items-center gap-y-1">
+          <span className="inline-flex items-center whitespace-nowrap">
+            <span>Everything a</span>
+            <span className="relative inline-block min-w-[95px] sm:min-w-[125px] md:min-w-[155px] lg:min-w-[185px] h-[1.3em] overflow-hidden align-middle mx-1.5 md:mx-2">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={currentWord}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  className="absolute left-0 top-0 w-full text-left font-display animate-text-gradient bg-clip-text text-transparent bg-gradient-to-r from-gold via-amber-500 to-orange-500 bg-[length:200%_auto]"
+                >
+                  {currentWord}
+                </motion.span>
+              </AnimatePresence>
+            </span>
           </span>
-          <span>needs.</span>
+          <span className="whitespace-nowrap">needs.</span>
         </span>
       )}
     </span>

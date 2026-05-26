@@ -141,14 +141,15 @@ function Home() {
           <div className="absolute inset-0 bg-primary/[0.015]" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 pt-14 pb-18 grid lg:grid-cols-12 gap-10 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 pt-10 sm:pt-14 pb-10 sm:pb-16 grid md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-10 items-center">
 
           <div className="lg:col-span-7 animate-slide-up">
             <SectionLabel>
               {t("அரசு அங்கீகரிக்கப்பட்டது · பதிவு எண். 2012/TNVS", "Government Registered · Reg. No. 2012/TNVS")}
             </SectionLabel>
 
-            <h1 className="mt-5 font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.06] text-ink">
+            <h1 className="mt-4 sm:mt-5 font-display font-semibold leading-[1.06] text-ink"
+               style={{ fontSize: 'clamp(1.75rem, 5vw + 0.5rem, 3.75rem)' }}>
               {language === "ta" ? (
                 <>
                   தமிழ்நாடு வணிகர்களின்{" "}
@@ -163,14 +164,14 @@ function Home() {
               )}
             </h1>
 
-            <p className="font-tamil text-lg sm:text-xl mt-4 text-foreground/80 leading-snug">
+            <p className="font-tamil text-base sm:text-lg md:text-xl mt-3 sm:mt-4 text-foreground/80 leading-snug">
               {t(
                 "தமிழ்நாடு வணிகர்களின் சங்கமம் — அரசு அங்கீகரிக்கப்பட்ட உத்தியோகபூர்வ அமைப்பு.",
                 "Tamil Nadu Vanigargalin Sangamam — Govt. Approved Official Organization."
               )}
             </p>
 
-            <p className="mt-4 text-base text-muted-foreground max-w-xl leading-relaxed">
+            <p className="mt-3 sm:mt-4 text-sm sm:text-base text-muted-foreground max-w-xl leading-relaxed">
               {t(
                 "உறுப்பினர் சேர்க்கைக்கு விண்ணப்பிக்கவும், உங்கள் அதிகாரப்பூர்வ சான்றிதழைப் பதிவிறக்கவும், நலத்திட்டங்களை அணுகவும் — அனைத்தும் ஒரே நம்பகமான போர்ட்டலில்.",
                 "Apply for membership, download your official certificate, access welfare schemes — all from one trusted portal."
@@ -178,10 +179,10 @@ function Home() {
             </p>
 
             {/* Single primary CTA + secondary text link */}
-            <div className="mt-8 flex flex-wrap items-center gap-6">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-6">
               <Link
                 to="/membership"
-                className="btn-primary text-base px-6 inline-flex"
+                className="btn-primary text-sm sm:text-base px-5 sm:px-6 inline-flex w-full sm:w-auto justify-center"
               >
                 <Users className="w-4 h-4" aria-hidden="true" />
                 {t("உறுப்பினர் சேர்க்கைக்கு விண்ணப்பிக்க", "Apply for Membership")}
@@ -190,7 +191,7 @@ function Home() {
               <Link
                 to="/voter-id"
                 search={{ q: undefined }}
-                className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1.5"
+                className="text-sm font-semibold text-primary hover:underline inline-flex items-center justify-center sm:justify-start gap-1.5 py-2"
               >
                 <IdCard className="w-4 h-4" aria-hidden="true" />
                 {t("ஏற்கனவே உறுப்பினரா? என் அட்டை பெறுக →", "Already a member? Get your card →")}
@@ -218,7 +219,7 @@ function Home() {
             <img
               src={templeLogo}
               alt="Tamil Nadu Vanigargalin Sangamam emblem"
-              className="w-full max-w-[400px] h-auto object-contain"
+              className="w-full max-w-[260px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] h-auto object-contain mx-auto"
               width={400}
               height={400}
             />
@@ -235,12 +236,12 @@ function Home() {
               delay={idx * 0.09}
               direction="up"
               blur
-              className="bg-card p-6 text-center"
+              className="bg-card p-4 sm:p-6 text-center"
             >
-              <div className="font-display text-4xl md:text-5xl font-semibold text-primary tabular-nums">
+              <div className="font-display text-2xl sm:text-4xl md:text-5xl font-semibold text-primary tabular-nums">
                 <AnimatedCounter value={s.v} />
               </div>
-              <div className="text-xs text-muted-foreground mt-2 uppercase tracking-wider font-semibold">
+              <div className="text-[10px] sm:text-xs text-muted-foreground mt-1 sm:mt-2 uppercase tracking-wider font-semibold">
                 {t(s.t, s.l)}
               </div>
             </ScrollReveal>

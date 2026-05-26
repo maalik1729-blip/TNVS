@@ -16,15 +16,15 @@ function About() {
   return (
     <div>
       <section className="border-b border-border bg-secondary/40">
-        <div className="max-w-7xl mx-auto px-4 py-16">
+        <div className="max-w-7xl mx-auto px-4 py-10 sm:py-16">
           <SectionLabel>About · எங்களைப் பற்றி</SectionLabel>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold max-w-3xl">A century-old movement, a modern portal.</h1>
-          <p className="font-tamil mt-4 text-xl text-foreground/75 max-w-3xl">தமிழ்நாடு வணிகர்களின் ஒற்றுமை — ஒரு பாரம்பரியம், ஒரு பொறுப்பு.</p>
+          <h1 className="mt-3 sm:mt-4 font-display font-semibold max-w-3xl">A century-old movement, a modern portal.</h1>
+          <p className="font-tamil mt-3 sm:mt-4 text-lg sm:text-xl text-foreground/75 max-w-3xl">தமிழ்நாடு வணிகர்களின் ஒற்றுமை — ஒரு பாரம்பரியம், ஒரு பொறுப்பு.</p>
         </div>
       </section>
 
-      <Section className="py-16">
-        <div className="grid md:grid-cols-3 gap-6">
+      <Section className="py-10 sm:py-16">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
           {[
             { i: Eye, t: "Our Vision", ta: "எங்கள் கனவு", d: "To be the most trusted voice and welfare body for every trader in Tamil Nadu — from the smallest petty shop to large wholesale merchants." },
             { i: Target, t: "Our Mission", ta: "எங்கள் நோக்கம்", d: "Deliver simple, transparent, government-backed services that protect traders, formalize businesses, and unlock welfare benefits." },
@@ -54,7 +54,7 @@ function About() {
               { y: "2023", t: "Digital Portal", d: "End-to-end online membership, payments and certificate delivery." },
               { y: "2025", t: "1.2 Lakh Members", d: "Crossed 1,24,560 registered members across all categories." },
             ].map((m) => (
-              <div key={m.y} className="flex gap-6 items-start">
+              <div key={m.y} className="flex gap-4 sm:gap-6 items-start">
                 <div className="font-display text-xl font-semibold text-gold w-20 shrink-0">{m.y}</div>
                 <div className="border-l border-border pl-6 pb-2 flex-1">
                   <div className="font-semibold text-ink">{m.t}</div>

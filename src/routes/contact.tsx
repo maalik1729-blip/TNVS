@@ -29,15 +29,15 @@ function Contact() {
   return (
     <div>
       <section className="border-b border-border bg-secondary/40">
-        <div className="max-w-7xl mx-auto px-4 py-16">
+        <div className="max-w-7xl mx-auto px-4 py-10 sm:py-16">
           <SectionLabel>Contact · தொடர்பு</SectionLabel>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold">We're here to help.</h1>
+          <h1 className="mt-3 sm:mt-4 font-display font-semibold">We're here to help.</h1>
           <p className="font-tamil mt-3 text-foreground/75">எந்த உதவிக்கும் தயங்காமல் தொடர்பு கொள்ளுங்கள்.</p>
         </div>
       </section>
 
-      <Section className="py-14 grid lg:grid-cols-5 gap-10">
-        <div className="lg:col-span-2 space-y-4">
+      <Section className="py-10 sm:py-14 grid lg:grid-cols-5 gap-6 sm:gap-10">
+        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
           {[
             { i: MapPin, t: "Head Office", d: "TN Vanigargalin Sangamam,\nNo. 24, North Mada Street,\nMylapore, Chennai — 600 004" },
             { i: Phone, t: "Helpline", d: "1800-XXX-XXXX (Toll-free)\n+91 91944 20044" },
@@ -54,7 +54,7 @@ function Contact() {
           ))}
         </div>
 
-        <form className="lg:col-span-3 paper rounded-xl p-8 space-y-5" onSubmit={handleSubmit}>
+        <form className="lg:col-span-3 paper rounded-xl p-5 sm:p-8 space-y-5" onSubmit={handleSubmit}>
           <h2 className="font-display text-2xl font-semibold">Send us a message</h2>
           <p className="font-tamil text-sm text-muted-foreground -mt-3">எங்களுக்கு செய்தி அனுப்புங்கள்</p>
           <div className="grid sm:grid-cols-2 gap-4">

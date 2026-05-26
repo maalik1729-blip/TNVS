@@ -102,7 +102,7 @@ export function Assistant() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8 overflow-x-hidden">
       {/* Top Breadcrumb */}
       <div>
         <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all">
@@ -202,7 +202,7 @@ export function Assistant() {
               )}
             </p>
 
-            <form onSubmit={handleCheckStatus} className="flex gap-2 max-w-md">
+            <form onSubmit={handleCheckStatus} className="flex flex-col sm:flex-row gap-2 max-w-md">
               <input
                 required
                 type="text"
