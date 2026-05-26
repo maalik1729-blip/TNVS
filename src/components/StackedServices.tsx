@@ -72,7 +72,7 @@ export function StackedServices({ services }: StackedServicesProps) {
   return (
     // The outer wrapper provides the total scroll height needed
     // Each card gets a spacer equal to its natural height so the sticky effect has room
-    <div ref={wrapperRef} className="relative">
+    <div ref={wrapperRef} className="relative" style={{ paddingBottom: "180px" }}>
       {services.map((s, idx) => (
         <div
           key={s.e}
