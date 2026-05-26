@@ -395,27 +395,27 @@ export function Assistant() {
             </div>
           </div>
 
-          {/* SIDEBAR WIDGET 2: Welcome Information text block instead of video placeholder */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-700 border border-emerald-100">
-                <Award className="w-3.5 h-3.5 text-emerald-800" aria-hidden="true" />
+          {/* SIDEBAR WIDGET 2: Welcome Video */}
+          <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100">
+              <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center text-primary border border-primary/10">
+                <Play className="w-3.5 h-3.5" aria-hidden="true" />
               </div>
               <h4 className="font-display font-bold text-xs text-slate-800">
-                {t("சங்கமத்தின் பணிகள்", "Advocacy & Services")}
+                {t("வரவேற்பு காணொளி", "Welcome Video")}
               </h4>
             </div>
-
-            <div className="space-y-3">
-              <div className="text-xs text-slate-600 leading-relaxed">
-                <strong>{t("வணிகர் நலன் பாதுகாப்பு:", "Trader Welfare Advocacy:")}</strong>{" "}
-                {t("வணிகர்களின் உரிமைகளைப் பாதுகாக்கவும், அரசாங்க வர்த்தக கொள்கைகளில் நியாயமான பிரதிநிதித்துவத்தை உறுதி செய்யவும் அர்ப்பணிக்கப்பட்ட அமைப்பு.", "Protecting trader rights, facilitating policies, and ensuring representation across government forums.")}
-              </div>
-              <div className="text-xs text-slate-600 leading-relaxed">
-                <strong>{t("உடனடி சான்றிதழ்கள்:", "Instant Certification:")}</strong>{" "}
-                {t("சங்கத்தின் பதிவு செய்யப்பட்ட உறுப்பினராகி, உங்கள் உத்தியோகபூர்வ கடைச் சான்றிதழைப் பதிவிறக்கிக் கொள்ளலாம்.", "Enroll online to get your membership certificate stamped and issued within minutes.")}
-              </div>
-            </div>
+            <video
+              src="/welcome_video.mp4"
+              controls
+              preload="none"
+              poster="/favicon.png"
+              className="w-full block"
+              aria-label={t("தமிழ்நாடு வணிகர்களின் சங்கமம் வரவேற்பு காணொளி", "Tamil Nadu Vanigargalin Sangamam welcome video")}
+            />
+            <p className="px-4 py-2.5 text-[11px] text-muted-foreground font-tamil leading-relaxed">
+              {t("சங்கமத்தில் சேரும் முன் இந்த காணொளியை பாருங்கள்.", "Watch this before joining the association.")}
+            </p>
           </div>
 
           {/* SIDEBAR WIDGET 3: Emergency Support Card / Contact */}
