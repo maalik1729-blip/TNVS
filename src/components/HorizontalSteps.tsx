@@ -1,5 +1,3 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
 import { SectionLabel } from "@/components/Section";
 
@@ -12,117 +10,75 @@ const HOW_IT_WORKS = [
 
 export function HorizontalSteps() {
   const { t } = useLanguage();
-  const targetRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start 0.2", "end 0.8"],
-  });
-
-  // Calculate horizontal translate transformation.
-  // Using relative viewport percentage for consistent overflow across screens.
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-58%"]);
 
   return (
-    <section ref={targetRef} className="relative h-auto lg:h-[100vh] bg-slate-50/30 dark:bg-slate-900/5 border-t border-border/50">
-      <div className="relative lg:sticky lg:top-[22.5vh] h-auto lg:h-[55vh] flex items-center overflow-visible lg:overflow-hidden pt-12 pb-4 lg:py-0">
-        <div className="max-w-7xl mx-auto px-4 w-full grid lg:grid-cols-12 gap-10 items-center">
-          
-          {/* Left Static Panel */}
-          <div className="lg:col-span-4 space-y-4">
-            <SectionLabel>{t("எப்படி பெறுவது", "How it works")}</SectionLabel>
-            <h2 className="font-display text-3xl md:text-4xl font-semibold leading-tight text-ink">
-              {t(
-                "4 எளிய படிகளில் பதிவுசெய்யப்பட்ட உறுப்பினராகுங்கள்.",
-                "Become a registered member in 4 simple steps."
-              )}
-            </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {t(
-                "மொத்த நேரம்: 5 நிமிடங்கள் · கட்டணம்: ₹500/ஆண்டு. உங்கள் வணிகத்தை எளிதாக டிஜிட்டல் மயமாக்குங்கள்.",
-                "Total time: ~5 minutes · Fee: ₹500/year. Seamless digital onboarding for your shop."
-              )}
-            </p>
-            {/* Subtle Scroll Indicator */}
-            <div className="hidden lg:flex items-center gap-2 text-xs text-muted-foreground pt-4">
-              <span className="w-8 h-[1px] bg-muted-foreground/30 animate-pulse" />
-              <span>{t("கீழே உருட்டவும் (Scroll Down)", "Scroll down to see steps")}</span>
-            </div>
-          </div>
+    <section className="relative bg-slate-50/40 dark:bg-slate-900/5 border-t border-b border-border/50 py-16 md:py-24">
+      
+      {/* Ambient background decoration */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.03] bg-primary blur-3xl" />
+        <div className="absolute -bottom-40 left-1/4 w-[300px] h-[300px] rounded-full opacity-[0.03] bg-gold blur-3xl" />
+      </div>
 
-          {/* Right Horizontal Track (Desktop) */}
-          <div className="hidden lg:block lg:col-span-8 overflow-hidden relative py-6 select-none">
-            <motion.div style={{ x }} className="flex gap-6 w-max pr-12">
-              {HOW_IT_WORKS.map((step, idx) => (
-                <div
-                  key={step.n}
-                  className="w-[280px] sm:w-[320px] p-6 bg-card border border-border rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-[260px] relative group"
-                >
-                  {/* Corner Accent */}
-                  <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-gold/10 to-transparent rounded-tr-2xl rounded-bl-full" />
-                  
-                  {/* Header: Step Number */}
-                  <div className="flex justify-between items-center">
-                    <span className="font-display text-3xl font-bold text-gold/80 dark:text-gold/90 group-hover:scale-110 transition duration-300">
-                      {step.n}
-                    </span>
-                    <span className="text-[10px] uppercase tracking-wider font-semibold bg-muted px-2 py-0.5 rounded text-muted-foreground">
-                      {t(`படி ${idx+1}`, `Step ${idx+1}`)}
-                    </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className="space-y-2 mt-4">
-                    <h3 className="font-display font-semibold text-ink text-base sm:text-lg">
-                      {t(step.t, step.e)}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-tamil">
-                      {t(step.td, step.d)}
-                    </p>
-                  </div>
-
-                  {/* Connecting indicator line */}
-                  {idx < 3 && (
-                    <div className="absolute top-1/2 -right-6 w-6 h-[1.5px] border-t-2 border-dashed border-border pointer-events-none hidden sm:block" />
-                  )}
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Right Vertical Track (Mobile / Tablet) */}
-          <div className="lg:hidden w-full grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
-            {HOW_IT_WORKS.map((step, idx) => (
-              <div
-                key={step.n}
-                className="w-full p-6 bg-card border border-border rounded-2xl shadow-md flex flex-col justify-between h-auto min-h-[160px] relative group"
-              >
-                {/* Corner Accent */}
-                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-gold/10 to-transparent rounded-tr-2xl rounded-bl-full" />
-                
-                {/* Header: Step Number */}
-                <div className="flex justify-between items-center">
-                  <span className="font-display text-2xl font-bold text-gold/80 dark:text-gold/90">
-                    {step.n}
-                  </span>
-                  <span className="text-[10px] uppercase tracking-wider font-semibold bg-muted px-2 py-0.5 rounded text-muted-foreground">
-                    {t(`படி ${idx+1}`, `Step ${idx+1}`)}
-                  </span>
-                </div>
-
-                {/* Content */}
-                <div className="space-y-2 mt-3">
-                  <h3 className="font-display font-semibold text-ink text-sm sm:text-base">
-                    {t(step.t, step.e)}
-                  </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed font-tamil">
-                    {t(step.td, step.d)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-          
+      <div className="relative max-w-7xl mx-auto px-4">
+        
+        {/* Header Layout */}
+        <div className="max-w-3xl mb-12 md:mb-16">
+          <SectionLabel>{t("எப்படி பெறுவது", "How it works")}</SectionLabel>
+          <h2 className="mt-4 font-display text-3xl md:text-4.5xl font-bold leading-tight text-ink">
+            {t(
+              "4 எளிய படிகளில் பதிவுசெய்யப்பட்ட உறுப்பினராகுங்கள்.",
+              "Become a registered member in 4 simple steps."
+            )}
+          </h2>
+          <p className="mt-3 text-sm md:text-base text-muted-foreground leading-relaxed">
+            {t(
+              "மொத்த நேரம்: 5 நிமிடங்கள் · கட்டணம்: ₹500/ஆண்டு. உங்கள் வணிகத்தை எளிதாக டிஜிட்டல் மயமாக்குங்கள்.",
+              "Total time: ~5 minutes · Fee: ₹500/year. Seamless digital onboarding for your shop."
+            )}
+          </p>
         </div>
+
+        {/* Steps Grid (Responsive 1 -> 2 -> 4 Columns) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative">
+          
+          {HOW_IT_WORKS.map((step, idx) => (
+            <div
+              key={step.n}
+              className="card-base card-interactive w-full p-6 sm:p-8 bg-card border border-border rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between min-h-[200px] sm:min-h-[230px] relative group"
+            >
+              {/* Corner Saffron Gold Accent */}
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-gold/15 to-transparent rounded-tr-2xl rounded-bl-full" />
+              
+              {/* Header: Step Number */}
+              <div className="flex justify-between items-center">
+                <span className="font-display text-3xl sm:text-4xl font-extrabold text-gold dark:text-gold-light group-hover:scale-110 transition duration-300">
+                  {step.n}
+                </span>
+                <span className="text-[10px] uppercase tracking-wider font-bold bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md text-muted-foreground">
+                  {t(`படி ${idx + 1}`, `Step ${idx + 1}`)}
+                </span>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-2 mt-4 flex-1">
+                <h3 className="font-display font-bold text-ink text-base sm:text-lg">
+                  {t(step.t, step.e)}
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-tamil">
+                  {t(step.td, step.d)}
+                </p>
+              </div>
+
+              {/* Connecting indicator line for desktop view */}
+              {idx < 3 && (
+                <div className="absolute top-1/2 -right-4 lg:-right-5 w-4 lg:w-5 h-[1.5px] border-t-2 border-dashed border-border/60 pointer-events-none hidden lg:block" />
+              )}
+            </div>
+          ))}
+
+        </div>
+
       </div>
     </section>
   );

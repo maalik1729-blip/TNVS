@@ -1,123 +1,192 @@
-# Executive Summary
-
-The Tamil Nadu Vanigargalin Sangamam (TNVS) Trader Portal serves as a vital digital gateway for trade associations, regional coordination, membership enrollment, and constituent verification. 
-
-While the portal exhibits robust functional capabilities—including a multi-step chatbot state machine, a comprehensive constituency directory, and a secure multi-stage membership card generator—it suffers from key UI/UX weaknesses that limit user retention, particularly among **first-time, non-technical, and mobile-first trade union members**.
-
-This audit highlights:
-- **Interaction Friction**: Inconsistencies in state persistence, multi-stage form feedback, and error recovery.
-- **Visual Clutter & Cognitive Overload**: Dense data tables, high-density chat logs, and poor scanning hierarchy in metrics panels.
-- **Mobile Gaps**: High density layouts on small screens, overly narrow button tap targets, and scroll-heavy forms.
-- **Accessibility Obstacles**: Lack of ARIA landmark annotations, focus rings, and poor color contrast between semantic colors.
+# 01 — UI/UX Audit · Tamil Nadu Vanigargalin Sangamam
 
 ---
 
-# Major UX Problems
+## Executive Summary
 
-### 1. Multi-Stage Membership Workflow Fragility (`/membership`)
-The membership card acquisition process operates through a strict three-stage workflow (Personal Details → Photo Upload → 4-Digit Member PIN Validation). 
-- **The Issue**: If a user is interrupted or experiences network lag during the heavy photo-upload phase, there is no automatic local preservation of form state. Initiating a reload completely resets the workflow, forcing manual re-entry.
-- **User Impact**: High frustration and abandonment rates for non-technical users who are prone to accidental refreshes or back navigation.
+The TNVS portal is structurally sound with a clear design intent, but suffers from **3 critical bugs**, **significant bilingual inconsistency**, **form styling fragmentation**, and **several mobile usability gaps** that directly harm the primary user journey — a Tamil-speaking trader on an Android phone trying to join the association.
 
-### 2. Disconnected Search and Card Generation Journey (`/voter-id` to `/membership`)
-- **The Issue**: When a user searches for an existing trader record on the `/voter-id` page and successfully locates their details, the transition to `/membership` to claim their card does not pass the record context automatically. The user is required to manually re-type their matching credential criteria.
-- **User Impact**: Redundant steps and cognitive friction, making the application feel like a set of siloed pages rather than an integrated portal.
+The home page hero is strong, the membership form steps are well-structured, and the voter ID card design is high quality. However, dead links in the footer, a broken video embed, About/Contact pages with no Tamil translations, and a contact form that ignores the `FloatingInput` system all undermine the portal's official credibility.
 
----
-
-# Major UI Problems
-
-### 1. Lack of Interactive Feedback States on Table Elements (`/wings`)
-The constituency breakdown table contains up to 100 visible rows, presenting thousands of individual voter counts.
-- **The Issue**: The table lacks a clear, responsive hover state on individual rows, and sorting controls are not visually distinct. Clicking a column header changes the order without any animated visual transition, leaving the user uncertain whether the action succeeded.
-- **User Impact**: Feels static and unresponsive. Users cannot easily track which row they are currently scanning on horizontal lines.
-
-### 2. Density & Contrast in Chat Interface Chat Bubbles (`/assistant`)
-- **The Issue**: The AI assistant chat bubbles utilize a compact spacing system. When long paragraphs of Tamil text are generated, line height is overly narrow, causing words to blur together. Additionally, background bubble gradients sometimes clash with white text.
-- **User Impact**: High cognitive load, particularly for older traders with minor visual impairments reading complex terms.
+**Severity Rating:**
+- 🔴 Critical (3) — broken functionality
+- 🟠 High (7) — UX friction causing drop-off
+- 🟡 Medium (8) — inconsistency degrading trust
+- 🟢 Low (5) — polish and enhancement opportunities
 
 ---
 
-# User Friction Points
+## 🔴 Critical Bugs
 
-### 1. The 4-Digit Member PIN Validation Gate
-- **The Issue**: The final security step requires a 4-digit Member PIN. However, the input fields are structured as four separate single-character boxes that do not auto-focus the next field upon entry or support standard keyboard paste events.
-- **User Impact**: High interaction cost. Users must manually click/tap each box to type their PIN, resulting in frequent input errors and workflow drop-offs.
+### 1. Broken Video Embed on Home Page
+**File:** `src/routes/index.tsx` line 273
+**Issue:** `<video src="/welcome_video.mp4" />` — `welcome_video.mp4` was deleted from the project. Every visitor sees a broken video player on the home page.
+**Impact:** Destroys first impression. Signals a broken, unmaintained portal — fatal for a government-adjacent trust portal.
+**Fix:** Remove the video section entirely, or replace with a static image/YouTube embed.
 
-### 2. File Upload Dropzone Ambiguity
-- **The Issue**: The photo upload step utilizes a generic drag-and-drop box. On mobile devices, "drag-and-drop" is non-standard. The box lacks immediate camera integration hooks, requiring users to pre-capture and browse local files.
-- **User Impact**: Mobile users struggle to upload images, causing delays at Stage 2 of the membership flow.
+### 2. Dead Hash Links in Footer
+**File:** `src/components/SiteFooter.tsx` lines 68–81
+**Issue:** `href="#about"`, `href="#terms"`, `href="#privacy"` — these hash anchors don't point to any real page or section. Clicking them does nothing or scrolls the user to the top.
+**Impact:** Traders looking for privacy policy, terms, or benefits information get a broken experience. Undermines legal credibility.
+**Fix:** Replace with real routes (`/about`, `/contact`) or remove until those pages exist.
 
----
-
-# Visual Hierarchy Problems
-
-### 1. Monotonous Dashboard Metric Cards (`/dashboard`)
-- **The Issue**: The admin dashboard renders multiple statistic boxes with identical background containers, font weights, and primary color styles. There is no clear differentiation between primary metrics (e.g., Total Members) and secondary metrics (e.g., Third Gender ratios).
-- **User Impact**: Zero glanceability. Users must actively read every label to comprehend the dashboard state, rather than intuitively scanning for key highlights.
-
-### 2. Landing Page Hero Primary vs. Secondary Call to Actions (`/`)
-- **The Issue**: The main welcome hero banner features several navigation links with very similar weights, causing them to compete for visual attention.
-- **User Impact**: First-time users are presented with too many paths simultaneously, diluting the conversion rate for the primary goal (Member Card Generation).
+### 3. About Page Has Zero Tamil Translations
+**File:** `src/routes/about.tsx`
+**Issue:** The entire About page is hardcoded in English — headers, card content, timeline milestones. It imports `Section`/`SectionLabel` but never calls `useLanguage()` or `t()`. Tamil users see no Tamil content on a page meant to build trust.
+**Impact:** Alienates the primary Tamil-speaking user base on the most trust-critical page.
+**Fix:** Add `useLanguage()`, wrap all content in `t(tamil, english)`.
 
 ---
 
-# Typography Problems
+## 🟠 High — UX Friction
 
-### 1. Tamil Font Stack Fallback Failures
-- **The Issue**: Throughout the pages, custom Tamil headings utilize fallback browser fonts when loading custom weights fails. This results in standard system serif fonts that clash with modern sans-serif English headings.
-- **User Impact**: The interface looks inconsistent, unpolished, and cheap, undermining professional trust.
+### 4. Contact Form Uses Inconsistent Raw Input Styling
+**File:** `src/routes/contact.tsx` line 97
+**Issue:** Contact form uses raw `<input>` and `<textarea>` elements with a hardcoded CSS string `const inp = "..."`. Every other form in the app uses `FloatingInput` from `@/components/FloatingInput`. The contact form feels like a different product.
+**Impact:** Visual inconsistency destroys the "official portal" perception. Non-technical users may distrust the form.
+**Fix:** Replace all contact form inputs with `FloatingInput`, `FloatingTextarea`, `FloatingSelect` components.
 
-### 2. Sub-optimal Line Lengths & Spacing
-- **The Issue**: Descriptive text cards on `/services` span the full width of the screen, creating line lengths exceeding 120 characters.
-- **User Impact**: Readability guidelines suggest a maximum of 75-80 characters per line. Excessive widths make it difficult for users to track back to the next line when scanning.
+### 5. `ScrollReveal` Silently Ignores `delay`, `duration`, `blur`, `stagger` Props
+**File:** `src/components/ScrollReveal.tsx`
+**Issue:** The component accepts props like `delay`, `duration`, `blur`, `stagger` but the CSS implementation only uses `direction`. Calling `<ScrollReveal delay={0.2} blur>` has zero effect.
+**Impact:** All scroll reveal animations on the home page play simultaneously instead of staggered — creates visual noise rather than guided attention.
+**Fix:** Apply `style={{ animationDelay: \`\${delay}s\` }}` and `animationDuration` using the props.
 
----
+### 6. HorizontalSteps Cards Have Fixed Heights That Overflow Tamil Text
+**File:** `src/components/HorizontalSteps.tsx` line 48
+**Issue:** Cards have `h-[230px] sm:h-[260px]` fixed height. Tamil text for step descriptions is significantly longer than English. On mobile, Tamil text will be clipped or overflow.
+**Impact:** Tamil-speaking users (the primary audience) see incomplete step information.
+**Fix:** Remove fixed height, use `min-h-[...]` with `justify-between` flex layout.
 
-# Accessibility Problems
+### 7. Footer Links Point to Dashboard Without Auth Gate
+**File:** `src/components/SiteFooter.tsx` line 49
+**Issue:** Footer link "Member Dashboard" goes to `/dashboard`. Dashboard requires login, but unauthenticated users just get the page with no redirect — they see an empty state with no clear "login to see this" prompt above the fold.
+**Impact:** Confuses traders who don't know their credentials.
 
-### 1. Invisible Focus States
-- **The Issue**: Buttons, interactive tabs, and text input boxes have custom focus outlines disabled in CSS, without replacing them with highly visible accessible rings.
-- **User Impact**: Keyboard-only users navigating via the `Tab` key cannot visually determine which element is currently active.
+### 8. No Language Persistence — Language Resets on Page Navigation
+**Issue:** The `useLanguage` hook likely uses component state or context without `localStorage` persistence. When a user switches to Tamil and navigates to a new page, the language may reset to English (depending on implementation).
+**Impact:** Tamil traders must re-switch language on every page — extremely frustrating.
 
-### 2. Missing Screen Reader Semantic Metadata
-- **The Issue**: Interactive elements (such as the Zone selection tabs on the revamped `/wings` page) use generic `div` or custom `button` markups without active `aria-selected` or `role="tab"` attributes.
-- **User Impact**: Screen readers cannot accurately communicate the current tab state or filter values to visually impaired users.
+### 9. Contact Form Has No Field Validation Feedback
+**File:** `src/routes/contact.tsx`
+**Issue:** Form uses native browser `required` validation only. No visible error messages, no inline feedback, no character count on message field.
+**Impact:** Form submission fails silently on invalid input — traders abandon the form.
 
----
-
-# Mobile Responsiveness Problems
-
-### 1. Excessively Cramped Mobile Table Scaling (`/wings`)
-- **The Issue**: Although a mobile grid card fallback was implemented, if a mobile device displays the table in landscape or on small tablets, the horizontal text overflows the viewport, causing severe horizontal page scrolling.
-- **User Impact**: Clunky interaction; critical voter metrics are clipped or hidden unless users perform tedious horizontal swipes.
-
-### 2. Tap-Target Padding Failures
-- **The Issue**: Category filtering buttons (e.g. on `/services` and `/wings`) are sized at 36px in height.
-- **User Impact**: Fails the Apple and Android accessibility guidelines which require a minimum tap target of 44x44px. Users with larger fingers frequently trigger adjacent categories by accident.
-
----
-
-# Cognitive Load Analysis
-
-- **The Problem**: On the `/wings` page, loading all 274 assembly constituencies concurrently creates significant cognitive load. While pagination exists, the overwhelming amount of numerical metrics (Male, Female, Third Gender, Total) displayed simultaneously induces choice paralysis.
-- **Why it matters**: Users looking up a specific town are forced to wade through millions of numeric counts, reducing the efficiency of regional search workflows.
+### 10. Services Page Modals Have No Mobile Scroll Lock
+**File:** `src/routes/services.tsx`
+**Issue:** Modal overlays don't prevent body scroll on mobile. Users can scroll the background while a modal is open.
+**Impact:** Disorienting UX on mobile — users lose their scroll position when closing modals.
 
 ---
 
-# Trust & Clarity Issues
+## 🟡 Medium — Inconsistency & Visual Issues
 
-- **Ambiguous Form Validation Labels**: Input validation errors display technical text (e.g., "invalid field format") instead of supportive, localized instructions in natural Tamil and English.
-- **Lack of Progress Indicators**: The system does not explicitly show *why* certain security steps exist (e.g., the 4-digit PIN is for identity lock protection), making the security requirements feel like bureaucratic hurdles rather than reassuring trust indicators.
+### 11. About Page Timeline Has No Animation
+The About page timeline section (years 2012–2025) is static. Every other section in the app uses scroll reveal. The timeline feels flat by comparison.
+
+### 12. Hero Section Has No Explicit `font-size` Unit Fallback
+`style={{ fontSize: 'clamp(1.75rem, 5vw + 0.5rem, 3.75rem)' }}` — on very small screens (320px), this resolves to ~1.75rem. Combined with Tamil font rendering, this may be too small for older users.
+
+### 13. Stats Grid Uses `gap-px bg-border` Divider Trick
+The stats section uses `bg-border` as a background and `gap-px` to simulate grid lines. This pattern fails in dark mode and on some Android browsers where sub-pixel gaps render inconsistently.
+
+### 14. `SectionLabel` in Bilingual Pages Mixes Languages Inconsistently
+Some pages hardcode mixed Tamil/English in SectionLabel: `"About · எங்களைப் பற்றி"` as a static string. This ignores the `useLanguage()` context and always shows mixed text.
+
+### 15. Voter ID Card References Deleted Assets
+**File:** `src/components/VoterIdCard.tsx` lines 1–3
+**Issue:** Imports `headerLogo`, `rightLogo`, `ownerSign` from `src/assets/`. These large PNG files are bundled directly into the component. The card component imports 1.6MB + 1.5MB + 2.2MB = ~5.3MB of images that every voter-id page visitor downloads.
+**Impact:** Massive page weight for the voter ID feature.
+
+### 16. `WordSwapper` Uses Full Framer Motion Import
+**File:** `src/components/WordSwapper.tsx`
+**Issue:** Imports `motion, AnimatePresence` from `"framer-motion"`. This pulls the full library into the home page's critical chunk.
+**Fix:** The word swap animation can be done with CSS `@keyframes` or `LazyMotion`.
+
+### 17. Home Page Video Section Occupies Significant Vertical Space
+Even with the broken video, the section heading, description, and container div all render, wasting screen space where no content can be shown.
+
+### 18. Contact Page Has No Map or District Office List
+Traders from districts other than Chennai have no information about their local district office. Only Chennai head office is listed.
 
 ---
 
-# Recommended Priority Fixes
+## Visual Hierarchy Problems
 
-| Rank | Severity | Issue | Page | Action |
-|---|---|---|---|---|
-| 1 | **Critical** | Separate PIN Input Friction | `/membership` | Implement single-input auto-focus PIN fields supporting copy-paste. |
-| 2 | **High** | Lack of Row Hover / Interactive State | `/wings` | Introduce hover highlights, sorting animation, and interactive progress bars. |
-| 3 | **High** | Form Resets on Interruptions | `/membership` | Integrate sessionStorage persistence for form state recovery. |
-| 4 | **Medium** | Narrow Tap Targets (<44px) | All Pages | Increase padding on all navigation and filtering pills to standard 44px tap targets. |
-| 5 | **Medium** | Missing Keyboard Navigation | All Pages | Apply high-contrast focus rings (`focus:ring-2 focus:ring-primary`) globally. |
+- **Home hero**: The SectionLabel badge ("Govt. Registered") is small and easy to miss — it should be the first element users notice to build trust.
+- **Services page**: All 12 service cards are the same visual weight — no hierarchy to guide users to the most important services (membership, renewal).
+- **Dashboard**: Not reviewed in detail yet, but activity feed and welfare sections likely compete for equal visual attention.
+- **Footer**: Three equal-weight nav columns (Services, Association, Office) give no hierarchy clue about which links matter most.
+
+---
+
+## Typography Problems
+
+- Tamil text (`font-tamil` class) is used inconsistently — some Tamil strings use it, others use the default font. Inconsistent Tamil rendering across pages.
+- Heading sizes jump from `text-3xl` to `text-4xl` without a consistent scale. The `font-display` class should map to a specific font stack.
+- FAQ accordion trigger text (`text-sm md:text-base`) is small for Tamil users, especially on mobile.
+- The `text-[10px]` usage in stats labels is too small for users 40+ years old — at least `text-xs` (12px) should be the floor.
+
+---
+
+## Accessibility Problems
+
+- **Tap targets**: Several icon-only buttons (e.g., language toggle) may be smaller than 44×44px.
+- **Color contrast**: `text-muted-foreground` over light backgrounds may not meet WCAG AA 4.5:1 contrast ratio.
+- **Missing `aria-label`** on language toggle button.
+- **Video element** (even broken) has no `aria-label` or fallback text.
+- **Footer hash links** are keyboard-accessible but lead nowhere — confusing for screen reader users.
+- **FAQ accordion**: Uses radix-ui `accordion` which has good ARIA, but Tamil text answers have no `lang="ta"` attribute — screen readers will mispronounce Tamil using English phonics.
+
+---
+
+## Mobile Responsiveness Problems
+
+- **HorizontalSteps**: Fixed card heights overflow Tamil text on 360px screens.
+- **Hero section**: `grid md:grid-cols-2 lg:grid-cols-12` — on 360–480px screens, the emblem image stacks below text and is very large relative to the viewport.
+- **Services modal**: No `max-height` on modal body, causing modals to extend off-screen on short mobile viewports.
+- **Contact form**: Full-width inputs with no clear group separation look like one long list on mobile.
+- **Testimonial carousel**: Carousel controls (prev/next) may overlap carousel text on very small screens.
+
+---
+
+## Cognitive Load Analysis
+
+| Page | Cognitive Load | Main Cause |
+|------|---------------|------------|
+| Home | Medium | Multiple sections competing for attention; video broken |
+| Services | High | 12 services + 4 modal flows all visible simultaneously |
+| Wings/Divisions | Very High | 234-constituency table + 50+ wings with no clear entry point |
+| Membership | Medium | 5 steps are clear, but document upload instructions are minimal |
+| Voter ID | Low-Medium | Simple search flow, well-designed |
+| Dashboard | Medium | Activity + renewal + welfare all visible; unclear priority |
+| Assistant | Low | Simple FAQ + status checker |
+| About | Low | Static content, no decisions required |
+| Contact | Low | Simple form |
+
+---
+
+## Trust & Clarity Issues
+
+1. **Broken video** is the single biggest trust-destroyer — looks abandoned.
+2. **Dead footer links** to non-existent privacy/terms pages undermine legal credibility.
+3. **About page in English only** makes Tamil traders feel like second-class users on a page explicitly about the Tamil traders' association.
+4. **"Demo Profile" text** visible in the Assistant page status checker search results — `name: "Senthil Kumar N (Demo Profile)"` — this is clearly a placeholder that was never replaced.
+5. **Fake phone number** — `1800-XXX-XXXX` in the contact page is a placeholder, not a real number.
+
+---
+
+## Recommended Priority Fixes
+
+| # | Fix | Severity | Effort |
+|---|-----|----------|--------|
+| 1 | Remove broken video embed or replace with YouTube embed | 🔴 Critical | 30 min |
+| 2 | Fix dead footer hash links | 🔴 Critical | 15 min |
+| 3 | Add Tamil translations to About page | 🔴 Critical | 1 hr |
+| 4 | Replace contact form inputs with FloatingInput | 🟠 High | 1 hr |
+| 5 | Fix ScrollReveal to apply delay/duration props | 🟠 High | 30 min |
+| 6 | Fix HorizontalSteps card height to min-h | 🟠 High | 15 min |
+| 7 | Replace "Demo Profile" placeholder text in Assistant | 🟠 High | 15 min |
+| 8 | Replace fake phone number with real helpline | 🟠 High | 10 min |
+| 9 | Fix mixed-language SectionLabel strings | 🟡 Medium | 30 min |
+| 10 | Convert WordSwapper to LazyMotion | 🟡 Medium | 45 min |

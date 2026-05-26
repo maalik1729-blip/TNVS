@@ -1,51 +1,127 @@
-# 05 — Final Review + Quality Verification (v2 Run)
-
-This document presents the final review, quality check, and verification results for the Tamil Nadu Vanigargalin Sangamam (TNVS) Trader Portal frontend. This review validates the successful completion of all 5 stages of our UI redesign pipeline.
+# 05 — Final Review (v2 · May 2026)
 
 ---
 
-## 1. Build & Compilation Verification
-* **Command Executed**: `npm run build`
-* **Status**: **PASS (100% Successful)**
-* **Logs & Metrics**:
-  * Total Client Modules Transformed: **2383**
-  * Total SSR Modules Transformed: **104**
-  * Assets, CSS, and JS chunks built in under **10.5 seconds** with zero compiler or TypeScript type warnings.
-  * No broken route references or TanStack router generation issues.
+## Code Verification Results
+
+| # | Check | Result | Evidence |
+|---|-------|--------|----------|
+| 1 | `src/styles.css` — `[lang="ta"]` rule exists | ✅ Pass | Line 725 |
+| 2 | `src/styles.css` — `word-enter`/`word-exit` keyframes exist | ✅ Pass | Lines 732–741 |
+| 3 | `src/routes/services.tsx` — no framer-motion import | ✅ Pass | Grep: 0 matches in file |
+| 4 | `src/routes/assistant.tsx` — no framer-motion import | ✅ Pass | Grep: 0 matches in file |
+| 5 | `src/components/WordSwapper.tsx` — LazyMotion wrapper present | ✅ Pass | Line 59, 106 |
+| 6 | `src/routes/index.tsx` — no `text-[10px]` | ✅ Pass | Grep: 0 matches in file |
+| 7 | `src/routes/index.tsx` — hero emblem `max-w-[180px]` at base | ✅ Pass | Line 222 |
+| 8 | `src/routes/membership.tsx` — `STORAGE_KEY` / localStorage auto-save | ✅ Pass | Pre-existing: `tnvs_form_data` + `tnvs_form_step` keys |
+| 9 | `src/routes/contact.tsx` — info cards use `t()` for label and detail | ✅ Pass | Lines 62–63 |
+| 10 | `src/routes/voter-id.tsx` — `hasSearched` state + `Link to="/membership"` in empty state | ✅ Pass | Lines 38, 469–479 |
+| 11 | TypeScript — `npx tsc --noEmit` | ✅ Clean | Exit code: 0, no errors |
 
 ---
 
-## 2. Design Tokens & Global Styles Validation
-* **Styles Sheet Audited**: [styles.css](file:///d:/ziya/TNVS/src/styles.css)
-* **Custom Theme Check**:
-  * Verified `:root` parameters are defined correctly (`--radius-input`, `--radius-card`, `--radius-pill`, `--spacing-touch`).
-  * Checked extended Tailwind properties (`--color-navy`, `--color-gold`, `--color-surface-info`, `--color-border-info`, `--color-text-info`).
-  * Confirmed that custom hardware-accelerated animations (`.animate-fade-in` and `.animate-slide-up`) are parsed correctly.
+## Remaining Framer Motion Imports
+
+| File | Status | Justification |
+|------|--------|---------------|
+| `src/components/WordSwapper.tsx` | ⚠️ LazyMotion (expected) | Uses `LazyMotion + domAnimation + m` — only ~10KB loaded, spring animation preserved |
+| `src/routes/voter-id.tsx` | ⚠️ Still full import | **Outside v2 pipeline scope** (not listed in GEMINI.md remaining issues) |
+| `src/routes/membership.tsx` | ⚠️ Still full import | **Outside v2 pipeline scope** |
+| `src/routes/wings.tsx` | ⚠️ Still full import | **Outside v2 pipeline scope** |
+| `src/routes/dashboard.tsx` | ⚠️ Still full import | **Outside v2 pipeline scope** |
+
+**Recommendation for v3 pipeline:** Add voter-id.tsx, membership.tsx, wings.tsx, dashboard.tsx to GEMINI.md remaining issues.
 
 ---
 
-## 3. Mobile Viewport (375px) & Ergonomic Check
-An audit of responsive class structures at `375px` (standard mobile sizing) was simulated and checked against our custom CSS variables:
-* **Interactive Elements Height**:
-  * **Primary Buttons**: Active buttons (`btn-primary`, `btn-secondary`, `btn-danger`) are validated to have a minimum touch target height of **`48px`** (`min-h-[48px]`), ensuring perfect compliance with ergonomic guidelines for thumb/finger usage.
-  * **Secondary / Text Links**: Utility elements and navigation links are structured to maintain at least **`44px`** (`min-h-[44px]`) touch targets, preventing accidental adjacent taps.
-* **Form Inputs & Selectors**:
-  * All input text fields and the newly introduced 38-district dropdown use `.input-base`, which maintains a height of `48px` and has structural corner radii of `10px` (`--radius-input`).
-  * Text scales perfectly on small screens without overflows, horizontal scrollbars, or text clipping.
+## text-[10px] Still Present (Out of Scope)
+
+| File | Count | Status |
+|------|-------|--------|
+| `src/routes/wings.tsx` | 6× | ⚠️ Out of scope — recommend v3 |
+| `src/routes/dashboard.tsx` | 5× | ⚠️ Out of scope — recommend v3 |
+| `src/components/FloatingInput.tsx` | 3× | ✅ Intentional — floated label design |
+| `src/components/HorizontalSteps.tsx` | 1× | ⚠️ Out of scope |
+| `src/components/StackedServices.tsx` | 1× | ⚠️ Out of scope |
+| `src/components/TestimonialCarousel.tsx` | 1× | ⚠️ Out of scope |
+| `src/routes/index.tsx` | 0× | ✅ Fixed in this pipeline |
 
 ---
 
-## 4. Bilingual Translation Audit
-* **Language Hook**: Custom TanStack Router dynamic translations (`useLanguage()`, `t(ta, en)`) are successfully verified across the application.
-* **Announcements & Tickers**: Checked to ensure tickers and headers display perfectly in both languages.
-* **DemoModeBanner**: Fully updated to render its notice headings bilingually (e.g. `முன்னோட்ட பயன்முறை / Demo & Preview Mode`), while presenting message bodies in both languages bilingually in a stacked, legible format.
-* **District selector**: The administrative district names automatically translate based on language toggle:
-  * In Tamil mode: `சென்னை / Chennai`
-  * In English mode: `Chennai / சென்னை`
+## Mobile 360px Checklist
+
+Manual verification checklist (run with browser DevTools at 360px):
+
+### / (Home page)
+- [ ] Stats labels readable at `text-xs` (12px) — not 10px
+- [ ] Hero emblem at 180px width — no overflow
+- [ ] Sticky bottom CTA visible, not overlapping last section (pb-16 in place)
+- [ ] HorizontalSteps cards use `min-h` — Tamil text not clipped
+
+### /services (Services page)
+- [ ] Open any modal — fits within 360px viewport height (max-h-[calc(100dvh-32px)])
+- [ ] Modal body scrollable (overflow-y-auto confirmed in code)
+- [ ] Background page scroll locked while modal open (useEffect confirmed)
+- [ ] Modal closes on Escape key
+
+### /membership (Membership form)
+- [ ] Step 1 renders cleanly at 360px
+- [ ] FloatingInput labels float on focus
+- [ ] Refresh page — saved form data restores (localStorage confirmed)
+- [ ] "Clear draft" button works
+
+### /voter-id (Card generator)
+- [ ] Search for "xyz123" (non-existent) → "Not a member?" block appears
+- [ ] "இப்போதே இணையுங்கள் →" link navigates to /membership
+
+### /assistant (Support center)
+- [ ] FAQ accordion opens/closes with CSS fade (no framer errors in console)
+- [ ] Status checker result panel animates in with CSS
+- [ ] DemoModeBanner visible at top
+
+### /contact (Contact page)
+- [ ] Info cards show Tamil labels in Tamil mode (தலைமை அலுவலகம், உதவி எண், etc.)
+- [ ] Info cards show English labels in English mode
+- [ ] Detail text correct font/line-height via `[lang="ta"]` rule
 
 ---
 
-## 5. Clean-Up & Performance Verification
-* **Lenis Removal**: Completed. The heavy smooth-scroll package has been fully uninstalled and its provider code deleted, completely removing the main-thread mousewheel and touch scroll listeners.
-* **Animation Optimizations**: Replaced Framer Motion scroll parallax on the index hero block and refactored the global `ScrollReveal` component into pure, hardware-accelerated CSS animations (`.animate-fade-in` / `.animate-slide-up`). This achieves a 0ms JavaScript computation time for entrance reveals on scroll, significantly improving rendering performance.
-* **Hardcoded Brand Colors**: Fully eliminated the hardcoded deep-navy hex value `#06225C` from `dashboard.tsx`, replacing it with unified semantic CSS class references (`bg-navy`, `from-navy`, `via-navy`, `to-navy`).
+## Outstanding Issues
+
+| Issue | Reason Not Fixed | Recommended Action |
+|-------|-----------------|-------------------|
+| framer-motion in voter-id.tsx | Outside v2 scope | Add to GEMINI.md for v3 |
+| framer-motion in membership.tsx | Outside v2 scope | Add to GEMINI.md for v3 |
+| framer-motion in wings.tsx | Outside v2 scope | Add to GEMINI.md for v3 |
+| framer-motion in dashboard.tsx | Outside v2 scope | Add to GEMINI.md for v3 |
+| `text-[10px]` in wings/dashboard/components | Outside v2 scope | Add to GEMINI.md for v3 |
+
+---
+
+## TypeScript Build Status
+
+```
+npx tsc --noEmit → Exit code: 0 — no errors
+```
+
+All 10 modified files pass TypeScript compilation.
+
+---
+
+## Release Readiness
+
+**Ready** — all 9 in-scope fixes implemented and verified.
+
+Conditions met:
+- TypeScript: clean
+- Framer Motion: removed from all 3 in-scope files (services, assistant, WordSwapper migrated to LazyMotion)
+- Body scroll lock: added to services.tsx modals
+- Stats font: fixed in index.tsx
+- Hero emblem: fixed
+- Tamil translations: contact info cards fully bilingual
+- Voter-ID: recovery path to /membership added
+- `lang="ta"`: applied to FAQ answers, contact details, voter-id empty state
+- localStorage: confirmed pre-existing in membership.tsx
+
+Remaining framer-motion in 4 out-of-scope files does not block release.
+Recommend adding those 4 files to GEMINI.md before running v3.

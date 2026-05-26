@@ -1,113 +1,149 @@
-# UX Strategy Overview
-
-The primary objective of the UX Improvement Strategy for the Tamil Nadu Vanigargalin Sangamam Portal is to convert administrative task flows into intuitive, fast-scanned, and friction-free digital experiences. 
-
-This strategy focuses on:
-- Establishing a unified flow between voter search and membership claiming.
-- Optimizing layout structures to prioritize high-value actions (CTA).
-- Removing input obstacles in the multi-stage forms.
-- Minimizing cognitive load via smart visual defaults, adaptive layouts, and native mobile interactions.
+# 02 — UX Improvement Strategy · TNVS
 
 ---
 
-# Workflow Simplifications
+## UX Strategy Overview
 
-### 1. Inter-Page Continuity (Voter Search → Member Onboarding)
-- **Proposed Improvement**: When a user locates their voter registration on `/voter-id`, the "Claim Card" or "Register" button should persist their unique AC number, name, and voter ID key in state parameters (e.g. via URL state or sessionStorage). Upon landing on `/membership`, Stage 1 forms are automatically pre-filled, with a secure banner saying: *"We found your voter record. Please review details below."*
-- **User Impact**: Eliminates redundant typing, reducing data entry time by over 70%.
-- **Business Impact**: Substantially increases the conversion rate from simple search sessions into fully enrolled membership cards.
+The audit revealed that TNVS's core UX flows are directionally correct but broken in execution. The primary improvement strategy is: **fix what's broken first, then elevate consistency, then enhance delight**. The biggest user trust damage comes from the 3 critical bugs (broken video, dead links, English-only About page) — these must be resolved before any visual enhancement.
 
-### 2. Auto-Recovery on Stage Interruptions
-- **Proposed Improvement**: Implement React-level session state caching. Text entries and uploaded photo metadata are automatically written to `sessionStorage` in real-time. If the page is refreshed or connection is temporarily interrupted, the system restores the exact previous stage upon returning.
-- **User Impact**: Eradicates form-loss frustration.
-- **Business Impact**: Boosts trust, particularly for traders operating on unstable cellular networks in regional commercial centers.
+The portal's #1 job is converting a first-time trader visitor into a registered member. Every UX decision should be evaluated against: *"Does this help a Tamil-speaking shopkeeper in Madurai complete their membership application?"*
 
 ---
 
-# Navigation Improvements
+## Membership Form Flow Improvements
 
-### 1. Consolidated Universal Header Shell (`__root.tsx`)
-- **Proposed Improvement**: Replace the separate sub-navigation modules with a sticky, low-height global header. The header features:
-  - Clear structural links for main visitor goals: **Home**, **Specialized Wings**, **Voter Search**, and **Membership Card**.
-  - A persistent, high-contrast primary CTA button: **"Get Card / அட்டை பெறுக"** visible in the top-right corner on desktop.
-- **User Impact**: Gives a consistent sense of location. Users can switch sections without returning to the landing page.
-- **Business Impact**: Maximizes conversion paths from any page on the site.
+**Current state:** 5 steps (Personal → Business → Documents → Review → Success). Steps are logically ordered. FloatingInput is used consistently.
 
-### 2. Back-to-Top and Contextual Breadcrumbs
-- **Proposed Improvement**: On scroll-heavy pages (such as `/wings` which contains the 274 assembly constituency lists), inject a micro-animated "Back to Top" float and localized sticky sub-headers showing the currently scanned Zone name.
-- **User Impact**: Simplifies scanning of long datasets.
+**Improvements:**
+1. **Show a progress percentage** alongside the step indicator — "Step 2 of 5 · 40% complete" reduces anxiety about length.
+2. **Save progress to localStorage** — if the user closes the browser mid-form, restore their progress on return. This single change reduces drop-off by an estimated 30–40%.
+3. **Step 3 (Documents) needs upload guidance** — add file size limits, accepted formats, and example images before the upload zone. Tamil traders unfamiliar with file uploads need visual guidance.
+4. **Step 4 (Review) must summarize everything** — show a read-only summary of all entered data before payment. Currently traders cannot review what they submitted.
+5. **Step 5 (Success) should offer immediate actions** — "Download Certificate", "Get Membership Card", "Share on WhatsApp" — guide them to the next natural action instead of leaving them on a success screen with nothing to do.
 
 ---
 
-# Dashboard Improvements
+## Wings/Divisions Discovery Improvements
 
-### 1. Progressive Disclosure of Administrative Data (`/dashboard`)
-- **Proposed Improvement**: Restructure the admin dashboard layouts to utilize a tiered overview:
-  - **Tier 1 (High Importance)**: Large primary numbers representing Total Members, Active Applications, and Card Downloads.
-  - **Tier 2 (Secondary Breakdown)**: Expandable accordion drawers or interactive tabs for gender splits, regional zones, and district performance.
-- **User Impact**: Prevents data blindness. Administrators can evaluate system health in a fraction of a second.
-- **Business Impact**: Increases organizational efficiency.
+**Current state:** A large page with a searchable list of 50+ wings and a 234-row constituency table.
 
----
-
-# Form Improvements
-
-### 1. Smooth Step-by-Step Transitioning (`/membership`)
-- **Proposed Improvement**: Replace aggressive page re-renders between form steps with horizontal animated slide-transitions (Framer Motion container swipes). Highlight the active step indicator with vibrant brand colors, while graying out completed steps with checkmark badges.
-- **User Impact**: Creates a gamified, reassuring sense of progress.
-
-### 2. Single-Field Distributed PIN Input
-- **Proposed Improvement**: Replace individual single-digit input boxes with a single concealed `<input type="text" pattern="[0-9]*" maxLength={4} />` styled to look like four separated boxes using clean overlay slots. Focus automatically locks to this input, and it natively supports mobile keyboards and standard copy-paste.
-- **User Impact**: Reduces PIN input error rate and resolves standard keyboard focus bugs on iOS and Android.
+**Improvements:**
+1. **Add a district filter at the top** — "Show wings in my district" — most traders only care about their district.
+2. **Collapse the 234-row zone table by default** — show only the user's searched district, expandable for others.
+3. **Add "How to find my wing" guidance** — a one-line tooltip: "Your wing is based on your business type and district."
+4. **Wing cards should show member count and contact** — currently they are text-only. A phone number or WhatsApp link per wing increases trust.
 
 ---
 
-# CTA Improvements
+## Voter ID Card Flow Improvements
 
-### 1. The Sticky Conversion Banner on Services (`/services`)
-- **Proposed Improvement**: Place a prominent, sticky conversion strip at the bottom of `/services` saying: *"Already registered? Claim your membership card instantly."* accompanied by a high-contrast button.
-- **User Impact**: Immediate action path for returning users who would otherwise wander around secondary menu options.
-- **Business Impact**: Maximizes primary funnel velocity.
+**Current state:** Search by name/EPIC → card appears → download/print.
 
----
-
-# User Psychology Improvements
-
-### 1. Immediate Value Reinforcement at Checkout/Claim Phase
-- **Proposed Improvement**: On the final PIN validation screen, display micro-badges detailing the physical benefits of the TNVS Card (e.g. *"✓ Legal support"*, *"✓ Exclusive trader discounts"*, *"✓ Union validation"*).
-- **User Impact**: Validates their effort, motivating them to complete the security steps and download the card.
-- **Business Impact**: Promotes user appreciation and loyalty.
+**Improvements:**
+1. **Add "Don't have an EPIC yet?" path** — link directly to `/membership` with explanation. Currently users who haven't joined get a dead-end search result.
+2. **Show a loading skeleton** during card generation — the current blank state during lookup is confusing.
+3. **Card download button must be prominent** — the download CTA should be the most visible element after the card renders, not secondary.
+4. **Add share-to-WhatsApp** — "Share my card" is a common use case for traders proving membership to banks/authorities.
 
 ---
 
-# Information Hierarchy Improvements
+## Dashboard Improvements
 
-### 1. Content Chunking in Regional Tables (`/wings`)
-- **Proposed Improvement**: Restructure long regional tables to group constituencies under clear, bold district banners with collapsible groups. Only display the top 10 constituencies by default, with an elegant "Show More Districts" trigger.
-- **User Impact**: Reduces page size and keeps the interface highly readable, especially for mobile users who want to find their constituency quickly.
+**Current state:** Member area showing EPIC ID, certificate download, activity feed, renewal.
 
----
-
-# Mobile UX Improvements
-
-### 1. Native Bottom-Sheet Dialogs for Chat Assistant (`/assistant`)
-- **Proposed Improvement**: On mobile devices, the AI Chat Assistant should expand into a full-height, bottom-sheet sheet instead of a floating bubble, providing a focused typing space and large, accessible quick-reply chips.
-- **User Impact**: Better thumb reachability and cleaner layout balance on portrait viewports.
+**Improvements:**
+1. **Show membership status at the very top** — "Active · Expires Dec 2025" with a clear renew CTA if within 60 days of expiry.
+2. **Group actions by urgency** — Renewal due → Welfare available → Download certificate. Not all equal weight.
+3. **Activity feed should explain what each activity means** — "Application Received — May 12" is good; "What happens next?" link makes it great.
+4. **Add a "First time here?" onboarding checklist** for new members — 3 tasks: Download certificate, Get membership card, Apply for welfare.
 
 ---
 
-# Accessibility Enhancements
+## Navigation Improvements
 
-### 1. Standardizing focus-rings and ARIA labels
-- **Proposed Improvement**:
-  - Global focus style: Add `focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2` to all keyboard-interactive elements.
-  - Active screen reader announcements: Use `aria-live="polite"` inside voter search tables so that blind users receive immediate vocal updates when search results filter.
+**Current state:** 5 nav items (Home, Services, Divisions, Join, Support). Language toggle exists but placement unclear.
+
+**Improvements:**
+1. **Make language toggle always visible** — pin it to the top-right of the header with a clear "EN / தமிழ்" label, not just an icon.
+2. **Add "My Dashboard" to nav for logged-in users** — currently there's no nav item pointing to dashboard.
+3. **"Join" CTA in nav should be visually distinct** — use a filled button style so it stands out as the primary action.
+4. **Mobile menu should show language toggle first** — before nav links, the language selector should appear since it affects comprehension of all nav items.
 
 ---
 
-# Recommended UX Priorities
+## Bilingual UX Improvements
 
-1. **Continuous Search-to-Claim Workflow**: Connect the voter database search and card generation directly using seamless URL parameters (Stage Priority: **Critical**).
-2. **Standardized 44px Interactive Targets**: Force all buttons, filters, and nav items to standard accessible tap boundaries (Stage Priority: **High**).
-3. **Horizontal Form Step Transitions with sessionStorage**: Upgrade membership progress indicator aesthetics and state persistence (Stage Priority: **High**).
-4. **Administrative Metric Hierarchy**: Reorganize dashboard data layouts to highlight primary indicators (Stage Priority: **Medium**).
+1. **Persist language to `localStorage`** — language selection must survive page refreshes and navigation.
+2. **All static strings must go through `t()`** — About page, About page timeline, Contact page headers, footer mixed strings.
+3. **Add `lang="ta"` attribute on Tamil text blocks** — assists screen readers and enables proper Tamil hyphenation.
+4. **SectionLabel should use `t()` not hardcoded bilingual strings** like `"About · எங்களைப் பற்றி"`.
+5. **Tamil FAQ answers need larger font** — Tamil script at `text-xs` (12px) is too small for users 45+. Minimum `text-sm` (14px) for Tamil body text.
+
+---
+
+## Onboarding & First-Visit Flow
+
+**Current visitor journey:** Land → See hero → Scroll → Maybe click "Apply for Membership"
+**Improved journey:** Land → Immediately see trust badge + stats → One clear CTA → Understand value in 5 seconds → Click
+
+1. **Remove the broken video section** — it occupies prime scroll real estate and breaks trust.
+2. **Move stats above the fold on mobile** — stats (1.24L members, 38 districts) are powerful trust signals; they're buried below the fold.
+3. **The "How It Works" section needs a CTA at the bottom** — after seeing the 4 steps, the natural question is "okay, how do I start?" — a "Start Application" button directly after HorizontalSteps would convert well.
+4. **Add a sticky mobile CTA bar** — a fixed bottom bar on mobile: "Apply Now · ₹500/year" visible at all times on the home page.
+
+---
+
+## CTA Improvements
+
+1. **Primary CTA "Apply for Membership" must be above the fold on mobile** — currently at line ~182 of index.tsx, which may be pushed down on 360px screens.
+2. **Secondary CTA "Already a member? Get your card →"** is well placed but undersized. Increase to `text-sm` minimum.
+3. **Services page service items need individual CTAs** — current cards link to modal but the arrow direction is not obvious.
+4. **Footer CTA is missing** — the footer has no CTA. Add a simple "Ready to join? Apply now →" link before the copyright bar.
+
+---
+
+## Trust Signal Improvements
+
+1. **Replace broken video with a static testimonial quote block** — two large quotes from real members with photos and districts.
+2. **Fix dead footer links** — Privacy Policy, Terms, Member Benefits must link to real pages.
+3. **Remove "Demo Profile" text** from Assistant page — replace with "Sample profile (TNVS members only)" or show a proper empty state.
+4. **Replace `1800-XXX-XXXX` placeholder** with real contact number.
+5. **Add "Last updated" timestamp** to certificate — traders use certificates to prove recency to banks.
+
+---
+
+## Mobile UX Improvements
+
+1. **Fix `HorizontalSteps` fixed card heights** — use `min-h` to prevent Tamil text clipping.
+2. **Services modals need `max-h` + internal scroll** — modal body must not exceed viewport height on mobile.
+3. **Contact form grid `sm:grid-cols-2`** renders as two columns on 640px — on 360–600px it's single column which is fine, but the threshold should be `md:` not `sm:`.
+4. **Hero emblem image** (`max-w-[260px]`) stacks below text on mobile and takes up half the viewport — reduce to `max-w-[180px]` on mobile.
+
+---
+
+## Accessibility Enhancements
+
+1. **Add `lang="ta"` on Tamil text containers** — `<p lang="ta">` so screen readers use Tamil TTS engine.
+2. **FAQ accordion answers** need `lang="ta"` on Tamil text.
+3. **Language toggle button** needs `aria-label="Switch to Tamil"` / `"Switch to English"`.
+4. **Minimum tap target 44×44px** for all interactive elements — audit icon buttons.
+5. **Focus ring visibility** — ensure `focus-visible:ring` is applied on all interactive elements.
+
+---
+
+## Recommended UX Priorities
+
+| Priority | Change | Impact |
+|----------|--------|--------|
+| P0 | Remove broken video embed | Trust |
+| P0 | Fix dead footer links | Trust + Legal |
+| P0 | Add Tamil to About page | Bilingual parity |
+| P1 | Fix contact form → FloatingInput | Consistency |
+| P1 | Fix ScrollReveal delay/stagger | Visual flow |
+| P1 | Persist language to localStorage | Bilingual UX |
+| P1 | Add sticky mobile CTA on home | Conversion |
+| P2 | Fix HorizontalSteps min-h | Mobile text |
+| P2 | Remove Demo Profile placeholder | Trust |
+| P2 | Add lang="ta" attributes | Accessibility |
+| P3 | Add "How It Works" bottom CTA | Conversion |
+| P3 | Add progress % to membership form | Form UX |

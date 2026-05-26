@@ -186,8 +186,9 @@ export function StackedServices({ services }: StackedServicesProps) {
                 <img
                   src={getCardImage(idx, s.to) as string}
                   alt={s.e}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
                   loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
                 />
               )}
             </div>

@@ -1,144 +1,326 @@
-# Header Changes
-
-- **Current Issue**: The page header contains nested navigations that look cluttered on desktop and are poorly integrated into the overall page wrapper.
-- **Redesign Goal**: Create a single, responsive, glassmorphic header pinned to the top of the viewport.
-- **UI Changes**:
-  - Apply `sticky top-0 z-50 backdrop-blur-md bg-white/75 border-b border-slate-200/60` to the header element in `__root.tsx`.
-  - Place a premium vector SVG logo of the association on the left.
-- **Interaction Improvements**: Link elements transition color on hover (`hover:text-primary transition-all duration-300`). Active links display a smooth bottom sliding bar.
-- **Responsive Behavior**: Collapses into a clean drawer triggered by a standard humburger menu on screen widths below `md` (768px).
+# 04 — Component Execution Plan · TNVS
 
 ---
 
-# Sidebar Changes
+## Priority Order
 
-- **Current Issue**: The administrative dashboard features a heavy, dark-colored navigation sidebar that creates high visual contrast against the main content, making it look outdated.
-- **Redesign Goal**: Implement a sleek, low-impact light sidebar that aligns with standard modern dashboards (e.g. Linear/Notion).
-- **UI Changes**:
-  - Set background to `bg-slate-50`, with a right border: `border-r border-slate-200/60`.
-  - Navigation links utilize a clean icon-and-label layout, with the active route highlighted by a soft primary navy background pill (`bg-primary/5 text-primary`).
-- **Responsive Behavior**: Completely slides out of view on mobile viewports, accessible via a top navigation menu drawer.
+**P0 — Critical bugs (implement first):**
+1. Remove broken video from `index.tsx`
+2. Fix dead footer links in `SiteFooter.tsx`
+3. Add `useLanguage()` + Tamil translations to `about.tsx`
 
----
+**P1 — High impact consistency:**
+4. Replace contact form inputs with `FloatingInput` in `contact.tsx`
+5. Fix `ScrollReveal.tsx` to apply `delay` prop
+6. Fix `HorizontalSteps.tsx` fixed card height → `min-h`
+7. Fix mixed-language SectionLabel strings
 
-# Navigation Improvements
+**P2 — Bilingual + trust:**
+8. Add `lang="ta"` attributes on Tamil text blocks
+9. Persist language to `localStorage` in `useLanguage.tsx`
+10. Remove "Demo Profile" placeholder from `assistant.tsx`
+11. Add sticky mobile CTA to `index.tsx`
 
-- **Redesign Goal**: Streamline navigation steps between different user modes (public voter, applicant, administrator).
-- **UI Changes**:
-  - Add active focus styles: `focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2`.
-  - Ensure all navigation links utilize distinct `id` attributes to simplify testing workflows.
-
----
-
-# Dashboard Card Changes
-
-- **Current Issue**: Metric cards on `/dashboard` are identical in style and shape, making it difficult to distinguish between core statistics and secondary counts.
-- **Redesign Goal**: Implement a responsive card grid with clear size classifications.
-- **UI Changes**:
-  - Primary Metric Card: Height set to `min-h-[160px]`, spans 2 grid slots on large viewports, utilizes a deep blue background with gold accents.
-  - Secondary Card: Styled in light gray, clean layout displaying count metrics alongside simple up/down indicators.
-- **Interaction Improvements**: Subtle hover scaling: `hover:-translate-y-1 hover:shadow-sm transition-transform ease-out duration-300`.
+**P3 — Enhancement:**
+12. Add "Start Application" CTA after HorizontalSteps
+13. Add footer CTA line before copyright
+14. Improve About page timeline with subtle animation
 
 ---
 
-# Table Improvements
+## 1. `src/routes/index.tsx` — Home Page
 
-- **Current Issue**: The constituency breakdown table on `/wings` lacks responsive row hovers and visual sorting highlights.
-- **Redesign Goal**: Implement a high-readability interactive data table.
-- **UI Changes**:
-  - Add sorting icon indicators beside interactive column headers.
-  - Voter count numerical columns utilize `font-mono tabular-nums text-right` to ensure decimal columns align perfectly.
-  - Inject interactive stacked gender ratio bars (navy for male, rose for female) directly into each constituency row.
-- **Responsive Behavior**: On mobile layouts, hide the wide table columns and render simplified, highly legible information cards displaying constituency names and total counts.
+### Remove Broken Video Section
+**Current issue:** Lines 252–278 render a `<video src="/welcome_video.mp4">` for a deleted file.
+**Change:** Delete the entire `{/* WELCOME VIDEO SECTION */}` block (lines 252–278).
+**Replace with:** A two-column testimonial quote block — two large pull-quotes with member photo, name, district.
 
----
+### Add CTA After HorizontalSteps
+**Current issue:** After the 4 steps, users have no prompt to act.
+**Change:** After `<HorizontalSteps />` (line 281), add:
+```tsx
+<div className="flex justify-center py-8 border-b border-border">
+  <Link to="/membership" className="btn-primary text-base px-8">
+    {t("இப்போதே விண்ணப்பிக்கவும்", "Start My Application")}
+    <ArrowRight className="w-4 h-4" />
+  </Link>
+</div>
+```
 
-# Form Improvements
+### Add Sticky Mobile CTA
+**Change:** Add a fixed bottom bar visible only on mobile (`sm:hidden`) at the bottom of the `Home` component return:
+```tsx
+<div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-primary/95 backdrop-blur border-t border-primary/20 px-4 py-3 flex items-center gap-3">
+  <Link to="/membership" className="flex-1 btn-primary text-sm py-2.5 justify-center">
+    {t("இணைவு — ₹500/ஆண்டு", "Join — ₹500/year")}
+  </Link>
+</div>
+```
+Also add `pb-20 sm:pb-0` to the `<div>` wrapping the page to prevent content hiding behind the sticky bar.
 
-- **Current Issue**: The 4-digit security PIN validation on `/membership` uses separate single-digit input boxes that do not support standard auto-focus or keyboard copy-paste.
-- **Redesign Goal**: Create a friction-free PIN input experience.
-- **UI Changes**:
-  - Render a single `<input type="text" pattern="[0-9]*" maxLength={4} />` with zero opacity positioned directly over four beautiful, styled placeholder slot boxes.
-- **Interaction Improvements**:
-  - When the user types, the placeholder boxes display the entered numbers sequentially, with the active digit showing a pulsing blue border.
-  - Native mobile keyboards open automatically, and standard clipboard paste events are supported out of the box.
-
----
-
-# Button System Improvements
-
-- **Redesign Goal**: Establish a consistent hierarchy for buttons across all pages.
-- **UI Changes**:
-  - Primary Button: `bg-primary hover:bg-primary/95 text-white px-5 py-2.5 rounded-lg text-xs md:text-sm font-semibold transition-all duration-300 min-h-[44px]`.
-  - Secondary Button: `bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-5 py-2.5 rounded-lg text-xs md:text-sm font-semibold transition-all duration-300 min-h-[44px]`.
-
----
-
-# Modal Improvements
-
-- **Current Issue**: Floating modals (such as voter detail profiles or chat expansion boxes) pop up aggressively without animation, blocking parent page scrolling.
-- **Redesign Goal**: Implement smooth, non-intrusive dialog overlays.
-- **UI Changes**:
-  - Backdrop: `fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50`.
-  - Modal Box: Center-aligned, utilizing a smooth scale-up entry animation (Framer Motion: `initial={{ scale: 0.95, opacity: 0 }}`).
-- **Interaction Improvements**: Clicking the overlay backdrop or pressing the `Escape` key automatically closes the active modal dialog.
+### Fix Mixed SectionLabel
+**Change:** Replace all hardcoded bilingual SectionLabel strings with `t()` calls:
+```tsx
+// Before:
+<SectionLabel>About · எங்களைப் பற்றி</SectionLabel>
+// After:
+<SectionLabel>{t("எங்களைப் பற்றி", "About")}</SectionLabel>
+```
 
 ---
 
-# Empty State Improvements
+## 2. `src/components/SiteFooter.tsx` — Footer
 
-- **Current Issue**: When voter lookups or division filters return empty lists, the interface simply displays blank white screens with basic system text.
-- **Redesign Goal**: Provide helpful, localized empty-state cards.
-- **UI Changes**:
-  - Render a clean slate card featuring a muted icon, a supportive message in both Tamil and English, and a clear button to clear active filters.
+### Fix Dead Hash Links
+**Current issue:** `href="#about"`, `href="#terms"`, `href="#privacy"` go nowhere.
+**Change:**
+```tsx
+// Before:
+<a href="#about">Member Benefits</a>
+<a href="#terms">Rules & Guidelines</a>
+<a href="#privacy">Privacy Policy</a>
+// After:
+<Link to="/about">{t("சங்கத்தின் பற்றி", "About Us")}</Link>
+<Link to="/contact">{t("விதிமுறைகள்", "Rules & Guidelines")}</Link>
+<Link to="/contact">{t("தனியுரிமைக் கொள்கை", "Privacy Policy")}</Link>
+```
 
----
-
-# Error State Improvements
-
-- **Redesign Goal**: Display clear, localized, and actionable validation notifications.
-- **UI Changes**:
-  - Input boxes containing invalid data display a soft red border and trigger a subtle shake animation. Helpful error messages are rendered below in red, detailing the exact formatting requirements.
-
----
-
-# Responsive Design Tasks
-
-1. **Category Pill Wrapping**: Category filters on mobile layouts should wrap naturally or operate as a side-scrolling container with fade indicators, preventing page width overflow.
-2. **Form Layout Adjustments**: Convert multi-column forms into structured single-column lists on mobile viewports.
-
----
-
-# Mobile Interaction Improvements
-
-- Ensure all buttons, links, and filtering pills adhere to a minimum tap height of **44px** to improve mobile usability.
-- Avoid relying on desktop hover triggers for showing tooltips; implement clean, tap-to-reveal states instead.
+### Add Footer CTA Line
+**Change:** Above the copyright bar, add:
+```tsx
+<div className="border-t border-slate-800/60 py-4 px-4 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+  <span className="text-xs text-slate-400">{t("இன்றே இணையுங்கள்", "Ready to join?")}</span>
+  <Link to="/membership" className="text-xs text-gold font-semibold hover:underline flex items-center gap-1">
+    {t("உறுப்பினர் சேர்க்கை →", "Apply for Membership →")}
+  </Link>
+</div>
+```
 
 ---
 
-# Frontend Handoff Notes
+## 3. `src/routes/about.tsx` — About Page
 
-- **Tailwind Config Extensions**:
-  - Configure modern HSL color tokens directly in `tailwind.config.js`:
-    ```javascript
-    colors: {
-      primary: 'hsl(215, 85%, 25%)',
-      gold: 'hsl(38, 92%, 50%)',
-    }
-    ```
-- **Framer Motion Presets**: All transitions utilize a standard spring curve:
-  ```javascript
-  transition: { type: "spring", stiffness: 300, damping: 30 }
-  ```
+### Add Full Bilingual Support
+**Current issue:** No `useLanguage()`, all content English-only.
+**Change:** Add `import { useLanguage } from "@/hooks/useLanguage"` and wrap every string.
+
+**Vision/Mission/Values cards:**
+```tsx
+{ i: Eye,    t: "Our Vision",  ta: "எங்கள் கனவு",     d: "...",    td: "..." },
+{ i: Target, t: "Our Mission", ta: "எங்கள் நோக்கம்",  d: "...",    td: "..." },
+{ i: Heart,  t: "Our Values",  ta: "எங்கள் கொள்கைகள்", d: "...",   td: "..." },
+```
+Render as `t(b.td, b.d)` for description, `t(b.ta, b.t)` for heading.
+
+**Timeline milestones:**
+```tsx
+{ y: "2012", t: "Foundation",        ta: "நிறுவப்பட்டது",         d: "...", td: "..." },
+```
+Render year labels and milestone titles through `t()`.
+
+**Page hero header:**
+```tsx
+<SectionLabel>{t("எங்களைப் பற்றி", "About")}</SectionLabel>
+<h1>{t("நூறு ஆண்டு இயக்கம், நவீன போர்ட்டல்.", "A century-old movement, a modern portal.")}</h1>
+<p className="font-tamil">{t("தமிழ்நாடு வணிகர்களின் ஒற்றுமை...", "Tamil Nadu traders' unity...")}</p>
+```
+
+### Add Timeline Animation
+**Change:** Wrap each timeline item in `ScrollReveal`:
+```tsx
+{milestones.map((m, i) => (
+  <ScrollReveal key={m.y} delay={i * 0.1} direction="up">
+    <div className="flex gap-4 sm:gap-6 items-start">...</div>
+  </ScrollReveal>
+))}
+```
 
 ---
 
-# Component Priority Order
+## 4. `src/routes/contact.tsx` — Contact Page
 
-| Priority | Component | Page | Impact |
-|---|---|---|---|
-| **1** | Single PIN Input Box | `/membership` | Resolves critical input friction on the card validation step. |
-| **2** | Translucent Header App Bar | `__root.tsx` | Implements a consistent navigation shell across the entire portal. |
-| **3** | Constituency Data Table | `/wings` | Enhances readability of dense voter data lists. |
-| **4** | Dynamic Stat Card Grid | `/dashboard` | Organizes administrative metrics clearly. |
-| **5** | Mobile Bottom Dialog Sheets | `/assistant` | Optimizes mobile chat assistant layout. |
+### Replace Raw Inputs with FloatingInput
+**Current issue:** Raw `<input>`, `<textarea>`, `<select>` with inline CSS string.
+**Add import:**
+```tsx
+import { FloatingInput, FloatingTextarea, FloatingSelect } from "@/components/FloatingInput";
+```
+**Replace form fields:**
+```tsx
+// Before:
+<label className="flex flex-col gap-1.5">
+  <span className="text-xs font-medium">Your Name</span>
+  <input className={inp} required />
+</label>
+
+// After:
+<FloatingInput label={t("உங்கள் பெயர்", "Your Name")} required />
+```
+Apply to all 5 fields: Name, Mobile, Email, Subject (FloatingSelect), Message (FloatingTextarea).
+
+**Remove:** `const inp = "..."` at the bottom of the file.
+
+### Add Tamil Page Header
+**Add** `useLanguage()` import and wrap header text:
+```tsx
+<SectionLabel>{t("தொடர்பு", "Contact")}</SectionLabel>
+<h1>{t("நாங்கள் உதவ தயாராக இருக்கிறோம்.", "We're here to help.")}</h1>
+```
+
+---
+
+## 5. `src/components/ScrollReveal.tsx` — Fix Delay/Stagger Props
+
+**Current issue:** `delay`, `duration`, `blur` props are accepted but never applied.
+**Change:** Apply `animationDelay` and `animationDuration` via inline style:
+```tsx
+export function ScrollReveal({
+  children,
+  direction = "up",
+  duration = 0.3,
+  delay = 0,
+  className = "",
+  stagger = false,
+}: ScrollRevealProps) {
+  const animClass = direction === "scale" || direction === "fade" ? "animate-fade-in" : "animate-slide-up";
+  const style = {
+    animationDelay: delay ? `${delay}s` : undefined,
+    animationDuration: duration ? `${duration}s` : undefined,
+  };
+
+  if (stagger && React.Children.count(children) > 1) {
+    return (
+      <div className={className}>
+        {React.Children.map(children, (child, i) => (
+          <div key={i} className={animClass} style={{ animationDelay: `${(delay || 0) + i * (staggerDelay || 0.05)}s` }}>
+            {child}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${animClass} ${className}`} style={style}>
+      {children}
+    </div>
+  );
+}
+```
+
+---
+
+## 6. `src/components/HorizontalSteps.tsx` — Fix Fixed Heights
+
+**Current issue:** `h-[230px] sm:h-[260px]` clips Tamil text.
+**Change:** Replace fixed height with `min-h`:
+```tsx
+// Before:
+className="... h-[230px] sm:h-[260px] ..."
+// After:
+className="... min-h-[200px] sm:min-h-[220px] ..."
+```
+Also ensure `flex flex-col justify-between` is present so content distributes properly regardless of height.
+
+---
+
+## 7. `src/hooks/useLanguage.tsx` — Persist to localStorage
+
+**Current issue:** Language state may not persist across navigation (depends on implementation).
+**Change:** Add localStorage read on init and write on change:
+```tsx
+const [language, setLanguageState] = useState<Language>(() => {
+  if (typeof window !== "undefined") {
+    return (localStorage.getItem("tnvs-lang") as Language) || "en";
+  }
+  return "en";
+});
+
+const setLanguage = (lang: Language) => {
+  setLanguageState(lang);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("tnvs-lang", lang);
+  }
+};
+```
+
+---
+
+## 8. `src/routes/assistant.tsx` — Remove Demo Placeholder
+
+**Current issue:** Status check result shows `name: "Senthil Kumar N (Demo Profile)"`.
+**Change:** Replace with:
+```tsx
+name: t("மாதிரி சுயவிவரம் (Demo)", "Sample Profile (Demo Mode)"),
+```
+And add a `DemoModeBanner` above the result to clarify it's a demo.
+
+---
+
+## SiteHeader Changes
+
+**Ensure language toggle is always visible:**
+Read `SiteHeader.tsx` to confirm the EN/Tamil toggle position.
+- If hidden on mobile: add `flex` to the toggle's container and ensure it's in the main nav bar, not only in the mobile menu.
+- Minimum toggle tap target: `min-w-[44px] min-h-[44px]`.
+
+---
+
+## Animation Improvements (Framer Motion)
+
+**`WordSwapper.tsx`** uses full `framer-motion`. To reduce bundle impact:
+```tsx
+// Replace full import:
+import { motion, AnimatePresence } from "framer-motion";
+// With LazyMotion (loads features async):
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
+// Wrap in <LazyMotion features={domAnimation}> and use <m.span> instead of <motion.span>
+```
+
+---
+
+## Bilingual Typography Improvements
+
+Add to `styles.css`:
+```css
+.font-tamil {
+  font-family: 'Noto Sans Tamil', 'Latha', sans-serif;
+  line-height: 1.8;
+  font-size: max(14px, 1em); /* enforce minimum 14px */
+}
+
+[lang="ta"] {
+  font-family: 'Noto Sans Tamil', 'Latha', sans-serif;
+  line-height: 1.8;
+}
+```
+
+Add Google Fonts link to `__root.tsx` head:
+```tsx
+{ rel: "preconnect", href: "https://fonts.googleapis.com" },
+{ rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700&display=swap" },
+```
+
+---
+
+## Responsive Design Tasks (360px → 1280px)
+
+| Component | Issue | Fix |
+|-----------|-------|-----|
+| Hero emblem | Too large on mobile (260px) | `max-w-[180px] sm:max-w-[280px] md:max-w-[360px]` |
+| Stats grid | `text-[10px]` labels illegible | `text-xs` minimum |
+| HorizontalSteps | Fixed height clips Tamil | `min-h-[200px]` |
+| Contact form | `sm:grid-cols-2` too early | `md:grid-cols-2` |
+| Services modal | No max-height | `max-h-[85vh] overflow-y-auto` |
+| Footer columns | Wraps oddly on 480–640px | Add `xs:grid-cols-2` |
+
+---
+
+## Frontend Handoff Notes
+
+1. All changes are additive — no route file restructuring needed
+2. `FloatingInput` already supports `label`, `required`, `type` props — use as-is
+3. `useLanguage()` hook: confirm `localStorage` write is in the setter, not a `useEffect`
+4. `ScrollReveal` accepts `once` prop — ensure `true` by default (only animate once on scroll in)
+5. The `btn-primary` class is defined in `styles.css` — use it for all submit buttons instead of inline Tailwind chains
+6. `DemoModeBanner` component exists and works — use it in assistant.tsx result state

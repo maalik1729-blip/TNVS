@@ -65,19 +65,19 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <a href="#about" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/about" className="hover:underline hover:text-white transition duration-200">
                 {t("சங்கத்தின் நன்மைகள்", "Member Benefits")}
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#terms" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/about" className="hover:underline hover:text-white transition duration-200">
                 {t("விதிமுறைகள் மற்றும் நிபந்தனைகள்", "Rules & Guidelines")}
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#privacy" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/contact" className="hover:underline hover:text-white transition duration-200">
                 {t("தனியுரிமைக் கொள்கை", "Privacy Policy")}
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -99,6 +99,16 @@ export function SiteFooter() {
           </ul>
         </div>
 
+      </div>
+
+      {/* Footer CTA */}
+      <div className="border-t border-slate-800/60">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span className="text-xs text-slate-400">{t("இன்றே உருப்பினராகுங்கள்", "Ready to join us?")}</span>
+          <Link to="/membership" className="text-xs text-gold font-semibold hover:underline flex items-center gap-1">
+            {t("உறுப்பினர் சேர்க்கைக்கு விண்ணப்பிக்கவும் →", "Apply for Membership →")}
+          </Link>
+        </div>
       </div>
 
       {/* Footer Bottom copyright section */}

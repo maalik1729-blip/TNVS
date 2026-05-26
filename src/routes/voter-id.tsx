@@ -29,12 +29,13 @@ export const Route = createFileRoute("/voter-id")({
 });
 
 function VoterIdPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { q } = Route.useSearch();
   
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Voter[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showForm, setShowForm] = useState(true);
   const [formStep, setFormStep] = useState<1 | 2>(1);
@@ -185,6 +186,7 @@ function VoterIdPage() {
       }
     } finally {
       setIsSearching(false);
+      setHasSearched(true);
     }
   };
 
@@ -464,6 +466,20 @@ function VoterIdPage() {
               </p>
 
               {/* Search Results Dropdown */}
+              {hasSearched && !isSearching && searchResults.length === 0 && (
+                <div className="mt-4 p-4 rounded-xl bg-secondary/60 border border-border text-center animate-fade-in">
+                  <p className="text-sm text-muted-foreground font-tamil" lang={language === "ta" ? "ta" : "en"}>
+                    {t("பதிவு எண் கண்டுபிடிக்கவில்லை.", "No membership record found.")}
+                  </p>
+                  <p className="mt-2 text-sm font-tamil" lang={language === "ta" ? "ta" : "en"}>
+                    {t("இன்னும் உறுப்பினர் இல்லையா?", "Not a member yet?")}{" "}
+                    <Link to="/membership" className="text-primary font-semibold hover:underline">
+                      {t("இப்போதே இணையுங்கள் →", "Join now →")}
+                    </Link>
+                  </p>
+                </div>
+              )}
+
               {searchResults.length > 0 && (
                 <div className="mt-3 border border-border bg-card rounded-md divide-y divide-border overflow-hidden max-h-48 overflow-y-auto">
                   {searchResults.map((v) => (

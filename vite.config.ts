@@ -47,5 +47,32 @@ export default defineConfig(({ command }) => {
         },
       },
     },
+    build: {
+      cssCodeSplit: true,
+      chunkSizeWarningLimit: 500,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("framer-motion")) return "framer-motion";
+            if (id.includes("lucide-react")) return "lucide";
+            if (id.includes("@tanstack/react-router") || id.includes("@tanstack/react-query") || id.includes("@tanstack/query-core")) return "tanstack";
+            if (id.includes("@radix-ui")) return "radix";
+            if (id.includes("node_modules")) return "vendor";
+          },
+        },
+      },
+    },
+    optimizeDeps: {
+      include: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "@tanstack/react-router",
+        "@tanstack/react-query",
+        "framer-motion",
+        "lucide-react",
+        "sonner",
+      ],
+    },
   };
 });

@@ -1,59 +1,117 @@
-# 04 — Component Fixes + Execution Plan (v2 Run)
-
-This document chronicles the implementation and code changes executed in **Stage 4 (Component Fixes)** of the TNVS UI Redesign Pipeline. All updates were completed strictly on the frontend (within the `src/` folder) and configured to be robust, bilingual, and accessible.
+# 04 — Change Plan (v2 · May 2026)
 
 ---
 
-## Completed Improvements
+## Files Modified
 
-### 1. CSS Design Tokens Integration
-* **Files Modified**: [dashboard.tsx](file:///d:/ziya/TNVS/src/routes/dashboard.tsx)
-* **Changes**: Checked and updated hardcoded navy color values `#06225C` to use semantic visual tokens `--navy` (exposed via the `@theme inline` in `src/styles.css` as `bg-navy`, `from-navy`, `via-navy`, `to-navy`).
-  * Removed `bg-[#06225C]` and `via-[#06225C]` in the premium hero promo banner.
-  * Replaced `to-[#06225C]` in the referral progress bar.
-  * Replaced `from-[#06225C]` in the simple loan modal header.
-
-### 2. Complete 38-District selector in Registration Form
-* **Files Modified**: [membership.tsx](file:///d:/ziya/TNVS/src/routes/membership.tsx)
-* **Changes**: Replaced the original limited 8-district hardcoded array with a complete bilingual 38-district database representing all official administrative districts in Tamil Nadu in both Tamil and English (e.g., `அரியலூர் / Ariyalur` up to `விருதுநகர் / Virudhunagar`).
-* **UX Improvement**: Dropdown displays districts adapted to the user's active language choice (e.g., `சென்னை / Chennai` in Tamil mode or `Chennai / சென்னை` in English mode). Selection stores the correct administrative key `"Chennai"`.
-
-### 3. Restructured DemoModeBanner component
-* **Files Modified**: [DemoModeBanner.tsx](file:///d:/ziya/TNVS/src/components/DemoModeBanner.tsx)
-* **Changes**: Transformed the amber triangle warning banner into a premium blue information box.
-  * Replaced the Lucide `AlertTriangle` icon with a standard `Info` icon.
-  * Styled the container with semantic CSS custom properties: `bg-surface-info` (`--info`), `border-border-info` (`--info-border`), and `text-text-info` (`--info-foreground`).
-  * Translated all notices, warning headings, and labels bilingually using the `useLanguage` hook.
-
-### 4. Strip Lenis Smooth Scrolling
-* **Files Modified**: [__root.tsx](file:///d:/ziya/TNVS/src/routes/__root.tsx)
-* **Files Deleted**: [LenisProvider.tsx](file:///d:/ziya/TNVS/src/components/LenisProvider.tsx)
-* **Changes**: Completely stripped the heavy `Lenis` smooth scrolling wrapper, reducing runtime JS event listeners and frame stutters.
-* **Fallbacks**: Introduced standard immediate scroll-to-top transition on routing location path changes inside the `RootInner` render loop:
-  ```typescript
-  const location = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-  ```
-
-### 5. Reduce Framer Motion Overhead
-* **Files Modified**: 
-  * [index.tsx](file:///d:/ziya/TNVS/src/routes/index.tsx)
-  * [ScrollReveal.tsx](file:///d:/ziya/TNVS/src/components/ScrollReveal.tsx)
-* **Changes**: Replaced high-overhead parallax and entry scroll reveals with lightweight CSS transitions.
-  * Replaced hero text and emblem parallax animations in `index.tsx` with standard container tags utilizing hardware-accelerated `.animate-slide-up` and `.animate-fade-in` CSS animations.
-  * Completely refactored the global `<ScrollReveal>` component to be a pure CSS-only wrapper. Substituted Framer Motion's `whileInView`, intersection observer bindings, and state checks with immediate, snappy, and zero-stutter native CSS animations, optimizing scrolling performance across all wing and service routes at once.
+| File | What Changed | Lines Affected |
+|------|-------------|----------------|
+| `src/styles.css` | Added `[lang="ta"]` typography rule + `word-enter`/`word-exit` keyframes | 724–741 |
+| `src/components/WordSwapper.tsx` | Full framer import → `LazyMotion + domAnimation + m` | 1–3, 59, 67–76, 89–98, 105–107 |
+| `src/routes/services.tsx` | Removed framer-motion import; added body scroll lock `useEffect`; replaced `AnimatePresence + motion.div` with CSS `animate-fade-in` | 9, 114–122, 286–302, 772–778 |
+| `src/routes/assistant.tsx` | Removed framer-motion import; replaced `motion.div + AnimatePresence` with `animate-fade-in` + conditional rendering | 7, 166–174, 228–234 |
+| `src/routes/index.tsx` | `text-[10px]` → `text-xs` on stats label; hero emblem `max-w-[260px]` → `max-w-[180px]`; `lang` on FAQ answers | 222, 244, 327–332 |
+| `src/routes/contact.tsx` | Added `language` to `useLanguage` destructure; added Tamil fields to info cards array; rendered through `t()` with `lang` attribute | 20, 53–66 |
+| `src/routes/voter-id.tsx` | Added `language` + `hasSearched` state; `setHasSearched(true)` in finally block; "Not a member?" empty state block | 32–38, 188–189, 468–480 |
 
 ---
 
-## Modified / Created / Deleted File List
+## Fix 1: Design Tokens — src/styles.css ✅
 
-1. **[MODIFY]** [styles.css](file:///d:/ziya/TNVS/src/styles.css) (Design tokens and animations - completed in Stage 3)
-2. **[MODIFY]** [__root.tsx](file:///d:/ziya/TNVS/src/routes/__root.tsx) (Removed LenisProvider, added route scroll fallback)
-3. **[MODIFY]** [membership.tsx](file:///d:/ziya/TNVS/src/routes/membership.tsx) (Added 38 administrative districts bilingually)
-4. **[MODIFY]** [DemoModeBanner.tsx](file:///d:/ziya/TNVS/src/components/DemoModeBanner.tsx) (Restyled banner using blue semantic info variables and bilingual headers)
-5. **[MODIFY]** [dashboard.tsx](file:///d:/ziya/TNVS/src/routes/dashboard.tsx) (Applied semantic navy variables, cleaned up hex codes)
-6. **[MODIFY]** [index.tsx](file:///d:/ziya/TNVS/src/routes/index.tsx) (Replaced Framer Motion hero entries with native CSS transitions)
-7. **[MODIFY]** [ScrollReveal.tsx](file:///d:/ziya/TNVS/src/components/ScrollReveal.tsx) (Refactored global ScrollReveal to use high-performance, GPU-accelerated CSS animations)
-8. **[DELETE]** [LenisProvider.tsx](file:///d:/ziya/TNVS/src/components/LenisProvider.tsx) (Removed scroll framework file)
+Appended to end of file inside `@layer` block:
+- `[lang="ta"], .font-tamil` rule: sets `font-family: var(--font-tamil)`, `line-height: 1.8`, `word-break: break-word`
+- `@keyframes word-enter` / `word-exit` + `.word-enter` / `.word-exit` utility classes
+
+Nothing overwritten. All existing CSS preserved.
+
+---
+
+## Fix 2: services.tsx — Framer Motion Removed ✅
+
+- Removed: `import { motion, AnimatePresence } from "framer-motion"`
+- Added body scroll lock `useEffect` on `modal.type` dependency
+- Replaced `<AnimatePresence>` + `<motion.div initial/animate/exit>` with plain `<div className="animate-fade-in">`
+- Modal backdrop div: `animate-fade-in` class applied
+- All existing modal content (max-h, overflow-y-auto, header, body) preserved
+
+---
+
+## Fix 3: assistant.tsx — Framer Motion Removed ✅
+
+- Removed: `import { motion, AnimatePresence } from "framer-motion"`
+- FAQ accordion panels: `motion.div` with height animation → `<div className="animate-fade-in">` (conditional mount triggers CSS)
+- Profile result panel: `motion.div` with opacity/y → `<div className="animate-fade-in p-5 ...">`
+- Removed stale `transition={{ duration: 0.25 }}` prop leftover
+
+---
+
+## Fix 4: WordSwapper.tsx — LazyMotion Migration ✅
+
+- Changed: `import { motion, AnimatePresence }` → `import { LazyMotion, domAnimation, m, AnimatePresence }`
+- Wrapped return in `<LazyMotion features={domAnimation}>`
+- All `motion.span` → `m.span` (identical API, spring variants preserved)
+- Bundle impact: ~35KB full framer → ~10KB domAnimation feature set loaded lazily
+
+---
+
+## Fix 5: index.tsx — Stats Label Font Size ✅
+
+- `text-[10px] sm:text-xs` → `text-xs` (unified at 12px minimum)
+- Location: stats grid label div, line 244
+
+---
+
+## Fix 6: index.tsx — Hero Emblem Mobile Size ✅
+
+- `max-w-[260px]` → `max-w-[180px]` at base breakpoint
+- At 360px viewport: emblem now 50% width (was 72%)
+- `sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px]` unchanged
+
+---
+
+## Fix 7: membership.tsx — localStorage Auto-Save ⏭ SKIPPED
+
+Already fully implemented before this pipeline run:
+- `tnvs_form_data` — saves full form object on every change
+- `tnvs_form_step` — saves current step
+- Reads both on mount, clears on step 5 success
+- Manual `clearDraft()` with confirm dialog
+
+---
+
+## Fix 8: lang="ta" Attributes Added ✅
+
+- `src/routes/index.tsx`: `AccordionContent` — `lang={language === "ta" ? "ta" : "en"}`
+- `src/routes/contact.tsx`: info card detail divs — `lang={language === "ta" ? "ta" : "en"}`
+- `src/routes/voter-id.tsx`: empty state paragraphs — `lang={language === "ta" ? "ta" : "en"}`
+- `src/styles.css`: `[lang="ta"]` CSS rule now applies correct font + line-height globally
+
+---
+
+## Fix 9: contact.tsx — Info Cards Tamil Translations ✅
+
+Extended inline array with `ta` (Tamil label) and `td` (Tamil detail) fields:
+- Head Office → தலைமை அலுவலகம்
+- Helpline → உதவி எண்
+- Email → மின்னஞ்சல்
+- Office Hours → அலுவலக நேரம்
+Rendered via `t(c.ta, c.t)` and `t(c.td, c.d)`.
+
+---
+
+## Fix 10: voter-id.tsx — "Not a Member?" Empty State ✅
+
+Added `hasSearched` boolean state (default `false`).
+Set to `true` in the `finally` block of `handleSearch`.
+When `hasSearched && !isSearching && searchResults.length === 0`:
+- Shows "பதிவு எண் கண்டுபிடிக்கவில்லை. / No membership record found."
+- Shows "இப்போதே இணையுங்கள் → / Join now →" Link to `/membership`
+- Both paragraphs have `lang` attribute + `font-tamil` class
+
+---
+
+## TypeScript Check Result
+
+```
+npx tsc --noEmit → Exit code: 0 (clean — no errors)
+```

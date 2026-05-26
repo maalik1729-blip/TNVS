@@ -22,8 +22,11 @@ interface ScrollRevealProps {
 export function ScrollReveal({
   children,
   direction = "up",
+  duration,
+  delay = 0,
   className = "",
   stagger = false,
+  staggerDelay = 0.08,
 }: ScrollRevealProps) {
   const animClass = direction === "scale" || direction === "fade" ? "animate-fade-in" : "animate-slide-up";
 
@@ -31,7 +34,14 @@ export function ScrollReveal({
     return (
       <div className={className}>
         {React.Children.map(children, (child, i) => (
-          <div key={i} className={animClass} style={{ animationDelay: `${i * 0.05}s` }}>
+          <div
+            key={i}
+            className={animClass}
+            style={{
+              animationDelay: `${delay + i * staggerDelay}s`,
+              ...(duration ? { animationDuration: `${duration}s` } : {}),
+            }}
+          >
             {child}
           </div>
         ))}
@@ -40,7 +50,13 @@ export function ScrollReveal({
   }
 
   return (
-    <div className={`${animClass} ${className}`}>
+    <div
+      className={`${animClass} ${className}`}
+      style={{
+        ...(delay ? { animationDelay: `${delay}s` } : {}),
+        ...(duration ? { animationDuration: `${duration}s` } : {}),
+      }}
+    >
       {children}
     </div>
   );

@@ -1,104 +1,148 @@
-# 01 — TNVS Frontend UI Audit (v2 Run)
+# 01 — TNVS Frontend UI Audit (v2 · May 2026)
+
+> Pre-flight confirmed: read services.tsx, assistant.tsx, WordSwapper.tsx,
+> index.tsx, membership.tsx, contact.tsx, voter-id.tsx, styles.css
+
+---
 
 ## Executive Summary
-This UI Audit provides an in-depth code and architecture analysis of the Tamil Nadu Vanigargalin Sangamam (TNVS) Member Portal frontend. The target audience of this portal consists of Tamil Nadu traders (35-55 age range) who are mostly mobile-first, using medium-to-low-tier Android devices, primarily literate in Tamil, and operating under varying network conditions. 
 
-The application is built on React 19, Tailwind CSS v4, and TanStack Router/Start. The audit focuses on layout performance, design systems consistency, bilingual behavior, mobile touch readiness, and dead-weight dependencies.
+| Severity | Count |
+|----------|-------|
+| HIGH     | 4     |
+| MEDIUM   | 5     |
+| DONE (skip) | 2  |
 
----
-
-## Design Token Findings
-Brand custom properties (Navy `#0A1F44` and Gold `#C9A84C`) are partially configured in `src/styles.css` using HSL/oklch values. However, several hardcoded inline hex values and Tailwind arbitrary classes are scattered across routes and components:
-
-1. **`src/routes/dashboard.tsx`** [Severity: HIGH]
-   - Uses hardcoded dark blue arbitrary colors: `bg-[#06225C]`, `via-[#06225C]`, `to-[#06225C]`. These violate token encapsulation.
-2. **`src/routes/voter-id.tsx`** [Severity: MEDIUM]
-   - Uses raw hex styles for background emulation: `#f0f2f5` (line 342) and `#fff` (lines 348, 353).
-3. **`src/components/VoterIdCard.tsx`** [Severity: LOW]
-   - Defines raw hex color string constants for card layout rendering: `const NAVY = "#1e3a8a";`, `const NAVY_D = "#162d6e";`, `const GOLD = "#d4b26f";`, `const GOLD_L = "#ebdca5";`. Also uses inline styling with `#dce3f0`, `#fff`, `#111`, `#888` for layout borders and textual segments.
-4. **`src/routes/membership.tsx`** [Severity: LOW]
-   - Hardcoded hex styles are used inside the 2D Canvas drawing API context (`ctx.fillStyle = "#1e3a8a"`, `#ebdca5`, etc.) to render the membership card file for download. This is expected behavior for raw canvas generation but should align with the defined visual theme colors.
-5. **`src/styles.css`** [Severity: LOW]
-   - Hardcoded background fallback `#ffffff` is declared on input and button elements (lines 334, 406).
+Total actionable items: **9 fixes** across 8 files.
 
 ---
 
-## Component Duplication Findings
-- **Navigation Bar**: The main navigation bar (`SiteHeader`) is a shared layout component imported in `src/routes/__root.tsx` and wrapped globally. It is not duplicated in individual route files.
-- **Footer**: The footer (`SiteFooter`) is a shared layout component imported in `src/routes/__root.tsx` and wrapped globally. No duplication.
-- **Announcement Ticker / Utility Strip**: Built directly into the `SiteHeader.tsx` shell, rendering persistent registration information and helpline links globally. No duplication.
+## Framer Motion Usage Map
+
+| File | Import Line | Usages | Can Replace With CSS? |
+|------|-------------|--------|-----------------------|
+| `src/routes/services.tsx` | line 9 | `motion.div` (modal overlay + panel) `AnimatePresence` | Yes — CSS opacity transition |
+| `src/routes/assistant.tsx` | line 7 | `motion.div` (panel transitions) `AnimatePresence` | Yes — CSS transition-all |
+| `src/components/WordSwapper.tsx` | line 2 | `motion.span` (word flip) `AnimatePresence` | Partial — LazyMotion preferred (spring physics) |
+| `src/routes/voter-id.tsx` | line 3 | `motion.div` `AnimatePresence` | Yes — CSS fade |
+| `src/routes/membership.tsx` | line 3 | `motion.div` `AnimatePresence` | Yes — CSS slide-up |
+| `src/routes/wings.tsx` | line 8 | `motion.div` `AnimatePresence` | Yes — CSS fade |
+| `src/routes/dashboard.tsx` | line 10 | `motion.div` `AnimatePresence` | Yes — CSS fade |
+
+**Pipeline scope (GEMINI.md):** services.tsx, assistant.tsx, WordSwapper.tsx  
+**Additional findings (outside pipeline scope):** voter-id.tsx, membership.tsx, wings.tsx, dashboard.tsx
+
+Severity: **HIGH** for all 3 in-scope files.
 
 ---
 
-## Critical Functional Bugs
+## Modal Mobile Audit (services.tsx)
 
-### 1. Incomplete District Selector Dropdown (Severity: CRITICAL)
-- **File**: [membership.tsx](file:///d:/ziya/TNVS/src/routes/membership.tsx#L43)
-- **Line Context**: `const DISTRICTS = ["Chennai","Coimbatore","Madurai","Trichy","Salem","Erode","Tirunelveli","Vellore"];`
-- **Impact**: Only 8 of the 38 Tamil Nadu districts are present. Traders from the remaining 30 districts (e.g. Ariyalur, Chengalpattu, Vellore, etc.) are unable to select their corresponding administrative location, blocking successful registration.
+**PASS — already fixed.**
+- Modal wrapper: `max-h-[calc(100dvh-32px)]` ✓
+- Modal body: `overflow-y-auto max-h-[calc(100vh-120px)] md:max-h-[70vh]` ✓
+- Body scroll lock: **MISSING** — `document.body` not referenced anywhere in services.tsx.
+  When modal is open, background page remains scrollable on Android.
 
-### 2. Missing Translation in Demo Mode Notice (Severity: MEDIUM)
-- **File**: [DemoModeBanner.tsx](file:///d:/ziya/TNVS/src/components/DemoModeBanner.tsx#L34)
-- **Impact**: While the language toggle in `SiteHeader` successfully updates the application language context (`ta` | `en`), the label `⚠️ Demo / Preview Mode` in the warning banner is hardcoded in English, failing to display a translated equivalent in Tamil mode.
-
----
-
-## Animation & Performance Findings
-
-### 1. Lenis Smooth Scroll Performance (Severity: HIGH)
-- **Files**: [__root.tsx](file:///d:/ziya/TNVS/src/routes/__root.tsx#L13) and [LenisProvider.tsx](file:///d:/ziya/TNVS/src/components/LenisProvider.tsx)
-- **Impact**: Lenis smooth scroll runs a global requestAnimationFrame loop. On ₹8,000–₹15,000 Android devices with 4G/3G connections, this script creates major scroll lag, conflicts with native scrolling, and should be removed.
-
-### 2. Framer Motion Performance Risk (Severity: MEDIUM)
-- **Imports**: `framer-motion` is imported in 11 files:
-  - `src/routes/index.tsx`, `membership.tsx`, `wings.tsx`, `dashboard.tsx`, `voter-id.tsx`, `assistant.tsx`, `services.tsx`
-  - `src/components/WordSwapper.tsx`, `Section.tsx`, `ScrollReveal.tsx`, `HorizontalSteps.tsx`
-- **Impact**: Pure decorative scroll fades and entrance shifts consume unnecessary main-thread performance. These should be replaced with GPU-accelerated CSS keyframe transitions wherever possible, retaining Framer Motion only for step indicators or functional interactive layouts.
+Severity: **MEDIUM** (scroll lock missing only).
 
 ---
 
-## Dead Dependency Findings
-The package configuration defines 26 separate `@radix-ui/*` dependencies. Of these, **25 are dead weight** (the only custom shadcn files under `src/components/ui/` that import them are never referenced in the primary routes):
+## Font Size Audit — text-[10px]
 
-* **Used**: `@radix-ui/react-accordion` (via `src/routes/index.tsx`) and `@radix-ui/react-slot` (via `src/components/ui/button.tsx` in `carousel.tsx`).
-* **Unused (Dead Weight)**:
-  - `@radix-ui/react-alert-dialog`
-  - `@radix-ui/react-aspect-ratio`
-  - `@radix-ui/react-avatar`
-  - `@radix-ui/react-checkbox`
-  - `@radix-ui/react-collapsible`
-  - `@radix-ui/react-context-menu`
-  - `@radix-ui/react-dialog`
-  - `@radix-ui/react-dropdown-menu`
-  - `@radix-ui/react-hover-card`
-  - `@radix-ui/react-label`
-  - `@radix-ui/react-menubar`
-  - `@radix-ui/react-navigation-menu`
-  - `@radix-ui/react-popover`
-  - `@radix-ui/react-progress`
-  - `@radix-ui/react-radio-group`
-  - `@radix-ui/react-scroll-area`
-  - `@radix-ui/react-select` (standard HTML select is used in `FloatingInput.tsx`)
-  - `@radix-ui/react-separator`
-  - `@radix-ui/react-slider`
-  - `@radix-ui/react-switch`
-  - `@radix-ui/react-tabs`
-  - `@radix-ui/react-toggle`
-  - `@radix-ui/react-toggle-group`
-  - `@radix-ui/react-tooltip`
+| File | Line | Context | Action |
+|------|------|---------|--------|
+| `src/routes/index.tsx` | 244 | Stats label (e.g. "மாவட்டங்கள்") | → `text-xs` |
+| `src/routes/wings.tsx` | 509, 528, 767, 817, 871, 927 | Zone/district/wing count badges | → `text-xs` |
+| `src/routes/dashboard.tsx` | 171, 600, 629, 658, 701 | Offer badge, loan pills | → `text-xs` |
+| `src/components/TestimonialCarousel.tsx` | 128 | Member location label | → `text-xs` |
+| `src/components/StackedServices.tsx` | 155 | Service badge | → `text-xs` |
+| `src/components/HorizontalSteps.tsx` | 58 | "Step N" badge | → `text-xs` |
+| `src/components/FloatingInput.tsx` | 75 | Floated label text | **Keep** — intentional design |
+
+**Pipeline scope:** `index.tsx` only.  
+Severity: **MEDIUM** — Tamil text at 10px is unreadable for target audience (40–60 age group).
 
 ---
 
-## Mobile Layout Findings
-- **Touch Target Sizing**: Essential interactive boundaries (buttons, form inputs) mostly comply with `min-h-[44px]`. The navigation links in `SiteHeader` specify `min-h-[44px]` (Desktop) but require verification on mobile screens where elements collapse.
-- **Stats Grid Wrapping**: `grid-cols-2 md:grid-cols-4` in the home stats row wraps correctly to mobile grids, preventing overflow.
+## Hero Emblem Size Audit (index.tsx)
+
+Current at base (mobile): `max-w-[260px]`  
+At 360px viewport width: emblem takes 72% of screen width — too dominant.  
+Target: `max-w-[180px]` at base (50% of 360px viewport).  
+sm: `max-w-[320px]` — unchanged.  
+
+Severity: **MEDIUM**
+
+---
+
+## Tamil Accessibility Audit (lang="ta")
+
+Files with `lang="ta"` present: **3** (`about.tsx`, `contact.tsx`, `__root.tsx`)  
+Files with Tamil text blocks missing `lang="ta"`:  
+- `src/routes/index.tsx` — FAQ answers rendered via `t()`, no lang attribute
+- `src/routes/services.tsx` — service card Tamil descriptions, no lang attribute  
+- `src/routes/assistant.tsx` — FAQ answer paragraphs, no lang attribute
+- `src/components/HorizontalSteps.tsx` — Tamil step text, no lang attribute
+
+Pattern rule: any element rendering `t(tamil, english)` needs `lang={language === "ta" ? "ta" : "en"}`.
+
+Severity: **MEDIUM** (screen reader / browser font selection broken for Tamil users)
+
+---
+
+## Membership Form localStorage Audit
+
+**PASS — already implemented.**
+- Key `tnvs_form_data`: saves full form object on every change ✓
+- Key `tnvs_form_step`: saves current step ✓
+- On mount: restores both from localStorage ✓
+- On step 5 success: clears both keys ✓
+- Manual clear: `clearDraft()` function with confirm dialog ✓
+
+**This item is DONE. Skip in Stage 4.**
+
+---
+
+## Contact Info Cards Tamil Audit
+
+All 4 cards in `src/routes/contact.tsx` use hardcoded English-only strings:
+```
+{ t: "Head Office", d: "TN Vanigargalin Sangamam,\nNo. 24, North Mada Street..." }
+{ t: "Helpline",    d: "1800-XXX-XXXX (Toll-free)..." }
+{ t: "Email",       d: "info@tnvs.gov.in..." }
+{ t: "Office Hours",d: "Monday – Saturday..." }
+```
+Labels (`t:`) and details (`d:`) do **not** go through `t()`.  
+Tamil-speaking users see English-only contact info.
+
+Severity: **MEDIUM**
+
+---
+
+## Voter-ID Empty State Audit
+
+When search returns 0 results (`searchResults.length > 0` is the only conditional),
+there is **no fallback state rendered**. The search results area simply stays empty.  
+No "not a member?" message. No link to `/membership`.  
+User has no recovery path — dead-end UX.
+
+Severity: **HIGH**
 
 ---
 
 ## Prioritized Fix List
 
-1. **[CRITICAL] membership.tsx**: Replace the hardcoded `DISTRICTS` list with the full 38-district Tamil Nadu bilingual mapping (`தமிழ் / English`).
-2. **[HIGH] __root.tsx & LenisProvider.tsx**: Remove Lenis smooth scrolling configuration. Add native `scroll-behavior: smooth` to `src/styles.css` for anchor jumps.
-3. **[HIGH] DemoModeBanner.tsx**: Redesign the warning banner to a sleek, blue info container using CSS tokens and Lucide Info icon. Add translation to the banner heading.
-4. **[HIGH] dashboard.tsx**: Replace the arbitrary background styles (`bg-[#06225C]`) with a semantic CSS custom property (`var(--color-primary)` or Tailwind token utility).
-5. **[MEDIUM] Framer Motion optimization**: Remove Framer Motion scroll and fade components in sections that can easily be expressed in standard CSS animations.
+| # | Severity | File | Issue | Fix |
+|---|----------|------|-------|-----|
+| 1 | HIGH | `services.tsx` | framer-motion import | Remove, replace with CSS transitions |
+| 2 | HIGH | `assistant.tsx` | framer-motion import | Remove, replace with CSS transitions |
+| 3 | HIGH | `WordSwapper.tsx` | framer-motion full import | Migrate to LazyMotion + domAnimation |
+| 4 | HIGH | `voter-id.tsx` | no empty-state + no membership link | Add "Not a member?" block |
+| 5 | MEDIUM | `services.tsx` | no body scroll lock on modal open | Add useEffect scroll lock |
+| 6 | MEDIUM | `index.tsx` | `text-[10px]` stats label | → `text-xs` |
+| 7 | MEDIUM | `index.tsx` | hero emblem `max-w-[260px]` mobile | → `max-w-[180px]` |
+| 8 | MEDIUM | Multiple | missing `lang="ta"` attributes | Add pattern across FAQ/service text |
+| 9 | MEDIUM | `contact.tsx` | info cards English-only | Add Tamil via `t()` |
+| — | DONE | `membership.tsx` | localStorage auto-save | Already complete |
+| — | DONE | `services.tsx` | modal max-h | Already complete |

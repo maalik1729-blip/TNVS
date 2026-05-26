@@ -1,17 +1,23 @@
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 export function Section({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add("section-visible"); observer.disconnect(); } },
+      { threshold: 0.05, rootMargin: "-80px 0px 0px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`max-w-7xl mx-auto px-4 ${className}`}
-    >
+    <section ref={ref} className={`section-reveal max-w-7xl mx-auto px-4 ${className}`}>
       {children}
-    </motion.section>
+    </section>
   );
 }
 

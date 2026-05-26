@@ -1,75 +1,187 @@
-# 02 — UX Strategy (v2 Run)
+# 02 — UX Strategy (v2 · May 2026)
+
+---
 
 ## Strategy Overview
-The UX Strategy for the TNVS Trader Portal redesign focuses on reducing onboarding friction, optimizing user trust signals, and maintaining a high-performing mobile-first experience. Since the target audience includes regional traders who are primarily Tamil-speaking, mobile-dependent, and operating on low-to-medium-tier devices, the interface must prioritize high-contrast typography, large touch targets, minimal bundle footprints, and immediate interactive feedback.
+
+9 targeted fixes across 8 files. No architectural changes needed.
+All fixes are additive or substitutive — no component restructuring required.
+Framer Motion removal is the highest-effort item; all others are surgical edits.
 
 ---
 
-## Navigation Architecture
-- **Global Layout Integration**: Keep the current unified layout architecture where the navbar (`SiteHeader`) and footer (`SiteFooter`) are wrapped inside the TanStack Router root (`__root.tsx`).
-- **Responsive Navigation Drawer**: On mobile widths (<768px), the navbar collapses into a side drawer with distinct navigation options and a high-contrast theme toggle. The mobile drawer must provide clear touch targets with a minimum height of `48px` for better thumb access.
-- **Scroll Behavior**: Replace the heavy Lenis smooth scrolling library with native browser scrolling (`scroll-behavior: smooth` declared in CSS for anchor links) to improve browser rendering times and prevent scroll bugs on Android mobile devices.
+## Framer Motion Replacement Plan
+
+### services.tsx — Modal open/close animation
+Current: `motion.div` with `scale: 0.95→1, opacity: 0→1` via `AnimatePresence`.  
+Replace with:
+- Backdrop: `transition-opacity duration-200` + conditional `opacity-0`/`opacity-100` classes
+- Modal panel: `transition-all duration-200` + conditional `scale-95 opacity-0`/`scale-100 opacity-100`
+- `AnimatePresence` removed — use conditional rendering directly (`modal && (...)`)
+- CSS classes already available: `animate-fade-in` (styles.css line 502)
+
+### assistant.tsx — Panel/step transitions
+Current: `motion.div` with `x: ±20, opacity` slide animations between FAQ panels.  
+Replace with:
+- Wrap panel content in `<div className="animate-fade-in">` (re-mounts on key change)
+- Or: use `key` prop on a plain `<div>` — React unmount/remount triggers CSS animation
+- `AnimatePresence` removed entirely
+
+### WordSwapper.tsx — Word flip animation
+Current: `motion.span` with spring `y: 20→0→-20, opacity` via `AnimatePresence`.  
+**Decision: LazyMotion + domAnimation** (not pure CSS).  
+Reasoning:
+- The spring physics (`stiffness: 260, damping: 20`) are the premium feel of the hero section
+- Replicating spring with CSS `cubic-bezier` is imprecise
+- LazyMotion loads only the ~10KB domAnimation feature set vs ~35KB full framer bundle
+- The word rotates every 2.8s — not a scroll/mount animation, so performance risk is minimal
+
+Migration:
+```tsx
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion"
+// Wrap outer return in <LazyMotion features={domAnimation}>
+// Replace motion.span → m.span (identical API)
+```
 
 ---
 
-## Registration Form Architecture
-- **Multi-Step Separation**: The 5-stage registration process in `src/routes/membership.tsx` (Personal → Business → Documents → Review → Success) splits form fields into distinct progressive viewports, reducing visual clutter.
-- **Form State Persistence**: Keep the current `localStorage` persistence layer. Form states are saved in real-time, allowing users to resume their registration if their cellular connection drops or they refresh the page.
-- **38 Districts Data Constant**: We will define a complete, bilingual 38-district constant array `TN_DISTRICTS` structured as:
-  ```typescript
-  export const TN_DISTRICTS = [
-    { value: "ariyalur", label: "அரியலூர் / Ariyalur" },
-    ...
-  ]
-  ```
-  This ensures that every trader in Tamil Nadu is represented and has an intuitive, readable district label in their primary language.
+## Services Modal Scroll Lock
+
+**Spec:** Add `useEffect` that locks body scroll when any modal is open.
+
+```tsx
+useEffect(() => {
+  if (modal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+  return () => { document.body.style.overflow = ""; };
+}, [modal]);
+```
+
+Place after existing `modal` state declaration. No library needed.
 
 ---
 
-## Dashboard Auth Flow (Demo Mode)
-- **Session Control**: Dashboard access is controlled by a simulated token stored in `sessionStorage` (handled in `src/lib/session.ts`).
-- **Login Verification**: The `LoginPrompt` component allows logging in with an EPIC ID or a 10-digit mobile number. The system verifies this value, issues a simulated successful authentication token, and updates the local state to mount the dashboard dashboard interface.
-- **PIN Input Validation**: For membership card creation and retrieval, we use a single overlay `<input type="text" pattern="[0-9]*" maxLength={4} />` mapped to four separate visual slots. The styling must provide focus states (pulsing borders) to clearly signal typing progress.
+## Membership Form Auto-Save
+
+**Already implemented** — `tnvs_form_data` + `tnvs_form_step` keys with full
+read-on-mount and clear-on-success logic. Skip this fix entirely.
 
 ---
 
-## Card Generator Flow
-- **Auto-Population**: When a user queries their voter record on `/voter-id` and clicks the join link, the search query parameters (`name`, `epic`, etc.) are appended to the `/membership` route link.
-- **API Fallback Search**: If the `/api/voter-search` API endpoint is unavailable, the card generator automatically falls back to searching client-side using `src/data/voters.json`. This guarantees functional continuity.
-- **Design Cleanliness**: The printed card template layout must follow exact ID-card dimensions with highly legible text styles.
+## Tamil Accessibility Plan
+
+**Rule to apply across codebase:**
+```tsx
+// When element renders t(tamil, english):
+<p lang={language === "ta" ? "ta" : "en"}>
+  {t("தமிழ் உரை", "English text")}
+</p>
+```
+
+**Requires** `const { language, t } = useLanguage()` — already imported in all target files.
+
+**Files + elements to update:**
+- `index.tsx`: FAQ `<AccordionContent>` answer paragraphs (2 per item)
+- `services.tsx`: service card `<p>` description elements in the grid
+- `assistant.tsx`: FAQ answer `<p>` elements inside accordion panels
+- `components/HorizontalSteps.tsx`: step description `<p>` elements
 
 ---
 
-## Language Toggle Decision
-We choose **Option A: Maintain Active Bilingual Hook (useLanguage)** with robust coverage.
-- **Reasoning**: The codebase already contains an elegant `useLanguage` hook providing a `t(ta, en)` function used throughout the pages. Rather than deleting this functionality, we will retain it and fix any gaps (e.g. translation of the `DemoModeBanner` title) to ensure full bilingual coverage.
-- **Pattern**: Every textual component must display headings, subtexts, and buttons in a bilingual `Tamil / English` layout or follow the `t(ta, en)` context switch pattern.
+## Stats / Typography Fix
+
+`text-[10px]` → `text-xs` (12px).  
+`text-xs` is the documented minimum in `styles.css` (`--text-caption: 0.75rem`).  
+**Pipeline scope:** `index.tsx` line 244 only. Other files (wings, dashboard) are bonus.
 
 ---
 
-## Component Hierarchy Recommendations
-- **SiteHeader**: Wraps Gov Stripe + Announcement Ticker + Navigation Bar.
-- **SiteFooter**: Renders footer links and credentials.
-- **DemoModeBanner**: Repositioned at the top of protected or mock-data views (like dashboard/assistant) to transparently signal preview states.
-- **VoterIdCard**: Formats the membership card preview and prints it.
+## Hero Emblem Size Fix
+
+`max-w-[260px]` → `max-w-[180px]` at base breakpoint only.  
+At 360px viewport: 180px = 50% width — appropriate for hero balance.  
+`sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px]` — all unchanged.
 
 ---
 
-## State Management Recommendations
-- **Bilingual State**: Managed via React Context in `LanguageProvider`.
-- **Form State**: Managed in local React state with standard `localStorage` persistence updates on change.
-- **Theme State**: Managed in `ThemeProvider` context (`light` | `dark`).
+## Voter-ID Empty State UX
+
+**When:** search has been submitted and `searchResults.length === 0` (and not `isSearching`).  
+**What to show:** a friendly "no results" message + link to `/membership`.
+
+Add a tracked `hasSearched` boolean state (set to `true` on handleSearch call).  
+Render below the search results area:
+```tsx
+{hasSearched && !isSearching && searchResults.length === 0 && (
+  <div className="mt-4 p-4 rounded-xl bg-secondary/60 border border-border text-center">
+    <p className="text-sm text-muted-foreground font-tamil"
+       lang={language === "ta" ? "ta" : "en"}>
+      {t("பதிவு எண் கண்டுபிடிக்கவில்லை.", "No membership record found.")}
+    </p>
+    <p className="mt-2 text-sm font-tamil" lang={language === "ta" ? "ta" : "en"}>
+      {t("இன்னும் உறுப்பினர் இல்லையா?", "Not a member yet?")}
+      {" "}
+      <Link to="/membership"
+            className="text-primary font-semibold hover:underline">
+        {t("இப்போதே இணையுங்கள் →", "Join now →")}
+      </Link>
+    </p>
+  </div>
+)}
+```
 
 ---
 
-## Recommended UX Priorities (Top 10)
-1. **Full District Support**: Add all 38 districts to the select options to prevent user drop-off in membership registration.
-2. **Blue Info-Style Demo Banner**: Re-style the warning banner to a pleasant blue info layout, matching institutional trust design rules.
-3. **Remove Lenis Scroll**: Strip Lenis wrapper to restore native, zero-lag scrolling on regional Android phones.
-4. **Bilingual Notice Alignment**: Translate notice banner headers to Tamil/English dynamic labels.
-5. **Standardized Tap Targets**: Force a minimum of `44px` height (`min-h-11`) on all buttons, select boxes, and anchors.
-6. **Smooth Form Step Progress**: Highlight the current registration stepper step in primary navy and gold.
-7. **Clean Input Focus Indicators**: Ensure inputs have high-visibility focus borders (`focus:border-primary focus:ring-4`).
-8. **Mock Search Fallback Coverage**: Ensure name or EPIC queries resolve instantly to form fields.
-9. **Accessibility Landmark Elements**: Use semantic tags `<main>`, `<header>`, `<footer>` with correct skip links.
-10. **Font Display Swap**: Enforce `font-display: swap` for Google Fonts loading to prevent layout shifting on slow networks.
+## Contact Info Cards Tamil Plan
+
+Extend the inline array in `contact.tsx` with Tamil fields `ta` and `td`:
+
+```tsx
+{[
+  {
+    i: MapPin,
+    t: "Head Office", ta: "தலைமை அலுவலகம்",
+    d: "TN Vanigargalin Sangamam,\nNo. 24, North Mada Street,\nMylapore, Chennai — 600 004",
+    td: "தமிழ்நாடு வணிகர்களின் சங்கமம்,\nஎண். 24, வடக்கு மடா தெரு,\nமயிலாப்பூர், சென்னை — 600 004"
+  },
+  {
+    i: Phone,
+    t: "Helpline", ta: "உதவி எண்",
+    d: "1800-XXX-XXXX (Toll-free)\n+91 91944 20044",
+    td: "1800-XXX-XXXX (கட்டணமற்றது)\n+91 91944 20044"
+  },
+  {
+    i: Mail,
+    t: "Email", ta: "மின்னஞ்சல்",
+    d: "info@tnvs.gov.in\nsupport@tnvs.gov.in",
+    td: "info@tnvs.gov.in\nsupport@tnvs.gov.in"
+  },
+  {
+    i: Clock,
+    t: "Office Hours", ta: "அலுவலக நேரம்",
+    d: "Monday – Saturday\n10:00 AM – 6:00 PM",
+    td: "திங்கள் – சனி\nகாலை 10:00 – மாலை 6:00"
+  },
+].map((c) => (
+  <div key={c.t} ...>
+    <div className="font-display font-semibold">{t(c.ta, c.t)}</div>
+    <div ... lang={language === "ta" ? "ta" : "en"}>{t(c.td, c.d)}</div>
+  </div>
+))}
+```
+
+---
+
+## Recommended Implementation Order
+
+1. styles.css — CSS additions (word-enter/exit, lang rule) — no risk
+2. WordSwapper.tsx — LazyMotion migration (isolated component)
+3. services.tsx — framer removal + scroll lock (highest-traffic page)
+4. assistant.tsx — framer removal
+5. index.tsx — text-[10px] + hero emblem (surgical, 2 lines)
+6. contact.tsx — info cards Tamil (additive)
+7. voter-id.tsx — hasSearched state + empty state block (additive)
+8. lang="ta" — index.tsx FAQs + services.tsx descriptions (low risk, additive)

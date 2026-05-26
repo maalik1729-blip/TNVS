@@ -4,7 +4,6 @@ import {
   CheckCircle2, User, Phone, MapPin, Award, ArrowRight, FileText, 
   Search, GraduationCap, Heart, HelpCircle, Play, Sparkles, ArrowLeft, ChevronDown, ShieldAlert, Check
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
 import { DemoModeBanner } from "@/components/DemoModeBanner";
 
@@ -45,7 +44,7 @@ export function Assistant() {
       
       if (query.length > 2) {
         setCheckedProfile({
-          name: "Senthil Kumar N (Demo Profile)",
+          name: t("மாதிரி சுயவிவரம் — செந்தில் குமார் (Demo)", "Sample Profile — Senthil Kumar (Demo)"),
           mobile: "+91 944 20 •• 44",
           district: "Chennai",
           epic: query.startsWith("TNVS") ? query : `TNVS-${query}`,
@@ -164,20 +163,13 @@ export function Assistant() {
                         aria-hidden="true"
                       />
                     </button>
-                    <AnimatePresence initial={false}>
                       {isOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.25 }}
-                        >
+                        <div className="animate-fade-in">
                           <div className="px-4 pb-4 pt-1.5 border-t border-slate-100 text-xs text-slate-500 leading-relaxed font-tamil">
                             {faq.a}
                           </div>
-                        </motion.div>
+                        </div>
                       )}
-                    </AnimatePresence>
                   </div>
                 );
               })}
@@ -233,14 +225,8 @@ export function Assistant() {
             )}
 
             {/* Simulated Live Timeline Tracker */}
-            <AnimatePresence>
               {checkedProfile && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="p-5 bg-slate-50/50 border border-slate-200/60 rounded-2xl space-y-5 shadow-xs"
-                >
+                <div className="animate-fade-in p-5 bg-slate-50/50 border border-slate-200/60 rounded-2xl space-y-5 shadow-xs">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2 text-slate-800 font-bold text-xs md:text-sm">
                       <CheckCircle2 className="w-5 h-5 text-emerald-800" aria-hidden="true" />
@@ -322,9 +308,8 @@ export function Assistant() {
                       <FileText className="w-3.5 h-3.5 text-slate-400" /> {t("சான்றிதழ் பெறுக", "Download Certificate")}
                     </Link>
                   </div>
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
           </div>
  
           {/* Welfare Schemes */}

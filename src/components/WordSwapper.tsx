@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const wordsEn = ["trader", "business", "merchant", "retailer", "shopkeeper"];
@@ -56,6 +56,7 @@ export function WordSwapper() {
   };
 
   return (
+    <LazyMotion features={domAnimation}>
     <span className="block select-none">
       {language === "ta" ? (
         <span className="flex flex-col lg:flex-row lg:items-center lg:gap-x-2">
@@ -63,7 +64,7 @@ export function WordSwapper() {
             {/* Invisible spacer to reserve exact width naturally */}
             <span className="invisible select-none" aria-hidden="true">{currentWord}</span>
             <AnimatePresence mode="wait">
-              <motion.span
+              <m.span
                 key={currentWord}
                 variants={variants}
                 initial="enter"
@@ -72,7 +73,7 @@ export function WordSwapper() {
                 className="absolute left-0 top-0 w-full text-left font-display animate-text-gradient bg-clip-text text-transparent bg-gradient-to-r from-gold via-amber-500 to-orange-500 bg-[length:200%_auto]"
               >
                 {currentWord}
-              </motion.span>
+              </m.span>
             </AnimatePresence>
           </span>
           <span className="whitespace-nowrap">தேவையான அனைத்தும்.</span>
@@ -85,7 +86,7 @@ export function WordSwapper() {
               {/* Invisible spacer to reserve exact width naturally */}
               <span className="invisible select-none" aria-hidden="true">{currentWord}</span>
               <AnimatePresence mode="wait">
-                <motion.span
+                <m.span
                   key={currentWord}
                   variants={variants}
                   initial="enter"
@@ -94,7 +95,7 @@ export function WordSwapper() {
                   className="absolute left-0 top-0 w-full text-left font-display animate-text-gradient bg-clip-text text-transparent bg-gradient-to-r from-gold via-amber-500 to-orange-500 bg-[length:200%_auto]"
                 >
                   {currentWord}
-                </motion.span>
+                </m.span>
               </AnimatePresence>
             </span>
           </span>
@@ -102,5 +103,6 @@ export function WordSwapper() {
         </span>
       )}
     </span>
+    </LazyMotion>
   );
 }

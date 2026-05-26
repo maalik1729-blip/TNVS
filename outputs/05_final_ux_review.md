@@ -1,108 +1,244 @@
-# Final UX Review Summary
-
-This final UX Review acts as a quality assurance validation report for the redesigned Tamil Nadu Vanigargalin Sangamam (TNVS) Trader Portal. 
-
-By systematically reviewing the planned implementation details in the Component Execution Plan, this audit validates that the portal now meets the highest standards of digital product design. 
-
-The integration of unified forms, continuous search-to-claim workflows, dynamic constituency indicators, and high-contrast, keyboard-accessible styles has successfully resolved primary interaction pain points, positioning the portal for a secure and highly successful launch.
+# 05 — Final UX Review · TNVS
 
 ---
 
-# Remaining UX Risks
+## Final UX Review Summary
 
-### 1. Photo Capture Latency on Low-end Devices (`/membership` Stage 2)
-- **The Risk**: When users on older mobile devices capture and upload high-resolution images, the local compression and upload phase can take up to several seconds over slow mobile networks. Without a visible loading state, users may think the app has crashed and close the page.
-- **Mitigation**: Introduce a progress bar and a clear loading spinner saying: *"Optimizing image... Please wait / படம் பதிவேற்றப்படுகிறது..."*.
+After completing the 4-stage audit → strategy → direction → execution plan pipeline, the TNVS portal has a clear, actionable roadmap. The 3 critical bugs are fully specified for fix. Bilingual parity has been addressed across About, Contact, and Footer. The membership form is structurally sound and needs only incremental improvements.
 
-### 2. Search Query Debounce Timing
-- **The Risk**: In the constituency search box on `/wings`, typing quickly might trigger massive dataset re-filtering too frequently, causing visual layout stuttering on low-power devices.
-- **Mitigation**: Apply a 300ms debounce buffer to all input changes before recalculating active lists.
+**Confidence level before implementation:**
+- Functionality: 🟠 Medium (critical bugs not yet fixed)
+- Bilingual UX: 🟠 Medium (About page fully English)
+- Consistency: 🟠 Medium (contact form raw inputs)
+- Mobile UX: 🟡 Mostly OK (a few overflow issues)
+- Accessibility: 🟡 Mostly OK (missing lang attributes)
 
----
-
-# Accessibility Risks
-
-### 1. ARIA Live Region Verbosity in Fast Search
-- **The Risk**: Setting `aria-live="polite"` on search tables could cause screen readers to read out every single character change, overwhelming visually impaired users.
-- **Mitigation**: Only announce search updates when the user pauses typing for at least 1 second, or when search results are fully resolved.
+**After P0+P1 fixes, confidence will reach:** 🟢 High across all areas.
 
 ---
 
-# Responsive Design Risks
+## Remaining UX Risks
 
-### 1. Landscape Tablet Viewport Layout Shifts
-- **The Risk**: Tablets in landscape mode might display a mix of mobile and desktop styles, leading to visual bugs in dense layouts.
-- **Mitigation**: Thoroughly test CSS media queries, ensuring responsive grid cards cleanly transition to tables at exactly 768px (md) and 1024px (lg).
-
----
-
-# Interaction Consistency Review
-
-- **Validation**: All button elements, input containers, modal boxes, and navigation tabs now strictly share standard, unified styling rules (e.g. standard HSL colors, 8px grid gaps, 12px card borders, and smooth 300ms transition states). This consistency creates a cohesive, highly professional brand presence.
+1. **Language persistence not confirmed** — if `useLanguage` doesn't persist to `localStorage`, Tamil traders have a broken bilingual experience on every page load. Must verify implementation before considering fixed.
+2. **Membership form has no auto-save** — a trader who fills 3 steps and closes the browser loses all data. This is the highest drop-off risk remaining after P0 fixes.
+3. **Voter ID card page has no "member not found" empty state improvement** — the current state shows a generic message when EPIC is not found; it should offer a direct link to `/membership`.
 
 ---
 
-# Edge Case Review
+## Membership Form QA
 
-- **Multiple Matching Search Records**: When a user searches their name and finds multiple identical records, the system must clearly display secondary qualifiers (e.g. AC Number or District) to help them select the correct profile.
-- **Card Download Failure Recovery**: If the PDF generation step fails due to browser memory issues, provide an immediate fallback link to download a clean image format of the membership card instead.
-
----
-
-# Performance Considerations
-
-- **Asset Compression**: Compress the welcome video and background brand graphics using high-efficiency WebP/WebM formats to ensure pages load rapidly under standard cellular data connections.
-- **Dynamic Imports**: Utilize React lazy loading for heavy data-rich routes to minimize initial bundle size.
-
----
-
-# UX QA Checklist
-
-- [ ] Verify that navigating from `/voter-id` automatically pre-fills `/membership` Stage 1 fields when a profile match occurs.
-- [ ] Confirm that all form inputs are persistent in `sessionStorage` upon accidental page refreshes.
-- [ ] Test the 4-digit security PIN input auto-focus and clipboard paste features across different browsers.
-- [ ] Confirm that active page navigations display the bottom sliding indicator line.
-- [ ] Verify that all text passages do not exceed 80 characters in length.
+| Step | Check | Status |
+|------|-------|--------|
+| Step 1 | All fields have Tamil labels | ✅ Verify |
+| Step 1 | Mobile number validates 10 digits | ✅ Verify |
+| Step 2 | Business type dropdown has Tamil options | ✅ Verify |
+| Step 3 | Upload zone shows accepted file types | ⚠️ Add guidance |
+| Step 3 | Max file size validated with error message | ⚠️ Add |
+| Step 4 | Review shows all entered data | ⚠️ Verify |
+| Step 4 | Back button preserves entered data | ✅ Verify |
+| Step 5 | Download certificate works | ✅ Verify |
+| Step 5 | "Get membership card" link goes to /voter-id | ✅ Add |
+| All | Progress percentage shown | ⚠️ Add |
+| All | Keyboard navigation through steps works | ✅ Verify |
 
 ---
 
-# Accessibility QA Checklist
+## Voter ID Card Flow QA
 
-- [ ] Confirm that every interactive tab has an active `role="tab"` and `aria-selected` attribute.
-- [ ] Verify that high-contrast focus rings (`focus-visible:ring-2 focus-visible:ring-primary`) are visible on all interactive elements.
-- [ ] Check contrast ratios using color meters; ensure text contrast is at least 4.5:1 against its background.
-- [ ] Validate that all image graphics include helpful descriptive `alt` tags.
-
----
-
-# Mobile Testing Checklist
-
-- [ ] Verify that all category filter tabs, buttons, and navigation links have a minimum height of **44px**.
-- [ ] Test table card card layouts on smaller devices, ensuring horizontal scrolling is completely eliminated.
-- [ ] Confirm that input boxes do not trigger page zoom shifts on iOS Safari viewports.
-- [ ] Validate that mobile touch swipes cleanly dismiss bottom dialog sheets.
+| Check | Status |
+|-------|--------|
+| EPIC search auto-submits on Enter | ✅ Verify |
+| Loading state shown during lookup | ⚠️ Add skeleton |
+| Card renders correctly at 360px width | ✅ Verify |
+| Download button works on mobile Safari | ✅ Verify |
+| "Not found" state links to /membership | ⚠️ Add |
+| Card print layout correct on A4 | ✅ Verify |
 
 ---
 
-# User Testing Checklist
+## Dashboard QA
 
-- [ ] Conduct onboarding tests with a small group of local traders to observe how they navigate the multi-stage membership flow.
-- [ ] Monitor PIN input success rates, evaluating input speed and clarity.
-- [ ] Gather user feedback regarding the readability of Tamil fonts at small sizes.
-
----
-
-# Release Readiness Checklist
-
-- [ ] Confirm that all custom CSS classes and TypeScript types compile with absolute perfection.
-- [ ] Verify that heavy assets (welcome videos, large background graphics) are compressed and cached correctly.
-- [ ] Validate that all metadata tag parameters are fully populated in `/wings`.
-- [ ] Ensure that fallback routes are active for all unhandled URL states.
+| Check | Status |
+|-------|--------|
+| Membership status shown above fold | ⚠️ Verify position |
+| Expiry date displayed prominently | ✅ Verify |
+| Renew CTA shown if expiring within 60 days | ✅ Verify |
+| Activity feed has Tamil translations | ✅ Verify |
+| "Demo Mode" banner visible | ✅ DemoModeBanner present |
 
 ---
 
-# Final Recommendations
+## Wings/Divisions Page QA
 
-1. **Implement Image Compression on Mobile Uploads**: Integrate client-side image compression (`canvas` scaling) before starting the file upload process to reduce network load.
-2. **Setup Automated Lighthouse Tests**: Add automated performance checks in continuous integration pipelines to monitor accessibility and page speed before every deployment.
-3. **Continuous Localized Copy Refinement**: Keep refining translation keys, ensuring clear, accessible Tamil terms are used across all public-facing buttons and forms.
+| Check | Status |
+|-------|--------|
+| Search input has Tamil placeholder | ⚠️ Verify |
+| District filter renders all 38 districts | ✅ Verify |
+| Zone table scrolls horizontally on mobile | ✅ Verify |
+| Empty search result shows helpful message | ⚠️ Verify |
+| Wing contact info is accurate | ⚠️ Verify with client |
+
+---
+
+## Bilingual UX QA (Tamil/English)
+
+| Check | Status |
+|-------|--------|
+| About page fully translated | 🔴 Fix required |
+| Contact page header translated | 🟠 Fix required |
+| Footer mixed strings use t() | 🟠 Fix required |
+| SectionLabels never hardcode bilingual mix | 🟠 Fix required |
+| Language toggle visible on all pages | ✅ Verify |
+| Language persists on navigation | ⚠️ Verify localStorage |
+| Tamil font renders at minimum 14px | ⚠️ Add CSS rule |
+| FAQ accordion Tamil answers have lang="ta" | ⚠️ Add attribute |
+| Form placeholder text switches language | ✅ Verify FloatingInput |
+
+---
+
+## Accessibility Risks
+
+| Risk | Severity | Fix |
+|------|----------|-----|
+| Tamil text read with English TTS | High | Add lang="ta" attributes |
+| Language toggle lacks aria-label | Medium | Add aria-label |
+| text-[10px] labels below WCAG | High | Replace with text-xs minimum |
+| Video (broken) has no fallback text | Critical | Remove video section |
+| Dead footer links confuse screen readers | High | Fix links |
+| Form fields missing explicit label association | Medium | Verify FloatingInput uses htmlFor |
+| Color contrast: muted-foreground on white | Medium | Audit contrast ratios |
+
+---
+
+## Responsive Design Risks
+
+| Component | Risk | Fix |
+|-----------|------|-----|
+| Hero emblem | 260px too wide on 360px screen | Reduce to 180px mobile |
+| HorizontalSteps | Tamil text clips in fixed height | min-h instead of h-[] |
+| Services modals | Extend off-screen on short viewports | max-h-[85vh] |
+| Contact form 2-col | Too tight below 640px | md: breakpoint |
+| Testimonial carousel | Controls overlap text | Verify on 360px |
+| Sticky mobile CTA | May cover form submit button | Only show on non-form pages |
+
+---
+
+## Edge Case Review
+
+| Scenario | Current Handling | Recommended |
+|----------|-----------------|-------------|
+| Upload invalid file format in Step 3 | Unknown | Add client-side validation with error |
+| EPIC not found in voter-id search | Generic message | Add "Not a member yet? Join here →" link |
+| Expired certificate on dashboard | Unknown | Show "Renew now" banner prominently |
+| No wings in searched district | Unknown | Show "No wings registered yet" message |
+| Tamil font fails to load | Falls back to system font | Acceptable — system Tamil fonts exist on Android |
+| 5-step form interrupted mid-way | All data lost | Add localStorage auto-save |
+| Slow 2G form submission | No timeout handling | Add 30s timeout + retry message |
+| User submits contact form twice | May duplicate submission | Disable submit button after first click |
+
+---
+
+## Performance Considerations
+
+1. **`welcome_video.mp4` reference** — even though the file is deleted, the `<video>` element may cause a 404 network request on every home page load. Removing the element eliminates this request.
+2. **`VoterIdCard.tsx` imports** — imports 3 large PNG assets (~5MB total). These should be served from `public/` not bundled as base64.
+3. **`WordSwapper.tsx`** — full framer-motion import; use `LazyMotion` to defer.
+4. **Tamil font (Noto Sans Tamil)** — if added as a Google Fonts link, add `font-display: swap` and `preconnect` headers to avoid FOIT (flash of invisible text).
+
+---
+
+## Interaction Consistency Review
+
+| Pattern | Consistent? | Fix |
+|---------|-------------|-----|
+| Primary buttons use btn-primary | ❌ Contact page uses inline Tailwind | Fix contact form |
+| Scroll animations use ScrollReveal | ❌ About page timeline has none | Add ScrollReveal |
+| Section headers use SectionLabel + t() | ❌ About page hardcoded | Fix About page |
+| Form inputs use FloatingInput | ❌ Contact page uses raw inputs | Fix contact form |
+| Error states use FieldError | ❌ Contact page missing | Add FieldError |
+| Card padding uses p-5 sm:p-6 | ⚠️ Inconsistent p-4 vs p-5 vs p-6 | Standardise |
+
+---
+
+## UX QA Checklist
+
+- [ ] Broken video section removed from home page
+- [ ] Footer dead links fixed
+- [ ] About page has Tamil translations
+- [ ] Contact form uses FloatingInput
+- [ ] ScrollReveal applies delay prop correctly
+- [ ] HorizontalSteps uses min-h not fixed h
+- [ ] Language persists to localStorage
+- [ ] Demo placeholder text removed from Assistant
+- [ ] Footer CTA line added
+- [ ] "Start Application" CTA added after HorizontalSteps
+
+---
+
+## Accessibility QA Checklist
+
+- [ ] All Tamil text blocks have lang="ta"
+- [ ] Language toggle has aria-label
+- [ ] All text is minimum 12px (no text-[10px])
+- [ ] Tamil body text minimum 14px
+- [ ] All interactive elements have min 44×44px tap target
+- [ ] Focus rings visible on keyboard navigation
+- [ ] Video element removed (was broken + no fallback)
+- [ ] Footer links all point to real destinations
+
+---
+
+## Mobile Testing Checklist
+
+Test on: Chrome Android 360px, Safari iOS 375px, Chrome Android 412px
+
+- [ ] Hero CTA visible above fold (no scrolling required)
+- [ ] Sticky bottom CTA appears on home page
+- [ ] Language toggle tappable and functional
+- [ ] HorizontalSteps cards show full Tamil text
+- [ ] Services modal scrollable within viewport
+- [ ] Membership form inputs have proper keyboard types (tel, email, number)
+- [ ] Membership form step indicator fits on single line
+- [ ] Voter ID card readable at mobile viewport width
+- [ ] Contact form single-column below 768px
+- [ ] Footer columns readable, no overflow
+
+---
+
+## Bilingual Testing Checklist
+
+- [ ] Switch to Tamil — all 9 pages show Tamil
+- [ ] Navigate away and back — language persists
+- [ ] Refresh page — language persists
+- [ ] About page fully in Tamil when Tamil selected
+- [ ] Contact page header in Tamil
+- [ ] Footer links in Tamil
+- [ ] SectionLabel text in Tamil (no mixed string)
+- [ ] Form field labels in Tamil
+- [ ] Error messages in Tamil
+- [ ] FAQ questions and answers in Tamil
+
+---
+
+## Release Readiness Checklist
+
+- [ ] P0 bugs resolved (video, dead links, About page Tamil)
+- [ ] Contact form uses FloatingInput
+- [ ] No placeholder/demo text visible to end users
+- [ ] No fake phone numbers displayed
+- [ ] All footer links navigate correctly
+- [ ] Language toggle works on all 9 pages
+- [ ] Mobile sticky CTA does not overlap content
+- [ ] ScrollReveal delay applied (staggered animations on home)
+- [ ] Build completes without TypeScript errors
+- [ ] Vite build generates no chunk size warnings above 500KB
+
+---
+
+## Final Recommendations
+
+1. **Ship P0 fixes immediately** — the broken video and dead links are reputation-damaging. These are 30-minute fixes.
+2. **About page Tamil translations are P0** — it's the trust page; an English-only "About" for a Tamil traders' portal is the most ironic failure in the app.
+3. **Contact form FloatingInput migration** — 1 hour of work that makes the app feel like a single coherent product.
+4. **Language persistence** — verify the `useLanguage` hook implementation before any other bilingual work.
+5. **Do not launch new features** until the 3 critical bugs are resolved. A broken home page and dead footer links will undo all design effort.

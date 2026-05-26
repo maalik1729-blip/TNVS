@@ -6,7 +6,6 @@ import {
   GraduationCap, HeartPulse, ArrowRight, X, QrCode, CreditCard, CheckCircle2,
   Sparkles, ShieldAlert, Check, HelpCircle, Coins, Store, Factory, Globe, Rocket
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export const Route = createFileRoute("/services")({
@@ -111,6 +110,16 @@ function Services() {
     setSelectedBusinessType("");
     setLoading(false);
   };
+
+  // Body scroll lock when modal is open
+  useEffect(() => {
+    if (modal.type) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [modal.type]);
 
   // Escape key close handler
   useEffect(() => {
@@ -283,19 +292,14 @@ function Services() {
       </Section>
 
       {/* DYNAMIC PREMIUM MODALS */}
-      <AnimatePresence>
-        {modal.type && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <motion.div
+      {modal.type && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+            <div
               ref={modalRef}
               tabIndex={-1}
               role="dialog"
               aria-modal="true"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[calc(100dvh-32px)] focus:outline-none"
+              className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[calc(100dvh-32px)] focus:outline-none animate-fade-in"
             >
               {/* Header */}
               <div className="bg-primary text-primary-foreground px-6 py-4 flex items-center justify-between">
@@ -769,10 +773,9 @@ function Services() {
                 )}
 
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
-      </AnimatePresence>
 
     </div>
   );

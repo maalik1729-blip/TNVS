@@ -111,6 +111,8 @@ export function TestimonialCarousel() {
                       src={t.image}
                       alt={language === "ta" ? t.nameTa : t.name}
                       className="w-12 h-12 rounded-full object-cover border-2 border-primary/10 shadow-sm"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute -bottom-1 -right-1 bg-gold text-white p-0.5 rounded-full shadow-sm">
                       <Award className="w-3 h-3 text-gold-foreground" />

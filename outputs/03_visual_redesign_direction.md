@@ -1,137 +1,217 @@
-# Visual Design Philosophy
-
-The visual direction for the Tamil Nadu Vanigargalin Sangamam Portal is modeled after world-class corporate web applications (such as **Stripe**, **Linear**, and **Airtable**). It moves away from flat, generic municipal styles, adopting a premium, reliable aesthetic suitable for a major trade and commercial association.
-
-### Design Principles:
-- **Clean Structure & Layered Depth**: Utilize subtle borders, background fills, and soft compound shadows to group related modules.
-- **Glanceable Hierarchy**: Colors, sizes, and font-weights work together to ensure that critical conversion points stand out instantly.
-- **Micro-Animations & Continuity**: Use smooth interactive transitions (e.g. hover translations, scale spring effects) to make the interface feel alive and premium.
+# 03 — Visual Redesign Direction · TNVS
 
 ---
 
-# Typography Recommendations
+## Visual Design Philosophy
 
-### 1. Unified Font Scales & Families
-- **English Font Stack**: Implement **Outfit** or **Inter** as the primary font via Google Fonts. These modern sans-serif typefaces offer exceptional readability at small sizes and high-end elegance for headers.
-- **Tamil Font Stack**: Pair with **Mukta Malar** or **Noto Sans Tamil**. This ensures that weights match, preventing vertical alignment problems.
-- **Line Heights & Tracking**:
-  - **Headings**: `leading-tight` (1.15 to 1.25) with a slight letter spacing adjustment (`tracking-tight`).
-  - **Body Copy**: `leading-relaxed` (1.6 to 1.625) to provide breathing room for extensive text passages.
+TNVS occupies a rare category: **official-yet-accessible**. It must feel like a government body (trustworthy, authoritative, permanent) while being as easy to use as a modern app (clear, fast, friendly). The visual language should evoke Tamil Nadu's cultural identity — saffron, gold, deep navy — while applying them with the restraint of a Stripe or Linear-quality interface.
 
----
+**Design North Star:** *"The official app of Tamil Nadu's traders — serious enough to show at a bank, simple enough for a first-time smartphone user."*
 
-# Layout System
-
-### 1. Consistent Grid Spacing (8px Grid Rules)
-- All layout gaps, padding, and margins should strictly adhere to an 8px grid (4px, 8px, 16px, 24px, 32px, 48px, 64px). This guarantees mathematical consistency across screens.
-- **Max Width Bounds**: The main content wrapper is locked to `max-w-7xl` (1280px) with comfortable responsive gutter padding (`px-4 sm:px-6 lg:px-8`).
-
-### 2. Glassmorphic App Bar Shell
-- The navigation bar uses a translucent glass styling:
-  ```css
-  background-color: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-  ```
-- This keeps the UI feeling light, modern, and high-performance.
+Three visual principles:
+1. **Gold signals importance** — use saffron/gold only for primary actions, trust badges, and key numbers
+2. **Space communicates credibility** — generous whitespace signals an established, trusted organisation
+3. **Tamil is first-class** — Tamil text must be as visually refined as English; never an afterthought
 
 ---
 
-# Color Hierarchy
+## Typography System (Tamil + English)
 
-The portal shifts to a modern, harmonious palette of deep navies, warm golds, and soft cool-grays:
+### English Display Font
+- Use `font-display` for all headings — maps to a serif or semi-serif like `Playfair Display` or `DM Serif Display` — communicates heritage and authority
+- Heading scale: `h1 = 3rem–3.75rem`, `h2 = 2rem–2.5rem`, `h3 = 1.25rem–1.5rem`
 
-| Token Name | HSL Value | Hex Equivalent | Purpose |
-|---|---|---|---|
-| **Primary Navy** | `hsl(215, 85%, 25%)` | `#0D2E5C` | Core brand identity, primary buttons, major headings. |
-| **Accent Gold** | `hsl(38, 92%, 50%)` | `#F5A623` | High-value alerts, special membership highlights, primary stars. |
-| **Secondary Gray** | `hsl(210, 40%, 96%)` | `#F1F5F9` | Neutral background containers, inactive tabs. |
-| **Success Emerald** | `hsl(142, 70%, 45%)` | `#22C55E` | Positive validations, completed steps, verified checkmarks. |
-| **Alert Rose** | `hsl(350, 80%, 60%)` | `#EF4444` | Form errors, invalid verification codes, warnings. |
+### English Body Font
+- `font-sans` — Inter or system-ui at 15–16px base
+- Line height: 1.6 for body, 1.2–1.3 for headings
 
----
+### Tamil Font
+- Use `Noto Sans Tamil` or `Latha` for `font-tamil` class
+- **Minimum Tamil body size: 14px (text-sm)** — Tamil script is denser than Latin; 12px is illegible for users 40+
+- Tamil headings: minimum 18px
+- Line height for Tamil: 1.8 (Tamil script needs more vertical breathing room)
+- Apply `font-feature-settings: "kern" 1` for Tamil text
 
-# Navigation Redesign
-
-- **Visual Changes**:
-  - Clean up the header shell. Inactive links are colored in a muted slate (`text-slate-500 hover:text-slate-900 transition`).
-  - The active route is highlighted by a highly visible, slightly rounded primary blue dot underneath, rather than generic full-height borders.
-  - The CTA button **"Claim Membership"** is styled in Primary Navy with a slight interactive glow effect.
-
----
-
-# Dashboard Redesign
-
-- **Visual Changes**:
-  - **Metric Hierarchy**: Establish three sizes of cards. The main stat card ("Total Active Traders") is double-width, featuring a deep Navy backdrop with gold details. Secondary counts utilize soft slate backgrounds with bold numbers.
-  - **Visual Charts**: Instead of static grid layouts, data points (e.g. Zone representations) display modern HSL Hued horizontal bar components with percentage tags.
+### What to Remove
+- `text-[10px]` usage — replace all instances with minimum `text-xs` (12px)
+- Mixed-language hardcoded strings in SectionLabel — all labels must use `t()` for clean rendering
 
 ---
 
-# Card Component Redesign
+## Color Hierarchy
 
-- **Visual Changes**:
-  - Cards feature a border radius of 16px (`rounded-2xl`).
-  - Border style: `1px solid rgba(226, 232, 240, 0.8)` (extremely subtle).
-  - Shadow styling:
-    ```css
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-    ```
-  - **Hover Action**: Smooth translateY movement and drop-shadow amplification:
-    ```css
-    transform: translateY(-4px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
-    ```
+### Primary Palette (keep)
+- `primary` — deep navy (#1a2f5e range) — authority, trust
+- `gold` / `saffron` — warm amber/orange — Tamil identity, importance
+- `background` — off-white — clean, accessible
 
----
+### Usage Rules
+- **Gold = action or highlight** — use only for: primary CTA buttons, key stats, step numbers, trust badges
+- **Navy = structural** — headers, footer, progress bars
+- **Slate grays = content** — body text, captions, secondary info
+- **Red/amber = alerts** — errors, warnings, expired status only
 
-# Table Redesign
-
-- **Visual Changes**:
-  - **Sticky Headers**: Desktop table headers utilize sticky positions with a clean, low-opacity white background.
-  - **Interactive Rows**: Add a subtle hover state: `hover:bg-slate-50/70 transition-colors duration-200`.
-  - **Numeric Alignments**: All numerical data (AC Numbers, Voter counts, Totals) utilize monospaced font features (`font-mono` or `tabular-nums`) and are right-aligned to align decimal columns.
+### What to Remove
+- Random use of `text-rose-500`, `text-indigo-500`, `text-amber-500` for welfare scheme icons — standardise to primary/gold/slate
+- `bg-slate-50/40` background tints used inconsistently — standardise section backgrounds to either `bg-background` or `bg-muted/40`
 
 ---
 
-# Form Redesign
+## Spacing Scale
 
-- **Visual Changes**:
-  - Inputs feature standard heights of 44px on mobile and 48px on desktop, with generous left padding (pl-10 for search icons).
-  - Custom Focus Ring: Upon activation, the border transitions to Primary Navy, accompanied by an elegant focus shadow:
-    ```css
-    box-shadow: 0 0 0 4px rgba(13, 46, 92, 0.1);
-    ```
-  - Validation error inputs utilize Alert Rose borders and a subtle, pulsating error message below.
+Adopt a strict 4px grid:
+- `space-y-2` = 8px
+- `space-y-4` = 16px
+- `space-y-6` = 24px
+- `space-y-8` = 32px
+- `py-12` = 48px for section padding (mobile)
+- `py-16` = 64px for section padding (desktop)
 
----
-
-# Button System
-
-- **Primary Button**: Solid deep Primary Navy, white text, 8px rounded corner, with a clean forward-arrow icon that shifts slightly rightward on hover.
-- **Secondary Button**: Clean slate-bordered button with transparent backgrounds, transitioning to soft grey highlights on hover.
-- **Disabled State**: Opacity shifted to 50%, backgrounds styled in muted grey, with default cursor lock.
+Section padding is currently inconsistent — some sections use `py-10`, others `py-16`. Standardise to `py-12 md:py-16` for all `<Section>` wrappers.
 
 ---
 
-# Mobile-first Design Adjustments
+## Layout System
 
-- Horizontal grid scroll containers automatically display fading gradient overlays on the right edges, indicating that more content is accessible via swiping.
-- Bottom sheet drawer layouts replace complex floating absolute overlays.
+- **Max content width:** `max-w-7xl` (1280px) — keep as-is
+- **Horizontal padding:** `px-4 sm:px-6 lg:px-8` — add `sm:px-6 lg:px-8` to prevent edge-to-edge content on tablets
+- **Grid system:** Use `grid` with `gap-6 md:gap-8` consistently; avoid mixing `gap-5` and `gap-6` in the same page
+
+### Section Structure
+Every content section should follow:
+```
+SectionLabel (category tag)
+H2 heading (2–6 words max)
+Supporting subtitle (1 line)
+Content
+```
+Never skip the SectionLabel — it provides cognitive anchoring.
 
 ---
 
-# UI Consistency Rules
+## Navigation Redesign
 
-- **Corner Radii**:
-  - Big CTA/Containers: 16px (`rounded-2xl`)
-  - Standard Cards/Images: 12px (`rounded-xl`)
-  - Input Boxes/Buttons: 8px (`rounded-lg`)
-- **Transitions**: All interactive element transitions use `transition-all duration-300 ease-out`.
+**Current problems:** Language toggle unclear, no "My Dashboard" for logged-in users, "Join" doesn't stand out.
+
+**Redesigned nav:**
+1. **Left:** Logo + org name (Tamil subtitle below)
+2. **Centre:** Nav links (Home, Services, Divisions, Support)
+3. **Right:** `[EN | தமிழ்]` toggle (always visible, pill-shaped) + `[Join →]` button (gold fill) + `[Dashboard]` icon (if logged in)
+
+**Mobile menu:**
+1. Language toggle at top of drawer (large, easy to tap)
+2. Nav links in large tap-target rows (min 48px height)
+3. "Apply for Membership" CTA button at bottom of drawer (full-width gold)
 
 ---
 
-# Visual Simplification Opportunities
+## Home Page Redesign
 
-- Remove complex structural division lines inside panels; use clean spacing and subtle background shifts (`bg-slate-50`) to separate sections.
-- Mute secondary textual labels by dropping their contrast value (`text-slate-400`).
+### Hero
+- Keep current layout (text left, emblem right) — it works
+- **Add**: A thin top bar above the nav (gov-stripe style) showing "Reg. No. 2012/TNVS · Government of Tamil Nadu" — this immediately signals authority before the user even reads the headline
+- **Remove**: The broken video section entirely
+- **Replace video section with**: Two large member testimonial quotes side-by-side — "Why I joined" format with photo, name, district, and business type
+
+### Stats Bar
+- Move stats **directly below the hero** (before "How It Works") — they're the strongest trust signal
+- Add subtle animated number counters (already implemented in `AnimatedCounter`) — keep
+
+### "How It Works" Section
+- Add a primary "Start My Application →" button **directly after the 4 steps** — conversion opportunity currently missed
+
+### Services Grid
+- Label it "Most Used Services" not just "Our Services" — specificity converts better
+
+### CTA Section (bottom of home)
+- Keep the full-width navy CTA block — it's strong
+- Add "No paperwork. No office visit. Done in 5 minutes." as a subtitle line
+
+---
+
+## Membership Form Redesign
+
+- **Step indicator**: Add percentage text ("40% complete") alongside step pills
+- **Step card background**: Light `bg-muted/30` tint to visually separate the form from page chrome
+- **Input labels**: All inputs use FloatingInput — keep this, it's good
+- **Error states**: Red border + inline error message below field (currently missing on some fields)
+- **Step 4 (Review)**: Show a structured summary card — two-column table of all entered data before payment
+- **Step 5 (Success)**: Three large action cards — "Download Certificate", "Get Membership Card", "Share on WhatsApp" — with icons
+
+---
+
+## Voter ID Card Visual Redesign
+
+The card itself (`VoterIdCard.tsx`) is well-designed. The page UX needs improvement:
+- **Above card**: Large search input with auto-submit on Enter (already exists — keep)
+- **Card render area**: Add a subtle shadow and "Print / Download" sticky bar below the card
+- **Empty state**: Custom illustration + "Enter your EPIC number above to generate your card" — remove the generic empty state
+
+---
+
+## Card Component System
+
+Two card types used throughout:
+1. **Action Card** (services, steps, wings) — `rounded-2xl`, subtle border, hover lift shadow, gold accent corner
+2. **Info Card** (stats, contact info, timeline) — `rounded-xl`, `bg-muted/40` background, no border, no hover state
+
+Rules:
+- Action cards: `hover:shadow-lg hover:border-primary/20 transition-all duration-200`
+- Info cards: `bg-muted/40 rounded-xl p-5` — no hover effect
+- Card padding: `p-5 sm:p-6` — never `p-4` (too tight for Tamil text)
+
+---
+
+## Form Component System
+
+All forms must use:
+- `FloatingInput` for text/number fields
+- `FloatingTextarea` for multiline
+- `FloatingSelect` for dropdowns
+- `FieldError` for inline error display
+- Consistent submit button: `btn-primary` class, min height 44px, full-width on mobile
+
+The contact form is the only exception currently — fix it to match.
+
+---
+
+## Button System
+
+Three types in use:
+1. **`btn-primary`** — navy fill, white text — for primary actions (Apply, Submit, Pay)
+2. **Gold variant** — `btn-primary bg-gold text-gold-foreground` — for the main CTA on home page only
+3. **Ghost/link** — `text-primary font-semibold hover:underline` — for secondary navigation actions
+
+Remove: Raw `<button className="inline-flex items-center gap-2 bg-primary ...">` inline styles — use `btn-primary` class consistently.
+
+---
+
+## Mobile-first Design Rules
+
+1. **Min tap target: 44×44px** for all buttons and interactive elements
+2. **Min Tamil body text: 14px** — no `text-[10px]` or `text-xs` for Tamil content
+3. **Hero emblem**: `max-w-[180px]` on mobile (currently 260px — too large)
+4. **Card heights**: Never fixed `h-[...]` — always `min-h-[...]` with content-driven growth
+5. **Modals**: `max-h-[85vh]` with `overflow-y-auto` inside modal body
+6. **Form grid**: `sm:grid-cols-2` → `md:grid-cols-2` (single column up to 768px for complex forms)
+
+---
+
+## UI Consistency Rules
+
+1. Section padding: `py-12 md:py-16` — everywhere
+2. Section label: always `<SectionLabel>{t(ta, en)}</SectionLabel>` — never hardcoded bilingual
+3. Cards: `rounded-2xl` for interactive, `rounded-xl` for info
+4. Gaps: `gap-6 md:gap-8` — no `gap-5`
+5. Heading after SectionLabel: always `mt-3`
+6. Tamil font class: `font-tamil` on all Tamil string containers
+7. `lang="ta"` attribute on all Tamil text elements
+
+---
+
+## Visual Simplification Opportunities
+
+1. **Remove the decorative orb blobs** from the hero and HorizontalSteps — they add weight without meaning on mobile
+2. **Remove `ring-4 ring-slate-100`** from the video container (being deleted anyway)
+3. **Consolidate `text-slate-X` shades** — the codebase uses `text-slate-800`, `text-slate-600`, `text-slate-500`, `text-slate-400` inconsistently — pick `text-ink` (darkest), `text-muted-foreground` (medium), `text-slate-400` (lightest) and stick to those 3
+4. **Remove unused `shadow-xs`** — not a standard Tailwind class; replace with `shadow-sm`

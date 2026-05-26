@@ -123,7 +123,7 @@ function Home() {
   const { language, t } = useLanguage();
 
   return (
-    <div>
+    <div className="pb-16 sm:pb-0">
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-border">
 
@@ -219,7 +219,7 @@ function Home() {
             <img
               src={templeLogo}
               alt="Tamil Nadu Vanigargalin Sangamam emblem"
-              className="w-full max-w-[260px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] h-auto object-contain mx-auto"
+              className="w-full max-w-[180px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] h-auto object-contain mx-auto"
               width={400}
               height={400}
             />
@@ -241,7 +241,7 @@ function Home() {
               <div className="font-display text-2xl sm:text-4xl md:text-5xl font-semibold text-primary tabular-nums">
                 <AnimatedCounter value={s.v} />
               </div>
-              <div className="text-[10px] sm:text-xs text-muted-foreground mt-1 sm:mt-2 uppercase tracking-wider font-semibold">
+              <div className="text-xs text-muted-foreground mt-1 sm:mt-2 uppercase tracking-wider font-semibold">
                 {t(s.t, s.l)}
               </div>
             </ScrollReveal>
@@ -249,36 +249,17 @@ function Home() {
         </div>
       </Section>
 
-      {/* WELCOME VIDEO SECTION */}
-      <Section className="py-12 border-t border-border">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <ScrollReveal direction="up" blur>
-            <SectionLabel>{t("வரவேற்பு உரை", "Welcome Message")}</SectionLabel>
-            <h2 className="mt-3 font-display text-2xl md:text-3.5xl font-bold text-slate-800 leading-tight">
-              {t("அதிகாரப்பூர்வ வரவேற்பு உரை மற்றும் அறிமுகம்", "Official Welcome Address & Introduction")}
-            </h2>
-            <p className="mt-2 text-xs md:text-sm text-slate-500 font-tamil max-w-xl mx-auto leading-relaxed">
-              {t(
-                "தமிழ்நாடு வணிகர்களின் சங்கமம் அமைப்பின் நோக்கங்கள் மற்றும் சேவைகள் பற்றிய அதிகாரப்பூர்வ நேரடி அறிமுக வீடியோ.",
-                "Watch our official welcome video to learn about the objectives and welfare schemes of the Tamil Nadu Traders association."
-              )}
-            </p>
-          </ScrollReveal>
-          <ScrollReveal direction="scale" delay={0.12} duration={0.8} blur>
-            <div className="relative rounded-3xl overflow-hidden border border-slate-200/80 shadow-2xl aspect-video bg-slate-950/90 group ring-4 ring-slate-100">
-              <video
-                className="w-full h-full object-cover"
-                controls
-                preload="metadata"
-                src="/welcome_video.mp4"
-              />
-            </div>
-          </ScrollReveal>
-        </div>
-      </Section>
-
       {/* HOW IT WORKS — Horizontal scroll-linked steps */}
       <HorizontalSteps />
+
+      {/* CTA after steps */}
+      <div className="flex justify-center py-8 border-b border-border bg-slate-50/40">
+        <Link to="/membership" className="btn-primary text-sm sm:text-base px-8">
+          <Users className="w-4 h-4" aria-hidden="true" />
+          {t("இப்போதே விண்ணப்பிக்கவும்", "Start My Application")}
+          <ArrowRight className="w-4 h-4" aria-hidden="true" />
+        </Link>
+      </div>
 
       {/* TOP 3 SERVICES */}
       <Section className="pt-10 pb-16 border-t border-border">
@@ -343,7 +324,10 @@ function Home() {
                   <AccordionTrigger className="font-display font-semibold text-slate-800 text-sm md:text-base py-5 hover:no-underline hover:text-primary">
                     {t(faq.q, faq.e)}
                   </AccordionTrigger>
-                  <AccordionContent className="text-slate-600 text-xs md:text-sm leading-relaxed pb-5 border-t border-slate-50 pt-3 font-tamil">
+                  <AccordionContent
+                    className="text-slate-600 text-xs md:text-sm leading-relaxed pb-5 border-t border-slate-50 pt-3 font-tamil"
+                    lang={language === "ta" ? "ta" : "en"}
+                  >
                     {t(faq.a, faq.ae)}
                   </AccordionContent>
                 </AccordionItem>
@@ -391,6 +375,17 @@ function Home() {
           </div>
         </ScrollReveal>
       </Section>
+      {/* Sticky mobile CTA */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-primary/95 backdrop-blur-sm border-t border-primary/20 px-4 py-3">
+        <Link
+          to="/membership"
+          className="btn-primary w-full justify-center text-sm py-2.5"
+        >
+          <Users className="w-4 h-4" aria-hidden="true" />
+          {t("இணைவு — ₹500/ஆண்டு", "Join — ₹500/year")}
+          <ArrowRight className="w-4 h-4" aria-hidden="true" />
+        </Link>
+      </div>
     </div>
   );
 }

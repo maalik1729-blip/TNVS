@@ -511,6 +511,17 @@
     animation: slide-up 0.3s ease-out both;
   }
 
+  /* === SECTION REVEAL (replaces framer-motion whileInView) === */
+  .section-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .section-reveal.section-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   /* === SECTION LABEL === */
   .section-label {
     display: inline-flex;
@@ -709,6 +720,25 @@
       padding: 0.875rem 1rem;
     }
   }
+
+  /* === TAMIL TYPOGRAPHY === */
+  [lang="ta"], .font-tamil {
+    font-family: var(--font-tamil);
+    line-height: 1.8;
+    word-break: break-word;
+  }
+
+  /* === WORD SWAPPER ANIMATION (CSS fallback) === */
+  @keyframes word-enter {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes word-exit {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-12px); }
+  }
+  .word-enter { animation: word-enter 0.25s ease forwards; }
+  .word-exit  { animation: word-exit 0.2s ease forwards; }
 }
 
 
