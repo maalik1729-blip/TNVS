@@ -1,7 +1,8 @@
 {
   "version": 2,
+  "outputDirectory": "dist/client",
   "rewrites": [
-    { "source": "/assets/(.*)", "destination": "/public/assets/$1" },
     { "source": "/(.*)", "destination": "/api/index" }
   ]
 }
+
