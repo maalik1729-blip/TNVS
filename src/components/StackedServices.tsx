@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, type ComponentType } from "react";
+import { useState, type ComponentType } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -26,60 +26,13 @@ interface StackedServicesProps {
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
-const HEADER_OFFSET = 88;   // fixed header height (px)
-const STACK_OFFSET  = 28;   // px gap between successive sticky tops
+const HEADER_OFFSET = 100;  // clean desktop header offset
+const STACK_OFFSET  = 32;   // stack spacing per card
 
 // ─── Component ───────────────────────────────────────────────────────────────
 export function StackedServices({ services }: StackedServicesProps) {
   const { t } = useLanguage();
-  const wrapperRef  = useRef<HTMLDivElement>(null);
-  const cardRefs    = useRef<(HTMLDivElement | null)[]>([]);
-  const [isMobile, setIsMobile] = useState(false);
-  const [scales, setScales]       = useState<number[]>(() => services.map(() => 1));
-  const [dims, setDims]           = useState<number[]>(() => services.map(() => 1));
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (isMobile) return;
-    const cards = cardRefs.current;
-    if (!cards.length) return;
-
-    const onScroll = () => {
-      const newScales: number[] = [];
-      const newDims:   number[] = [];
-
-      cards.forEach((card, i) => {
-        if (!card) { newScales.push(1); newDims.push(1); return; }
-        const cardRect = card.getBoundingClientRect();
-        const stickyTop = HEADER_OFFSET + i * STACK_OFFSET;
-
-        // How far past its sticky-top position is the card?
-        const pushed = Math.max(0, stickyTop - cardRect.top);
-        const cardH  = Math.max(cardRect.height, 1);
-        const progress = Math.min(1, pushed / cardH);
-
-        const isLast = i === services.length - 1;
-        newScales.push(isLast ? 1 : 1 - progress * 0.05);
-        newDims.push(isLast ? 1 : 1 - progress * 0.15);
-      });
-
-      setScales(newScales);
-      setDims(newDims);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [services, isMobile]);
 
   // Dynamically assign appropriate illustration or photograph to each service card
   const getCardImage = (idx: number, to: string) => {
@@ -90,22 +43,16 @@ export function StackedServices({ services }: StackedServicesProps) {
   };
 
   return (
-    <div ref={wrapperRef} className="relative" style={{ paddingBottom: isMobile ? "0px" : "180px" }}>
+    <div className="relative space-y-6 md:space-y-0 md:pb-[140px] w-full">
       {services.map((s, idx) => (
         <div
           key={s.e}
-          ref={(el) => { cardRefs.current[idx] = el; }}
-          className="sticky-stack-card"
+          className="md:sticky transition-all duration-300"
           style={{
-            position: isMobile ? "relative" : "sticky",
-            top: isMobile ? "auto" : `${HEADER_OFFSET + idx * STACK_OFFSET}px`,
+            top: `${HEADER_OFFSET + idx * STACK_OFFSET}px`,
             zIndex: hoveredIdx === idx ? 100 : 10 + idx,
-            marginBottom: idx < services.length - 1 ? (isMobile ? "1.5rem" : "2rem") : 0,
-            transform: isMobile 
-              ? "none" 
-              : `scale(${scales[idx] ?? 1}) translateY(${hoveredIdx === idx ? "-12px" : "0px"}) translateX(${hoveredIdx === idx ? "12px" : "0px"})`,
-            filter: isMobile ? "none" : `brightness(${dims[idx] ?? 1})`,
-            transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease",
+            // Spacing before cards begin stacking
+            paddingBottom: idx < services.length - 1 ? "1.5rem" : 0,
           }}
         >
           <Link
@@ -117,6 +64,10 @@ export function StackedServices({ services }: StackedServicesProps) {
             style={{
               borderRadius: "1.5rem",
               borderTop: `3px solid oklch(${0.55 + idx * 0.08} 0.14 ${252 - idx * 30} / ${0.35 + idx * 0.05})`,
+              transform: hoveredIdx === idx ? "scale(1.02) translateY(-6px) translateX(6px)" : "none",
+              boxShadow: hoveredIdx === idx 
+                ? "0 25px 50px -12px oklch(0.20 0.025 252 / 0.25)" 
+                : "0 10px 30px -10px oklch(0.20 0.025 252 / 0.15)",
             }}
           >
             {/* Left Side: Crisp, highly readable text layout */}
