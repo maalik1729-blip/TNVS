@@ -198,10 +198,12 @@
   .font-tamil {
     font-family: var(--font-tamil);
     font-family: 'Noto Sans Tamil', 'Noto Serif Tamil', sans-serif;
+    line-height: 1.55 !important;
   }
   h1:lang(ta), h2:lang(ta), h3:lang(ta), h4:lang(ta),
   .font-display.font-tamil {
     font-family: 'Noto Serif Tamil', serif;
+    line-height: 1.25 !important;
   }
   /* Ensure inputs and buttons are touch-friendly by default */
   input, textarea, select, button {

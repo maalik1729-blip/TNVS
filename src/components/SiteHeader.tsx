@@ -208,7 +208,7 @@ export function SiteHeader() {
           </nav>
 
           {/* Desktop Right Controls */}
-          <div className="hidden md:flex items-center gap-2.5">
+          <div className="hidden md:flex items-center gap-2">
 
             {/* Language Toggle */}
             <button
@@ -222,13 +222,19 @@ export function SiteHeader() {
               <span className={language === "en" ? "font-bold text-primary" : "text-slate-400"}>EN</span>
             </button>
 
-
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-1.5 border border-primary/20 bg-primary/6 text-primary px-4 py-2 rounded-[10px] text-sm font-semibold hover:bg-primary hover:text-white transition duration-200 active:scale-95 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
             >
               <User className="w-3.5 h-3.5" aria-hidden="true" />
               {language === "ta" ? "எனது கணக்கு" : "My Account"}
+            </Link>
+
+            <Link
+              to="/membership"
+              className="btn-primary select-none cursor-pointer"
+            >
+              {language === "ta" ? "உறுப்பினர் சேர்க்கை" : "Apply for Membership"}
             </Link>
           </div>
 

@@ -86,8 +86,13 @@ function PhotoBox({ photoUrl, size = 90 }: { photoUrl?: string; size?: number })
    MAIN EXPORT
 ══════════════════════════════════════════════ */
 export function VoterIdCard({ voter, template }: { voter: Voter; template: Template }) {
-  if (template === "back") return <GovBack voter={voter} />;
-  return <GovFront voter={voter} />;
+  return (
+    <div className="card-scale-wrapper">
+      <div className="responsive-card-scale">
+        {template === "back" ? <GovBack voter={voter} /> : <GovFront voter={voter} />}
+      </div>
+    </div>
+  );
 }
 
 /* ══════════════════════════════════════════════
