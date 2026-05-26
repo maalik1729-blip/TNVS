@@ -170,11 +170,11 @@ export function StackedServices({ services }: StackedServicesProps) {
             </div>
 
             {/* Right Side: Photograph blending seamlessly into the card background */}
-            <div className="w-full md:w-2/5 relative min-h-[200px] md:min-h-auto overflow-hidden bg-card flex items-center justify-center">
+            <div className="w-full md:w-2/5 relative min-h-[200px] md:min-h-auto bg-card flex items-center justify-center">
               {/* Fade mask overlay: blends the photo into the left side clean card bg */}
-              <div className="hidden md:block absolute inset-y-0 -left-1 w-24 bg-gradient-to-r from-card via-card to-transparent z-10" />
+              <div className="hidden md:block absolute inset-y-0 -left-3 w-28 bg-gradient-to-r from-card via-card to-transparent z-10" />
               {/* Fade mask overlay for mobile top bleed */}
-              <div className="block md:hidden absolute inset-x-0 -top-1 h-16 bg-gradient-to-b from-card via-card to-transparent z-10" />
+              <div className="block md:hidden absolute inset-x-0 -top-3 h-20 bg-gradient-to-b from-card via-card to-transparent z-10" />
 
               {getCardImage(idx, s.to) === "mockup" ? (
                 <div className="w-full h-full p-6 flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-950">
@@ -186,7 +186,7 @@ export function StackedServices({ services }: StackedServicesProps) {
                 <img
                   src={getCardImage(idx, s.to) as string}
                   alt={s.e}
-                  className="w-[calc(100%+4px)] -ml-[2px] h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
                   loading="lazy"
                 />
               )}
