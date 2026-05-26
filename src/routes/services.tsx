@@ -203,7 +203,7 @@ function Services() {
   };
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-x-hidden">
       <section className="border-b border-border bg-secondary/40">
         <div className="max-w-7xl mx-auto px-4 py-10 sm:py-14 md:py-16">
           <SectionLabel>{t("சேவைகள்", "Services")}</SectionLabel>
