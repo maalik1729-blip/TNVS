@@ -22,8 +22,8 @@ export function HorizontalSteps() {
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-58%"]);
 
   return (
-    <section ref={targetRef} className="relative h-auto lg:h-[260vh] bg-slate-50/30 dark:bg-slate-900/5">
-      <div className="relative lg:sticky lg:top-0 h-auto lg:h-screen flex items-center overflow-visible lg:overflow-hidden py-10 lg:py-0">
+    <section ref={targetRef} className="relative h-auto lg:h-[160vh] bg-slate-50/30 dark:bg-slate-900/5">
+      <div className="relative lg:sticky lg:top-0 h-auto lg:h-screen flex items-center overflow-visible lg:overflow-hidden pt-12 pb-4 lg:py-0">
         <div className="max-w-7xl mx-auto px-4 w-full grid lg:grid-cols-12 gap-10 items-center">
           
           {/* Left Static Panel */}

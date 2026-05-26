@@ -315,7 +315,7 @@ function Home() {
       <HorizontalSteps />
 
       {/* TOP 3 SERVICES */}
-      <Section className="py-16 border-t border-border">
+      <Section className="pt-10 pb-16 border-t border-border">
         <ScrollReveal direction="up" blur className="flex items-end justify-between flex-wrap gap-4 mb-10">
           <div>
             <SectionLabel>{t("எங்கள் சேவைகள்", "Our Services")}</SectionLabel>
