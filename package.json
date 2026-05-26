@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "voter-api": "node voter-api-server.js",
-    "build": "vite build",
+    "build": "vite build && node scripts/copy-assets.js",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint ."
@@ -55,6 +55,7 @@
     "lenis": "^1.3.23",
     "lucide-react": "^0.575.0",
     "mysql2": "^3.22.3",
+    "nitro": "^3.0.260522-beta",
     "react": "^19.2.0",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.0",

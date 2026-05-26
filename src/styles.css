@@ -236,6 +236,8 @@
   html {
     font-family: var(--font-body);
     font-size: 16px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   body {
     background-color: var(--color-background);
@@ -244,6 +246,8 @@
     background-image:
       radial-gradient(var(--dot-color) 1.2px, transparent 1.2px);
     background-size: 24px 24px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
@@ -633,6 +637,31 @@
     -webkit-background-clip: text;
     color: transparent !important;
     animation: text-gradient 5s ease infinite;
+  }
+
+  /* Responsive scale wrapper for CR80 standard ID cards */
+  .card-scale-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+    padding: 10px 0;
+  }
+  .responsive-card-scale {
+    transform-origin: center center;
+    transition: transform 0.2s ease-in-out;
+    flex-shrink: 0;
+  }
+  @media (max-width: 400px) {
+    .responsive-card-scale {
+      transform: scale(0.85);
+    }
+  }
+  @media (max-width: 350px) {
+    .responsive-card-scale {
+      transform: scale(0.74);
+    }
   }
 }
 

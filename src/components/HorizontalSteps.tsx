@@ -22,8 +22,8 @@ export function HorizontalSteps() {
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-58%"]);
 
   return (
-    <section ref={targetRef} className="relative h-[200vh] lg:h-[260vh] bg-slate-50/30 dark:bg-slate-900/5">
-      <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+    <section ref={targetRef} className="relative h-auto lg:h-[260vh] bg-slate-50/30 dark:bg-slate-900/5">
+      <div className="relative lg:sticky lg:top-0 h-auto lg:h-screen flex items-center overflow-visible lg:overflow-hidden py-10 lg:py-0">
         <div className="max-w-7xl mx-auto px-4 w-full grid lg:grid-cols-12 gap-10 items-center">
           
           {/* Left Static Panel */}
@@ -48,8 +48,8 @@ export function HorizontalSteps() {
             </div>
           </div>
 
-          {/* Right Horizontal Track */}
-          <div className="lg:col-span-8 overflow-hidden relative py-6 select-none">
+          {/* Right Horizontal Track (Desktop) */}
+          <div className="hidden lg:block lg:col-span-8 overflow-hidden relative py-6 select-none">
             <motion.div style={{ x }} className="flex gap-6 w-max pr-12">
               {HOW_IT_WORKS.map((step, idx) => (
                 <div
@@ -86,6 +86,39 @@ export function HorizontalSteps() {
                 </div>
               ))}
             </motion.div>
+          </div>
+
+          {/* Right Vertical Track (Mobile / Tablet) */}
+          <div className="lg:hidden w-full grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
+            {HOW_IT_WORKS.map((step, idx) => (
+              <div
+                key={step.n}
+                className="w-full p-6 bg-card border border-border rounded-2xl shadow-md flex flex-col justify-between h-auto min-h-[160px] relative group"
+              >
+                {/* Corner Accent */}
+                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-gold/10 to-transparent rounded-tr-2xl rounded-bl-full" />
+                
+                {/* Header: Step Number */}
+                <div className="flex justify-between items-center">
+                  <span className="font-display text-2xl font-bold text-gold/80 dark:text-gold/90">
+                    {step.n}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider font-semibold bg-muted px-2 py-0.5 rounded text-muted-foreground">
+                    {t(`படி ${idx+1}`, `Step ${idx+1}`)}
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="space-y-2 mt-3">
+                  <h3 className="font-display font-semibold text-ink text-sm sm:text-base">
+                    {t(step.t, step.e)}
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed font-tamil">
+                    {t(step.td, step.d)}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
           
         </div>

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Section, SectionLabel } from "@/components/Section";
-import { Search, ArrowRight, ArrowLeft, Sparkles, MapPin, Globe, Users, Award, ShieldCheck, ChevronRight, ChevronDown, Phone, Mail } from "lucide-react";
+import { Search, ArrowRight, ArrowLeft, Sparkles, MapPin, Globe, Users, Award, ShieldCheck, ChevronRight, ChevronDown, Phone, Mail, ArrowUpDown } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { WINGS } from "@/data/wings";
 import { ZONE_BREAKDOWN } from "@/data/zones";
@@ -219,162 +219,52 @@ function Wings() {
   const [selectedZone, setSelectedZone] = useState<string>("all");
   const [selectedDistrict, setSelectedDistrict] = useState<string>("all");
 
-  // Collapsible tree expanded nodes state
-  const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
+  // Zones State (Extended for Sequential Progressive Explorer)
+  const [selectedDeptZone, setSelectedDeptZone] = useState<string>("all");
+  const [selectedWingZone, setSelectedWingZone] = useState<string>("all");
 
-  // Tree data structure grouped by Zone and District
-  const treeData = useMemo(() => {
-    const zonesMap: Record<string, Set<string>> = {};
-    ZONE_BREAKDOWN.forEach(item => {
-      if (selectedZone !== "all" && item.zone !== selectedZone) return;
-      if (selectedDistrict !== "all" && item.district !== selectedDistrict) return;
+  const explorerRef = useRef<HTMLDivElement>(null);
 
-      if (!zonesMap[item.zone]) {
-        zonesMap[item.zone] = new Set();
-      }
-      zonesMap[item.zone].add(item.district);
-    });
-
-    return Object.entries(zonesMap).map(([zoneName, districtsSet]) => ({
-      zoneName,
-      districts: Array.from(districtsSet).sort()
-    })).sort((a, b) => a.zoneName.localeCompare(b.zoneName));
-  }, [selectedZone, selectedDistrict]);
-
-  // Compute search matches and expand paths automatically
-  const getSearchMatches = useMemo(() => {
-    const term = zoneQuery.toLowerCase().trim();
-    if (!term) return { visibleNodes: null, autoExpanded: null };
-
-    const visibleNodes = new Set<string>();
-    const autoExpanded = new Set<string>();
-
-    treeData.forEach(({ zoneName, districts }) => {
-      let zoneMatches = zoneName.toLowerCase().includes(term);
-
-      districts.forEach(district => {
-        let districtMatches = district.toLowerCase().includes(term);
-
-        DEPARTMENTS.forEach(dept => {
-          let deptMatches = dept.nameEn.toLowerCase().includes(term) || dept.nameTa.toLowerCase().includes(term);
-
-          const deptWings = WINGS.filter(w => dept.wings.includes(w.id));
-          deptWings.forEach(wing => {
-            let wingMatches = wing.nameEn.toLowerCase().includes(term) || wing.nameTa.toLowerCase().includes(term);
-
-            const officers = generateOfficers(district, wing.id, wing.nameEn, wing.nameTa);
-            const officerMatches = officers.some(off =>
-              off.nameEn.toLowerCase().includes(term) ||
-              off.nameTa.toLowerCase().includes(term) ||
-              off.email.toLowerCase().includes(term) ||
-              off.phone.toLowerCase().includes(term)
-            );
-
-            if (wingMatches || officerMatches) {
-              const wingKey = `wing:${zoneName}:${district}:${dept.id}:${wing.id}`;
-              const deptKey = `dept:${zoneName}:${district}:${dept.id}`;
-              const distKey = `dist:${zoneName}:${district}`;
-              const zoneKey = `zone:${zoneName}`;
-
-              visibleNodes.add(wingKey);
-              visibleNodes.add(deptKey);
-              visibleNodes.add(distKey);
-              visibleNodes.add(zoneKey);
-
-              autoExpanded.add(deptKey);
-              autoExpanded.add(distKey);
-              autoExpanded.add(zoneKey);
-              if (officerMatches) {
-                autoExpanded.add(wingKey);
-              }
-            }
-          });
-
-          if (deptMatches) {
-            const deptKey = `dept:${zoneName}:${district}:${dept.id}`;
-            const distKey = `dist:${zoneName}:${district}`;
-            const zoneKey = `zone:${zoneName}`;
-
-            visibleNodes.add(deptKey);
-            visibleNodes.add(distKey);
-            visibleNodes.add(zoneKey);
-
-            autoExpanded.add(distKey);
-            autoExpanded.add(zoneKey);
-
-            const deptWings = WINGS.filter(w => dept.wings.includes(w.id));
-            deptWings.forEach(wing => {
-              visibleNodes.add(`wing:${zoneName}:${district}:${dept.id}:${wing.id}`);
-            });
-          }
-        });
-
-        if (districtMatches) {
-          const distKey = `dist:${zoneName}:${district}`;
-          const zoneKey = `zone:${zoneName}`;
-
-          visibleNodes.add(distKey);
-          visibleNodes.add(zoneKey);
-
-          autoExpanded.add(zoneKey);
-
-          DEPARTMENTS.forEach(dept => {
-            visibleNodes.add(`dept:${zoneName}:${district}:${dept.id}`);
-            const deptWings = WINGS.filter(w => dept.wings.includes(w.id));
-            deptWings.forEach(wing => {
-              visibleNodes.add(`wing:${zoneName}:${district}:${dept.id}:${wing.id}`);
-            });
-          });
-        }
-      });
-
-      if (zoneMatches) {
-        const zoneKey = `zone:${zoneName}`;
-        visibleNodes.add(zoneKey);
-
-        districts.forEach(district => {
-          visibleNodes.add(`dist:${zoneName}:${district}`);
-          DEPARTMENTS.forEach(dept => {
-            visibleNodes.add(`dept:${zoneName}:${district}:${dept.id}`);
-            const deptWings = WINGS.filter(w => dept.wings.includes(w.id));
-            deptWings.forEach(wing => {
-              visibleNodes.add(`wing:${zoneName}:${district}:${dept.id}:${wing.id}`);
-            });
-          });
-        });
-      }
-    });
-
-    return { visibleNodes, autoExpanded };
-  }, [treeData, zoneQuery]);
-
-  const handleToggle = (nodeKey: string) => {
-    setExpandedNodes(prev => {
-      const currentVal = getSearchMatches.autoExpanded 
-        ? (prev[nodeKey] !== undefined ? prev[nodeKey] : getSearchMatches.autoExpanded.has(nodeKey))
-        : !!prev[nodeKey];
-      return { ...prev, [nodeKey]: !currentVal };
-    });
+  const handleStatsZoneClick = () => {
+    setSelectedZone("all");
+    setSelectedDistrict("all");
+    setSelectedDeptZone("all");
+    setSelectedWingZone("all");
+    setZoneQuery("");
+    setTimeout(() => {
+      explorerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   };
 
-  const isExpanded = (nodeKey: string) => {
-    if (expandedNodes[nodeKey] !== undefined) {
-      return expandedNodes[nodeKey];
-    }
-    if (getSearchMatches.autoExpanded) {
-      return getSearchMatches.autoExpanded.has(nodeKey);
-    }
-    return false;
+  const handleStatsDistrictClick = () => {
+    setSelectedZone("all");
+    setSelectedDistrict("all");
+    setSelectedDeptZone("all");
+    setSelectedWingZone("all");
+    setZoneQuery("");
+    setTimeout(() => {
+      explorerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   };
 
-  const isVisible = (nodeKey: string) => {
-    if (getSearchMatches.visibleNodes) {
-      return getSearchMatches.visibleNodes.has(nodeKey);
+  const handleBreadcrumbClick = (step: number) => {
+    setZoneQuery("");
+    if (step === 1) {
+      setSelectedZone("all");
+      setSelectedDistrict("all");
+      setSelectedDeptZone("all");
+      setSelectedWingZone("all");
+    } else if (step === 2) {
+      setSelectedDistrict("all");
+      setSelectedDeptZone("all");
+      setSelectedWingZone("all");
+    } else if (step === 3) {
+      setSelectedDeptZone("all");
+      setSelectedWingZone("all");
+    } else if (step === 4) {
+      setSelectedWingZone("all");
     }
-    return true;
   };
-
-  const isTreeEmpty = treeData.length === 0 || (zoneQuery.trim() !== "" && getSearchMatches.visibleNodes && getSearchMatches.visibleNodes.size === 0);
 
   // Unique Zones list
   const uniqueZones = Array.from(new Set(ZONE_BREAKDOWN.map(item => item.zone)));
@@ -403,20 +293,77 @@ function Wings() {
     );
   });
 
-  // Filter zones/constituencies
-  const filteredZones = ZONE_BREAKDOWN.filter((item) => {
-    const term = zoneQuery.toLowerCase();
-    const matchesSearch =
-      item.constituency.toLowerCase().includes(term) ||
-      item.district.toLowerCase().includes(term) ||
-      item.zone.toLowerCase().includes(term) ||
-      item.ac_no.toString().includes(term);
+  // Sequential progressive step tracker
+  const currentStep = useMemo(() => {
+    if (selectedZone === "all") return 1;
+    if (selectedDistrict === "all") return 2;
+    if (selectedDeptZone === "all") return 3;
+    if (selectedWingZone === "all") return 4;
+    return 5;
+  }, [selectedZone, selectedDistrict, selectedDeptZone, selectedWingZone]);
 
-    const matchesZone = selectedZone === "all" || item.zone === selectedZone;
-    const matchesDistrict = selectedDistrict === "all" || item.district === selectedDistrict;
+  const activeDept = useMemo(() => {
+    return DEPARTMENTS.find(d => d.id === selectedDeptZone);
+  }, [selectedDeptZone]);
 
-    return matchesSearch && matchesZone && matchesDistrict;
-  });
+  const activeWing = useMemo(() => {
+    return WINGS.find(w => w.id === selectedWingZone);
+  }, [selectedWingZone]);
+
+  // Context-specific search inputs and filtered item lists
+  const searchPlaceholder = useMemo(() => {
+    if (currentStep === 1) return t("மண்டலத்தைத் தேடுக... (எ.கா: CHENNAI)", "Search zone... (e.g. CHENNAI)");
+    if (currentStep === 2) return t("மாவட்டத்தைத் தேடுக... (எ.கா: THIRUVALLUR)", "Search district... (e.g. THIRUVALLUR)");
+    if (currentStep === 3) return t("சேவைப் பிரிவைத் தேடுக...", "Search service category...");
+    if (currentStep === 4) return t("உறுப்புப் பிரிவைத் தேடுக... (எ.கா: மகளிர்)", "Search wing... (e.g. Women)");
+    return t("நிர்வாகியைத் தேடுக... (எ.கா: பெயர், மின்னஞ்சல்)", "Search officer... (e.g. Name, Email)");
+  }, [currentStep, t]);
+
+  const filteredZonesList = useMemo(() => {
+    const term = zoneQuery.toLowerCase().trim();
+    if (!term) return uniqueZones;
+    return uniqueZones.filter(zone => zone.toLowerCase().includes(term));
+  }, [uniqueZones, zoneQuery]);
+
+  const filteredDistrictsList = useMemo(() => {
+    const term = zoneQuery.toLowerCase().trim();
+    if (!term) return availableDistricts;
+    return availableDistricts.filter(dist => dist.toLowerCase().includes(term));
+  }, [availableDistricts, zoneQuery]);
+
+  const deptWingsList = useMemo(() => {
+    if (!activeDept) return [];
+    return WINGS.filter(w => activeDept.wings.includes(w.id));
+  }, [activeDept]);
+
+  const filteredWingsList = useMemo(() => {
+    const term = zoneQuery.toLowerCase().trim();
+    if (!term) return deptWingsList;
+    return deptWingsList.filter(wing =>
+      wing.nameEn.toLowerCase().includes(term) ||
+      wing.nameTa.toLowerCase().includes(term) ||
+      wing.descriptionEn.toLowerCase().includes(term) ||
+      wing.descriptionTa.toLowerCase().includes(term)
+    );
+  }, [deptWingsList, zoneQuery]);
+
+  const activeOfficers = useMemo(() => {
+    if (selectedDistrict === "all" || selectedWingZone === "all" || !activeWing) return [];
+    return generateOfficers(selectedDistrict, selectedWingZone, activeWing.nameEn, activeWing.nameTa);
+  }, [selectedDistrict, selectedWingZone, activeWing]);
+
+  const filteredOfficersList = useMemo(() => {
+    const term = zoneQuery.toLowerCase().trim();
+    if (!term) return activeOfficers;
+    return activeOfficers.filter(off =>
+      off.nameEn.toLowerCase().includes(term) ||
+      off.nameTa.toLowerCase().includes(term) ||
+      off.phone.includes(term) ||
+      off.email.toLowerCase().includes(term) ||
+      off.roleEn.toLowerCase().includes(term) ||
+      off.roleTa.toLowerCase().includes(term)
+    );
+  }, [activeOfficers, zoneQuery]);
 
   return (
     <div className="relative min-h-screen">
@@ -429,10 +376,14 @@ function Wings() {
             </Link>
           </div>
 
-          <div className="flex border-b border-slate-200 mb-8">
+          <div className="flex border-b border-slate-200 mb-8" role="tablist" aria-label="Wings and Zones Navigation">
             <button
+              role="tab"
+              aria-selected={activeTab === "wings"}
+              aria-controls="wings-panel"
+              id="wings-tab"
               onClick={() => setActiveTab("wings")}
-              className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer ${
+              className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                 activeTab === "wings" ? "text-primary" : "text-slate-400 hover:text-slate-600"
               }`}
             >
@@ -445,8 +396,12 @@ function Wings() {
               )}
             </button>
             <button
+              role="tab"
+              aria-selected={activeTab === "zones"}
+              aria-controls="zones-panel"
+              id="zones-tab"
               onClick={() => setActiveTab("zones")}
-              className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer ${
+              className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                 activeTab === "zones" ? "text-primary" : "text-slate-400 hover:text-slate-600"
               }`}
             >
@@ -461,7 +416,7 @@ function Wings() {
           </div>
 
           {activeTab === "wings" ? (
-            <div>
+            <div id="wings-panel" role="tabpanel" aria-labelledby="wings-tab" className="focus:outline-none">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">
                 <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
                 <span>{t("துணைப் பிரிவுகள்", "Specialized Wings")}</span>
@@ -496,7 +451,7 @@ function Wings() {
               <div className="mt-6 flex gap-2 flex-wrap pb-1 overflow-x-auto">
                 <button
                   onClick={() => setSelectedDept("all")}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[36px] border ${
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[44px] border ${
                     selectedDept === "all" 
                       ? "bg-primary text-white border-primary shadow-xs" 
                       : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -508,7 +463,7 @@ function Wings() {
                   <button
                     key={dept.id}
                     onClick={() => setSelectedDept(dept.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[36px] border ${
+                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[44px] border ${
                       selectedDept === dept.id 
                         ? "bg-primary text-white border-primary shadow-xs" 
                         : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -520,7 +475,7 @@ function Wings() {
               </div>
             </div>
           ) : (
-            <div>
+            <div id="zones-panel" role="tabpanel" aria-labelledby="zones-tab" className="focus:outline-none">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">
                 <Globe className="w-3.5 h-3.5 text-primary" />
                 <span>{t("புவியியல் கவரேஜ்", "Geographical Coverage")}</span>
@@ -539,97 +494,44 @@ function Wings() {
 
               {/* Statistics Panel */}
               <div className="mt-8 grid grid-cols-2 gap-4 max-w-md">
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-center shadow-xs">
-                  <div className="text-xl md:text-2xl font-bold text-primary tabular-nums">{statsZonesCount}</div>
-                  <div className="text-xxs uppercase tracking-wider text-slate-400 font-semibold mt-1">
-                    {t("அதிகாரப்பூர்வ மண்டலங்கள்", "Regional Zones")}
-                  </div>
-                </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-center shadow-xs">
-                  <div className="text-xl md:text-2xl font-bold text-primary tabular-nums">{statsDistrictsCount}</div>
-                  <div className="text-xxs uppercase tracking-wider text-slate-400 font-semibold mt-1">
-                    {t("உள்ளடக்கிய மாவட்டங்கள்", "Districts Covered")}
-                  </div>
-                </div>
-              </div>
-
-              {/* Zone Filter pills */}
-              <div className="mt-8 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                {/* Constituency Search */}
-                <div className="w-full md:max-w-md relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-slate-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={zoneQuery}
-                    onChange={(e) => {
-                      setZoneQuery(e.target.value);
-                    }}
-                    placeholder={t("தொகுதி, மாவட்டம் அல்லது மண்டலம் தேடுக...", "Search constituency, district or zone...")}
-                    className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl bg-white shadow-xs focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-xs md:text-sm transition duration-300 min-h-[44px]"
-                  />
-                </div>
-              </div>
-
-              {/* Zone Selector tabs */}
-              <div className="mt-6 flex gap-2 flex-wrap pb-1 overflow-x-auto">
                 <button
-                  onClick={() => {
-                    setSelectedZone("all");
-                    setSelectedDistrict("all");
-                  }}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[36px] border ${
-                    selectedZone === "all" 
-                      ? "bg-primary text-white border-primary shadow-xs" 
-                      : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
-                  }`}
+                  onClick={handleStatsZoneClick}
+                  className="group relative overflow-hidden bg-gradient-to-br from-white to-blue-50/30 border border-blue-100/80 rounded-2xl p-5 shadow-xs hover:shadow-md hover:shadow-blue-500/5 hover:border-blue-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
                 >
-                  {t("அனைத்து மண்டலங்களும்", "All Zones")}
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-blue-500/10 group-hover:scale-110 pointer-events-none" />
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-2xl md:text-3xl font-extrabold text-blue-600 tracking-tight tabular-nums group-hover:scale-105 origin-left transition-transform duration-300">
+                        {statsZonesCount}
+                      </div>
+                      <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-500 mt-2 font-display leading-tight">
+                        {t("அதிகாரப்பூர்வ மண்டலங்கள்", "Regional Zones")}
+                      </div>
+                    </div>
+                    <div className="p-2 rounded-xl bg-blue-500/10 text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shrink-0">
+                      <Globe className="w-4 h-4" />
+                    </div>
+                  </div>
                 </button>
-                {uniqueZones.map(zone => (
-                  <button
-                    key={zone}
-                    onClick={() => {
-                      setSelectedZone(zone);
-                      setSelectedDistrict("all");
-                    }}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[36px] border ${
-                      selectedZone === zone 
-                        ? "bg-primary text-white border-primary shadow-xs" 
-                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
-                    }`}
-                  >
-                    {zone}
-                  </button>
-                ))}
-              </div>
-
-              {/* District pills based on selected zone */}
-              <div className="mt-4 flex gap-1.5 flex-wrap pb-1 overflow-x-auto">
                 <button
-                  onClick={() => setSelectedDistrict("all")}
-                  className={`px-3 py-1.5 rounded-full text-xxs font-bold transition cursor-pointer border ${
-                    selectedDistrict === "all" 
-                      ? "bg-slate-800 border-slate-800 text-white shadow-xs" 
-                      : "bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-250"
-                  }`}
+                  onClick={handleStatsDistrictClick}
+                  className="group relative overflow-hidden bg-gradient-to-br from-white to-amber-50/30 border border-amber-100/80 rounded-2xl p-5 shadow-xs hover:shadow-md hover:shadow-amber-500/5 hover:border-amber-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
                 >
-                  {t("அனைத்து மாவட்டங்களும்", "All Districts")}
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-amber-500/10 group-hover:scale-110 pointer-events-none" />
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-2xl md:text-3xl font-extrabold text-amber-600 tracking-tight tabular-nums group-hover:scale-105 origin-left transition-transform duration-300">
+                        {statsDistrictsCount}
+                      </div>
+                      <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-500 mt-2 font-display leading-tight">
+                        {t("உள்ளடக்கிய மாவட்டங்கள்", "Districts Covered")}
+                      </div>
+                    </div>
+                    <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shrink-0">
+                      <MapPin className="w-4 h-4" />
+                    </div>
+                  </div>
                 </button>
-                {availableDistricts.map(district => (
-                  <button
-                    key={district}
-                    onClick={() => setSelectedDistrict(district)}
-                    className={`px-3 py-1.5 rounded-full text-xxs font-bold transition cursor-pointer border ${
-                      selectedDistrict === district 
-                        ? "bg-slate-800 border-slate-800 text-white shadow-xs" 
-                        : "bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-250"
-                    }`}
-                  >
-                    {district}
-                  </button>
-                ))}
               </div>
             </div>
           )}
@@ -691,9 +593,9 @@ function Wings() {
                                   <Link
                                     to="/membership"
                                     search={{ wing: w.id }}
-                                    className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline transition-all cursor-pointer min-h-[30px]"
+                                    className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline transition-all cursor-pointer min-h-[44px] py-1.5"
                                   >
-                                    {t("இணைவு / Join", "Join Wing")} <ArrowRight className="w-3.5 h-3.5" />
+                                    {t("சேர / Join", "Join Wing")} <ArrowRight className="w-3.5 h-3.5" />
                                   </Link>
                                 </div>
                               </motion.div>
@@ -708,301 +610,409 @@ function Wings() {
             )}
           </div>
         ) : (
-          <div>
-            {isTreeEmpty ? (
-              <div className="text-center py-16 bg-white border border-slate-250/60 rounded-2xl p-6 shadow-xs max-w-md mx-auto">
-                <div className="text-slate-400 text-sm font-semibold">{t("முடிவுகள் எதுவும் காணப்படவில்லை.", "No matching results found.")}</div>
-                <button 
-                  onClick={() => {
-                    setZoneQuery("");
-                    setSelectedZone("all");
-                    setSelectedDistrict("all");
-                  }} 
-                  className="mt-3 text-xs text-primary font-bold hover:underline"
+          <div ref={explorerRef} className="space-y-6 scroll-mt-20">
+            {/* Contextual Controller: Back Button, Title Info, Search Input */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 md:p-6 shadow-xxs flex flex-col gap-4">
+              
+              {/* Visual Breadcrumb Progress Path */}
+              <div className="flex items-center gap-2 flex-wrap text-xxs md:text-xs font-bold text-slate-500 overflow-x-auto pb-1.5">
+                <button
+                  onClick={() => handleBreadcrumbClick(1)}
+                  className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-xl flex items-center border border-transparent ${currentStep === 1 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
                 >
-                  {t("வடிகட்டிகளை நீக்கு", "Clear Filters & View All")}
+                  <Globe className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+                  {t("மண்டலங்கள்", "Zones")}
                 </button>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {treeData.map(({ zoneName, districts }) => {
-                  const zoneKey = `zone:${zoneName}`;
-                  if (!isVisible(zoneKey)) return null;
-
-                  const zoneExpanded = isExpanded(zoneKey);
-                  const districtCount = districts.length;
-
-                  return (
-                    <div
-                      key={zoneKey}
-                      className={`bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-hidden transition-all duration-300 ${
-                        zoneExpanded ? "ring-4 ring-primary/5 border-primary/40 shadow-md" : "hover:border-slate-350"
-                      }`}
+                
+                {selectedZone !== "all" && (
+                  <>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-350 shrink-0" />
+                    <button
+                      onClick={() => handleBreadcrumbClick(2)}
+                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-xl flex items-center border border-transparent ${currentStep === 2 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
                     >
-                      {/* Zone Header */}
-                      <button
-                        onClick={() => handleToggle(zoneKey)}
-                        className="w-full text-left px-5 py-4 md:px-6 md:py-5 flex items-center justify-between bg-slate-50/50 hover:bg-slate-50 transition cursor-pointer"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-xl transition-all duration-200 ${zoneExpanded ? "bg-primary text-white shadow-xs" : "bg-slate-100 text-slate-500"}`}>
-                            <Globe className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="font-display font-bold text-sm md:text-base text-slate-800 tracking-wide">
-                              {zoneName}
-                            </h3>
-                            <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-0.5">
-                              {t(`${districtCount} மாவட்டங்கள்`, `${districtCount} Districts Covered`)}
+                      <MapPin className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+                      <span className="truncate max-w-[120px]">{selectedZone}</span>
+                    </button>
+                  </>
+                )}
+
+                {selectedDistrict !== "all" && (
+                  <>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-350 shrink-0" />
+                    <button
+                      onClick={() => handleBreadcrumbClick(3)}
+                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-xl flex items-center border border-transparent ${currentStep === 3 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
+                    >
+                      <Users className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+                      <span className="truncate max-w-[120px]">{selectedDistrict}</span>
+                    </button>
+                  </>
+                )}
+
+                {selectedDeptZone !== "all" && activeDept && (
+                  <>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-350 shrink-0" />
+                    <button
+                      onClick={() => handleBreadcrumbClick(4)}
+                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-xl flex items-center border border-transparent ${currentStep === 4 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
+                    >
+                      <Award className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+                      <span className="truncate max-w-[120px]">{language === "ta" ? activeDept.nameTa : activeDept.nameEn}</span>
+                    </button>
+                  </>
+                )}
+
+                {selectedWingZone !== "all" && activeWing && (
+                  <>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-350 shrink-0" />
+                    <span className="text-primary bg-primary/5 px-3 py-2 rounded-xl border border-primary/10 shrink-0 flex items-center min-h-[44px]">
+                      <Sparkles className="w-3.5 h-3.5 mr-1.5 shrink-0 text-primary animate-pulse" />
+                      <span className="truncate max-w-[120px]">{language === "ta" ? activeWing.nameTa : activeWing.nameEn}</span>
+                    </span>
+                  </>
+                )}
+              </div>
+
+              <div className="h-px bg-slate-200/60 w-full" />
+
+              {/* Back Button & Search Filter Coordination */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  {currentStep > 1 && (
+                    <button
+                      onClick={() => handleBreadcrumbClick(currentStep - 1)}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-primary bg-white border border-slate-200 shadow-xxs px-3 py-2 rounded-xl transition cursor-pointer min-h-[44px] focus:outline-none"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>{t("பின்னால்", "Back")}</span>
+                    </button>
+                  )}
+                  <div>
+                    <div className="text-xxs uppercase tracking-wider text-slate-400 font-bold">
+                      {t(`படி ${currentStep} இல் 5`, `Step ${currentStep} of 5`)}
+                    </div>
+                    <h2 className="font-display font-extrabold text-sm md:text-base text-slate-800 mt-0.5 leading-none">
+                      {currentStep === 1 && t("மண்டலத்தைத் தேர்ந்தெடுக்கவும்", "Select Regional Zone")}
+                      {currentStep === 2 && t("மாவட்டத்தைத் தேர்ந்தெடுக்கவும்", "Select Covered District")}
+                      {currentStep === 3 && t("சேவைப் பிரிவைத் தேர்ந்தெடுக்கவும்", "Select Department Service")}
+                      {currentStep === 4 && t("உறுப்புப் பிரிவைத் தேர்ந்தெடுக்கவும்", "Select Specialty Wing")}
+                      {currentStep === 5 && t("அதிகாரப்பூர்வ நிர்வாகிகள்", "Active Verified Officers")}
+                    </h2>
+                  </div>
+                </div>
+
+                {/* Context-sensitive Search Input */}
+                <div className="relative w-full sm:max-w-xs shrink-0">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-3.5 w-3.5 text-slate-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={zoneQuery}
+                    onChange={(e) => setZoneQuery(e.target.value)}
+                    placeholder={searchPlaceholder}
+                    className="block w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl bg-white shadow-xxs focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-xs transition duration-300 min-h-[44px]"
+                  />
+                </div>
+              </div>
+
+            </div>
+
+            {/* Progressive Visual Grid Views */}
+            <div className="min-h-[250px]">
+              <AnimatePresence mode="wait">
+                
+                {/* Step 1: Zones list */}
+                {currentStep === 1 && (
+                  <motion.div
+                    key="step-1-zones"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                  >
+                    {filteredZonesList.length === 0 ? (
+                      <div className="col-span-full text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-xxs">
+                        <p className="text-slate-400 text-xs font-semibold">{t("மண்டலங்கள் எதுவும் காணப்படவில்லை.", "No matching zones found.")}</p>
+                        <button onClick={() => setZoneQuery("")} className="mt-2 text-xxs text-primary font-bold hover:underline">
+                          {t("தேடலை நீக்கு", "Clear Search")}
+                        </button>
+                      </div>
+                    ) : (
+                      filteredZonesList.map((zone) => {
+                        const distCount = Array.from(new Set(ZONE_BREAKDOWN.filter(item => item.zone === zone).map(item => item.district))).length;
+                        return (
+                          <button
+                            key={zone}
+                            onClick={() => {
+                              setSelectedZone(zone);
+                              setZoneQuery("");
+                            }}
+                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none block w-full bg-white border border-slate-200 shadow-xxs min-h-[44px]"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
+                                  <Globe className="w-4 h-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <h3 className="font-display font-extrabold text-xs md:text-sm text-slate-800 group-hover:text-primary transition truncate">
+                                  {zone}
+                                </h3>
+                                <span className="text-[10px] font-bold text-slate-400 block mt-0.5 uppercase tracking-wider">
+                                  {t(`${distCount} மாவட்டங்கள்`, `${distCount} Districts Covered`)}
+                                </span>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-slate-350 transition duration-300 group-hover:translate-x-1" />
+                          </button>
+                        );
+                      })
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Step 2: Districts list */}
+                {currentStep === 2 && (
+                  <motion.div
+                    key="step-2-districts"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                  >
+                    {filteredDistrictsList.length === 0 ? (
+                      <div className="col-span-full text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-xxs">
+                        <p className="text-slate-400 text-xs font-semibold">{t("மாவட்டங்கள் எதுவும் காணப்படவில்லை.", "No matching districts found.")}</p>
+                        <button onClick={() => setZoneQuery("")} className="mt-2 text-xxs text-primary font-bold hover:underline">
+                          {t("தேடலை நீக்கு", "Clear Search")}
+                        </button>
+                      </div>
+                    ) : (
+                      filteredDistrictsList.map((district) => {
+                        const constituencyCount = ZONE_BREAKDOWN.filter(item => item.district === district).length;
+                        return (
+                          <button
+                            key={district}
+                            onClick={() => {
+                              setSelectedDistrict(district);
+                              setZoneQuery("");
+                            }}
+                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none block w-full bg-white border border-slate-200 shadow-xxs min-h-[44px]"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
+                                  <MapPin className="w-4 h-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <h3 className="font-display font-extrabold text-xs md:text-sm text-slate-800 group-hover:text-primary transition truncate uppercase">
+                                  {district}
+                                </h3>
+                                <span className="text-[10px] font-bold text-slate-400 block mt-0.5 uppercase tracking-wider">
+                                  {t(`${constituencyCount} தொகுதிகள்`, `${constituencyCount} Constituencies`)}
+                                </span>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-slate-350 transition duration-300 group-hover:translate-x-1" />
+                          </button>
+                        );
+                      })
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Step 3: Departments list */}
+                {currentStep === 3 && (
+                  <motion.div
+                    key="step-3-departments"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-5"
+                  >
+                    {DEPARTMENTS.map((dept) => {
+                      const deptColors: Record<string, { bg: string, text: string, accent: string, border: string, hover: string }> = {
+                        professional: { bg: "bg-violet-50/70", text: "text-violet-750", accent: "bg-violet-600", border: "border-violet-100/80", hover: "hover:border-violet-300 hover:ring-violet-500/5" },
+                        agricultural: { bg: "bg-emerald-50/70", text: "text-emerald-750", accent: "bg-emerald-600", border: "border-emerald-100/80", hover: "hover:border-emerald-300 hover:ring-emerald-500/5" },
+                        industrial: { bg: "bg-amber-50/70", text: "text-amber-750", accent: "bg-amber-600", border: "border-amber-100/80", hover: "hover:border-amber-300 hover:ring-amber-500/5" },
+                        public: { bg: "bg-blue-50/70", text: "text-blue-750", accent: "bg-blue-600", border: "border-blue-100/80", hover: "hover:border-blue-300 hover:ring-blue-500/5" }
+                      };
+                      const colors = deptColors[dept.id] || { bg: "bg-slate-50", text: "text-slate-750", accent: "bg-slate-650", border: "border-slate-100", hover: "hover:border-slate-300" };
+
+                      return (
+                        <button
+                          key={dept.id}
+                          onClick={() => {
+                            setSelectedDeptZone(dept.id);
+                            setZoneQuery("");
+                          }}
+                          className={`p-5 md:p-6 border rounded-2xl flex flex-col justify-between text-left transition duration-300 group cursor-pointer focus:outline-none shadow-xxs hover:shadow-md hover:ring-8 bg-white min-h-[44px] ${colors.border} ${colors.hover}`}
+                        >
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-1.5 h-6 rounded-full ${colors.accent}`} />
+                              <h3 className={`font-display font-extrabold text-sm md:text-base leading-none ${colors.text}`}>
+                                {language === "ta" ? dept.nameTa : dept.nameEn}
+                              </h3>
+                            </div>
+                            <p className="text-xs text-slate-500 leading-relaxed font-tamil">
+                              {language === "ta" ? dept.descTa : dept.descEn}
                             </p>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xxs font-bold px-2 py-0.5 bg-primary/10 text-primary rounded-full">
-                            {t("மண்டலம்", "Zone")}
-                          </span>
-                          <ChevronDown
-                            className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${
-                              zoneExpanded ? "transform rotate-180" : ""
-                            }`}
-                          />
-                        </div>
-                      </button>
+                          
+                          <div className="mt-6 pt-3.5 border-t border-slate-100 flex items-center justify-between w-full">
+                            <span className="text-[10px] font-bold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md">
+                              {t(`${dept.wings.length} சிறப்புப் பிரிவுகள்`, `${dept.wings.length} Specialized Wings`)}
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:underline">
+                              {t("அடுத்து", "Next")} <ArrowRight className="w-3.5 h-3.5 transition duration-300 group-hover:translate-x-1" />
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                )}
 
-                      {/* Zone Content: Districts */}
-                      <AnimatePresence initial={false}>
-                        {zoneExpanded && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.25 }}
-                            className="border-t border-slate-150/80 px-4 py-4 md:px-6 md:py-6 bg-white space-y-4 relative overflow-hidden"
+                {/* Step 4: Specialty Wings list */}
+                {currentStep === 4 && (
+                  <motion.div
+                    key="step-4-wings"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                  >
+                    {filteredWingsList.length === 0 ? (
+                      <div className="col-span-full text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-xxs">
+                        <p className="text-slate-400 text-xs font-semibold">{t("பிரிவுகள் எதுவும் காணப்படவில்லை.", "No matching wings found.")}</p>
+                        <button onClick={() => setZoneQuery("")} className="mt-2 text-xxs text-primary font-bold hover:underline">
+                          {t("தேடலை நீக்கு", "Clear Search")}
+                        </button>
+                      </div>
+                    ) : (
+                      filteredWingsList.map((wing) => {
+                        const WingIcon = wing.icon;
+                        return (
+                          <button
+                            key={wing.id}
+                            onClick={() => {
+                              setSelectedWingZone(wing.id);
+                              setZoneQuery("");
+                            }}
+                            className="card-base card-interactive p-4 md:p-5 flex flex-col justify-between group text-left cursor-pointer focus:outline-none block w-full bg-white border border-slate-200 shadow-xxs min-h-[170px]"
                           >
-                            {/* Vertical connector line for tree blueprint */}
-                            <div className="absolute left-6 top-0 bottom-6 w-0.5 bg-slate-100" />
+                            <div className="space-y-3">
+                              <div className="w-9 h-9 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
+                                <WingIcon className="w-4 h-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <h3 className="font-display font-extrabold text-xs md:text-sm text-slate-800 leading-snug truncate">
+                                  {language === "ta" ? wing.nameTa : wing.nameEn}
+                                </h3>
+                                <p className="text-[11px] text-slate-400 line-clamp-2 mt-1 leading-relaxed font-tamil">
+                                  {language === "ta" ? wing.descriptionTa : wing.descriptionEn}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between w-full">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                {t("3 அதிகாரிகள்", "3 Active Officers")}
+                              </span>
+                              <span className="text-xs font-bold text-primary group-hover:underline inline-flex items-center gap-1">
+                                {t("நிர்வாகிகள்", "Officers")} <ChevronRight className="w-3.5 h-3.5 transition duration-300 group-hover:translate-x-1" />
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </motion.div>
+                )}
 
-                            {districts.map((district) => {
-                              const distKey = `dist:${zoneName}:${district}`;
-                              if (!isVisible(distKey)) return null;
+                {/* Step 5: Active Officers Profile Cards */}
+                {currentStep === 5 && (
+                  <motion.div
+                    key="step-5-officers"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-6"
+                  >
+                    {filteredOfficersList.length === 0 ? (
+                      <div className="text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-xxs max-w-md mx-auto">
+                        <p className="text-slate-400 text-xs font-semibold">{t("நிர்வாகிகள் எதுவும் காணப்படவில்லை.", "No matching officers found.")}</p>
+                        <button onClick={() => setZoneQuery("")} className="mt-2 text-xxs text-primary font-bold hover:underline">
+                          {t("தேடலை நீக்கு", "Clear Search")}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {filteredOfficersList.map((officer, oIdx) => (
+                          <div
+                            key={`officer-${oIdx}`}
+                            className="flex flex-col justify-between p-5 md:p-6 border border-slate-200/80 rounded-2xl bg-white hover:border-slate-300 transition duration-300 hover:shadow-md relative overflow-hidden"
+                          >
+                            {/* Top Role Accent Strip */}
+                            <div className={`absolute top-0 left-0 right-0 h-1.5 ${
+                              oIdx === 0 ? "bg-blue-500" : oIdx === 1 ? "bg-emerald-500" : "bg-amber-500"
+                            }`} />
 
-                              const distExpanded = isExpanded(distKey);
-
-                              return (
-                                <div key={distKey} className="relative pl-6">
-                                  {/* Horizontal line connector */}
-                                  <div className="absolute left-0 top-5 w-5 h-0.5 bg-slate-200" />
-
-                                  <div className={`border rounded-xl shadow-xxs transition duration-200 ${
-                                    distExpanded ? "border-slate-300 shadow-sm bg-slate-50/20" : "border-slate-200 hover:border-slate-350 bg-white"
+                            <div className="flex items-start gap-3.5 mt-2">
+                              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-display font-extrabold text-[12px] tracking-wide shrink-0 border shadow-xxs ${officer.avatarColor}`}>
+                                {officer.initials}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-md uppercase tracking-wider border ${
+                                    oIdx === 0 
+                                      ? "bg-blue-50 text-blue-600 border-blue-100" 
+                                      : oIdx === 1 
+                                        ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
+                                        : "bg-amber-50 text-amber-600 border-amber-100"
                                   }`}>
-                                    {/* District Header */}
-                                    <button
-                                      onClick={() => handleToggle(distKey)}
-                                      className="w-full text-left px-4 py-3.5 flex items-center justify-between cursor-pointer"
-                                    >
-                                      <div className="flex items-center gap-2.5">
-                                        <MapPin className={`w-4 h-4 ${distExpanded ? "text-primary" : "text-slate-400"}`} />
-                                        <span className="font-display font-bold text-xs md:text-sm text-slate-700 uppercase tracking-wide">
-                                          {district}
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">
-                                          {t("மாவட்டம்", "District")}
-                                        </span>
-                                        <ChevronDown
-                                          className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                                            distExpanded ? "transform rotate-180" : ""
-                                          }`}
-                                        />
-                                      </div>
-                                    </button>
-
-                                    {/* District Content: Departments */}
-                                    {distExpanded && (
-                                      <div className="border-t border-slate-150 p-4 space-y-3 bg-white/60 relative">
-                                        {/* Inner Vertical line connector */}
-                                        <div className="absolute left-6 top-0 bottom-6 w-0.5 bg-slate-100" />
-
-                                        {DEPARTMENTS.map((dept) => {
-                                          const deptKey = `dept:${zoneName}:${district}:${dept.id}`;
-                                          if (!isVisible(deptKey)) return null;
-
-                                          const deptExpanded = isExpanded(deptKey);
-                                          const deptWingsList = WINGS.filter(w => dept.wings.includes(w.id));
-
-                                          // Color mapping for departments
-                                          const deptColors: Record<string, { bg: string, text: string, accent: string, border: string }> = {
-                                            professional: { bg: "bg-violet-50/70", text: "text-violet-750", accent: "bg-violet-600", border: "border-violet-100" },
-                                            agricultural: { bg: "bg-emerald-50/70", text: "text-emerald-750", accent: "bg-emerald-600", border: "border-emerald-100" },
-                                            industrial: { bg: "bg-amber-50/70", text: "text-amber-750", accent: "bg-amber-600", border: "border-amber-100" },
-                                            public: { bg: "bg-blue-50/70", text: "text-blue-750", accent: "bg-blue-600", border: "border-blue-100" }
-                                          };
-                                          const colors = deptColors[dept.id] || { bg: "bg-slate-50", text: "text-slate-750", accent: "bg-slate-650", border: "border-slate-100" };
-
-                                          return (
-                                            <div key={deptKey} className="relative pl-6">
-                                              {/* Horizontal connector to Department */}
-                                              <div className="absolute left-0 top-5.5 w-5 h-0.5 bg-slate-200" />
-
-                                              <div className={`border rounded-lg overflow-hidden transition-all duration-200 ${
-                                                deptExpanded ? "border-slate-250 shadow-xxs bg-white" : "border-slate-150 bg-white"
-                                              }`}>
-                                                {/* Department Header */}
-                                                <button
-                                                  onClick={() => handleToggle(deptKey)}
-                                                  className={`w-full text-left px-3.5 py-3 flex items-center justify-between cursor-pointer ${colors.bg}`}
-                                                >
-                                                  <div className="flex items-center gap-2">
-                                                    <div className={`w-1.5 h-5 rounded-full ${colors.accent}`} />
-                                                    <span className={`font-display font-extrabold text-xs leading-none ${colors.text}`}>
-                                                      {language === "ta" ? dept.nameTa : dept.nameEn}
-                                                    </span>
-                                                  </div>
-                                                  <div className="flex items-center gap-2">
-                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 bg-white/80 text-slate-550 border border-slate-200/50 rounded-md">
-                                                      {t(`${deptWingsList.length} பிரிவுகள்`, `${deptWingsList.length} Wings`)}
-                                                    </span>
-                                                    <ChevronDown
-                                                      className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                                                        deptExpanded ? "transform rotate-180" : ""
-                                                      }`}
-                                                    />
-                                                  </div>
-                                                </button>
-
-                                                {/* Department Content: Wings */}
-                                                {deptExpanded && (
-                                                  <div className="p-3.5 space-y-2 bg-white relative">
-                                                    {/* Deep connector line */}
-                                                    <div className="absolute left-6 top-0 bottom-6 w-0.5 bg-slate-100" />
-
-                                                    {deptWingsList.map((wing) => {
-                                                      const wingKey = `wing:${zoneName}:${district}:${dept.id}:${wing.id}`;
-                                                      if (!isVisible(wingKey)) return null;
-
-                                                      const wingExpanded = isExpanded(wingKey);
-                                                      const WingIcon = wing.icon;
-
-                                                      return (
-                                                        <div key={wingKey} className="relative pl-6">
-                                                          {/* Horizontal connector to Wing */}
-                                                          <div className="absolute left-0 top-5 w-5 h-0.5 bg-slate-200" />
-
-                                                          <div className={`border rounded-lg overflow-hidden transition-all duration-200 ${
-                                                            wingExpanded ? "border-primary/30 bg-primary/2.5" : "border-slate-150 bg-white hover:bg-slate-50/20"
-                                                          }`}>
-                                                            {/* Wing Title Header */}
-                                                            <button
-                                                              onClick={() => handleToggle(wingKey)}
-                                                              className="w-full text-left px-3 py-2.5 flex items-center justify-between cursor-pointer"
-                                                            >
-                                                              <div className="flex items-center gap-2.5">
-                                                                <div className={`w-7 h-7 rounded-lg grid place-items-center transition-all ${
-                                                                  wingExpanded ? "bg-primary text-white" : "bg-slate-100 text-slate-500"
-                                                                }`}>
-                                                                  <WingIcon className="w-3.5 h-3.5" />
-                                                                </div>
-                                                                <h4 className="font-display font-bold text-xxs md:text-xs text-slate-750">
-                                                                  {language === "ta" ? wing.nameTa : wing.nameEn}
-                                                                </h4>
-                                                              </div>
-                                                              <div className="flex items-center gap-2">
-                                                                <span className="text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-md">
-                                                                  {t("3 அதிகாரிகள்", "3 Officers")}
-                                                                </span>
-                                                                <ChevronDown
-                                                                  className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-250 ${
-                                                                    wingExpanded ? "transform rotate-180" : ""
-                                                                  }`}
-                                                                />
-                                                              </div>
-                                                            </button>
-
-                                                            {/* Wing Content: Active Officers */}
-                                                            {wingExpanded && (
-                                                              <div className="p-3 bg-slate-50/30 border-t border-slate-100">
-                                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                                                  {generateOfficers(district, wing.id, wing.nameEn, wing.nameTa).map((officer, oIdx) => (
-                                                                    <div
-                                                                      key={`${wingKey}-officer-${oIdx}`}
-                                                                      className="flex flex-col justify-between p-3 border border-slate-200/80 rounded-xl bg-white hover:border-slate-300 transition shadow-xxs relative overflow-hidden"
-                                                                    >
-                                                                      {/* Accent bar by role */}
-                                                                      <div className={`absolute top-0 left-0 right-0 h-1 ${
-                                                                        oIdx === 0 ? "bg-blue-500" : oIdx === 1 ? "bg-emerald-500" : "bg-amber-500"
-                                                                      }`} />
-
-                                                                      <div className="flex items-start gap-2.5 mt-1">
-                                                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center font-display font-extrabold text-[10px] tracking-wide shrink-0 border shadow-xxs ${officer.avatarColor}`}>
-                                                                          {officer.initials}
-                                                                        </div>
-                                                                        <div className="min-w-0 flex-1">
-                                                                          <div className="flex items-center gap-1">
-                                                                            <span className={`text-[8px] font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider ${
-                                                                              oIdx === 0 
-                                                                                ? "bg-blue-50 text-blue-600 border border-blue-100" 
-                                                                                : oIdx === 1 
-                                                                                  ? "bg-emerald-50 text-emerald-600 border border-emerald-100" 
-                                                                                  : "bg-amber-50 text-amber-600 border border-amber-100"
-                                                                            }`}>
-                                                                              {language === "ta" ? officer.roleTa : officer.roleEn}
-                                                                            </span>
-                                                                            <ShieldCheck className="w-3.5 h-3.5 text-blue-500 fill-blue-50 animate-pulse" />
-                                                                          </div>
-                                                                          <h5 className="font-display font-bold text-xxs md:text-xs text-slate-800 mt-1 truncate animate-fade-in" title={language === "ta" ? officer.nameTa : officer.nameEn}>
-                                                                            {language === "ta" ? officer.nameTa : officer.nameEn}
-                                                                          </h5>
-                                                                        </div>
-                                                                      </div>
-
-                                                                      {/* Contact Details with custom-designed micro-buttons */}
-                                                                      <div className="mt-3.5 pt-2.5 border-t border-slate-100 flex flex-col gap-1.5">
-                                                                        <a
-                                                                          href={`tel:${officer.phone.replace(/\s+/g, "")}`}
-                                                                          className="flex items-center gap-1.5 text-[10px] text-slate-550 hover:text-primary transition font-semibold"
-                                                                        >
-                                                                          <Phone className="w-3 h-3 text-slate-400" />
-                                                                          <span className="tabular-nums truncate">{officer.phone}</span>
-                                                                        </a>
-                                                                        <a
-                                                                          href={`mailto:${officer.email}`}
-                                                                          className="flex items-center gap-1.5 text-[10px] text-slate-550 hover:text-primary transition font-semibold"
-                                                                        >
-                                                                          <Mail className="w-3 h-3 text-slate-400" />
-                                                                          <span className="truncate" title={officer.email}>{officer.email}</span>
-                                                                        </a>
-                                                                      </div>
-                                                                    </div>
-                                                                  ))}
-                                                                </div>
-                                                              </div>
-                                                            )}
-                                                          </div>
-                                                        </div>
-                                                      );
-                                                    })}
-                                                  </div>
-                                                )}
-                                              </div>
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-                                    )}
-                                  </div>
+                                    {language === "ta" ? officer.roleTa : officer.roleEn}
+                                  </span>
+                                  <ShieldCheck className="w-4 h-4 text-blue-500 fill-blue-50 shrink-0" />
                                 </div>
-                              );
-                            })}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                                <h5 className="font-display font-bold text-xs md:text-sm text-slate-800 mt-1.5 truncate" title={language === "ta" ? officer.nameTa : officer.nameEn}>
+                                  {language === "ta" ? officer.nameTa : officer.nameEn}
+                                </h5>
+                              </div>
+                            </div>
+
+                            {/* Contact buttons with min 44px tap target size to align with best practices */}
+                            <div className="mt-5 pt-3.5 border-t border-slate-100 flex flex-col gap-2.5">
+                              <a
+                                href={`tel:${officer.phone.replace(/\s+/g, "")}`}
+                                className="flex items-center gap-2.5 text-xs text-slate-600 hover:text-primary transition font-semibold min-h-[44px] px-3.5 bg-slate-50 hover:bg-primary/5 rounded-xl border border-slate-200/50"
+                              >
+                                <Phone className="w-4 h-4 text-slate-400 shrink-0" />
+                                <span className="tabular-nums truncate shrink-0">{officer.phone}</span>
+                              </a>
+                              <a
+                                href={`mailto:${officer.email}`}
+                                className="flex items-center gap-2.5 text-xs text-slate-600 hover:text-primary transition font-semibold min-h-[44px] px-3.5 bg-slate-50 hover:bg-primary/5 rounded-xl border border-slate-200/50"
+                              >
+                                <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+                                <span className="truncate" title={officer.email}>{officer.email}</span>
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+              </AnimatePresence>
+            </div>
+
           </div>
         )}
       </Section>
@@ -1011,10 +1021,17 @@ function Wings() {
       <Section className="py-12 border-t border-slate-200/80 bg-white">
         <div className="bg-slate-950 text-white rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md border border-slate-800">
           <div className="space-y-2 text-center md:text-left">
-            <span className="bg-gold/25 border border-gold/15 text-gold text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">நிர்வாகியாக இணைய</span>
-            <h2 className="font-display text-2xl font-bold leading-tight">தலைமை ஏற்கத் தயாரா?</h2>
+            <span className="bg-gold/25 border border-gold/15 text-gold text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+              {t("நிர்வாகியாக இணைய", "Join as Officer")}
+            </span>
+            <h2 className="font-display text-2xl font-bold leading-tight">
+              {t("தலைமை ஏற்கத் தயாரா?", "Ready to Lead?")}
+            </h2>
             <p className="text-xs md:text-sm text-slate-350 max-w-xl font-tamil leading-relaxed">
-              உங்கள் பரிந்துரை லிங்க் மூலம் 25 வணிகர்களை ஒன்றிணைத்து, தமிழ்நாடு வணிகர்களின் சங்கமத்தில் 'ஒருங்கிணைப்பாளர்' பொறுப்பை பெற்றிடுங்கள்!
+              {t(
+                "உங்கள் பரிந்துரை லிங்க் மூலம் 25 வணிகர்களை ஒன்றிணைத்து, தமிழ்நாடு வணிகர்களின் சங்கமத்தில் 'ஒருங்கிணைப்பாளர்' பொறுப்பை பெற்றிடுங்கள்!",
+                "Unite 25 traders through your referral link and earn the 'Coordinator' role in the Tamil Nadu Traders Association!"
+              )}
             </p>
           </div>
           <Link

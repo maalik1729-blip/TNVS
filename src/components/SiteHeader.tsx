@@ -1,9 +1,8 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, User, Phone, Sun, Moon } from "lucide-react";
+import { Menu, X, User, Phone } from "lucide-react";
 import templeLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useTheme } from "@/hooks/useTheme";
 
 const NAV = [
   { to: "/",          label: "முகப்பு",     en: "Home" },
@@ -25,7 +24,7 @@ export function SiteHeader() {
 
   const loc = useLocation();
   const { language, setLanguage } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
+
   const menuRef = useRef<HTMLDivElement>(null);
 
   // ─── Smart hide-on-scroll-down, show-on-scroll-up ──────────────────────────
@@ -205,14 +204,6 @@ export function SiteHeader() {
             <span className={language === "en" ? "font-bold text-primary" : "text-slate-400"}>EN</span>
           </button>
 
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-            className="inline-flex items-center justify-center p-2.5 rounded-[10px] border border-slate-200/80 bg-white/60 hover:bg-white/90 backdrop-blur-sm transition text-slate-700 min-h-[44px] min-w-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 cursor-pointer"
-          >
-            {theme === "light" ? <Moon className="w-4 h-4 text-slate-600" /> : <Sun className="w-4 h-4 text-amber-500 animate-[spin_8s_linear_infinite]" />}
-          </button>
 
           <Link
             to="/dashboard"
@@ -336,23 +327,6 @@ export function SiteHeader() {
                 </button>
               </div>
 
-              {/* Theme Toggle (Mobile) */}
-              <button
-                onClick={() => { toggleTheme(); setOpen(false); }}
-                className="w-full flex items-center justify-center gap-2 border border-slate-200/80 bg-white/70 text-slate-700 py-3 rounded-xl text-sm font-semibold hover:bg-white/90 transition min-h-[48px] cursor-pointer"
-              >
-                {theme === "light" ? (
-                  <>
-                    <Moon className="w-4 h-4 text-slate-600" />
-                    <span>{language === "ta" ? "இருண்ட பயன்முறை" : "Dark Mode"}</span>
-                  </>
-                ) : (
-                  <>
-                    <Sun className="w-4 h-4 text-amber-500 animate-[spin_8s_linear_infinite]" />
-                    <span>{language === "ta" ? "ஒளி பயன்முறை" : "Light Mode"}</span>
-                  </>
-                )}
-              </button>
 
               <Link
                 to="/dashboard"

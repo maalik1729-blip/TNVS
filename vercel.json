@@ -1,10 +1,7 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/assets/(.*)", "destination": "/dist/client/assets/$1" },
-    { "source": "/favicon.ico", "destination": "/dist/client/favicon.ico" },
-    { "source": "/favicon.png", "destination": "/dist/client/favicon.png" },
-    { "source": "/welcome_video.mp4", "destination": "/dist/client/welcome_video.mp4" },
+    { "source": "/assets/(.*)", "destination": "/public/assets/$1" },
     { "source": "/(.*)", "destination": "/api/index" }
   ]
 }

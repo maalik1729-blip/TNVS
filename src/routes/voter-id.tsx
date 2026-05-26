@@ -865,14 +865,18 @@ function VoterIdPage() {
                       <div className="flex flex-col items-center gap-6 rounded-xl p-2">
                         <div className="w-full">
                           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2.5 text-center">முன்பக்கம் · FRONT</p>
-                          <div ref={frontRef} className="flex justify-center overflow-x-auto">
-                            <VoterIdCard voter={selected} template="front" />
+                          <div ref={frontRef} className="card-scale-wrapper">
+                            <div className="responsive-card-scale">
+                              <VoterIdCard voter={selected} template="front" />
+                            </div>
                           </div>
                         </div>
                         <div className="w-full border-t border-border/60 pt-5">
                           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2.5 text-center">பின்பக்கம் · BACK</p>
-                          <div ref={backRef} className="flex justify-center overflow-x-auto">
-                            <VoterIdCard voter={selected} template="back" />
+                          <div ref={backRef} className="card-scale-wrapper">
+                            <div className="responsive-card-scale">
+                              <VoterIdCard voter={selected} template="back" />
+                            </div>
                           </div>
                         </div>
                       </div>
