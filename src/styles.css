@@ -681,7 +681,7 @@
   .stacked-services-container {
     isolation: isolate;
   }
-  .stacked-card-wrapper {
+  .sticky-stack-card {
     transform-origin: top center;
     will-change: transform, filter;
   }

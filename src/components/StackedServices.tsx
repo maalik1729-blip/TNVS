@@ -95,7 +95,7 @@ export function StackedServices({ services }: StackedServicesProps) {
         <div
           key={s.e}
           ref={(el) => { cardRefs.current[idx] = el; }}
-          className="stacked-card-wrapper"
+          className="sticky-stack-card"
           style={{
             position: isMobile ? "relative" : "sticky",
             top: isMobile ? "auto" : `${HEADER_OFFSET + idx * STACK_OFFSET}px`,
