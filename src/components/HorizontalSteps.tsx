@@ -15,6 +15,7 @@ export function HorizontalSteps() {
   const targetRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
+    offset: ["start start", "end end"],
   });
 
   // Calculate horizontal translate transformation.
@@ -22,7 +23,7 @@ export function HorizontalSteps() {
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-58%"]);
 
   return (
-    <section ref={targetRef} className="relative h-auto lg:h-[160vh] bg-slate-50/30 dark:bg-slate-900/5">
+    <section ref={targetRef} className="relative h-auto lg:h-[135vh] bg-slate-50/30 dark:bg-slate-900/5 border-t border-border/50">
       <div className="relative lg:sticky lg:top-0 h-auto lg:h-screen flex items-center overflow-visible lg:overflow-hidden pt-12 pb-4 lg:py-0">
         <div className="max-w-7xl mx-auto px-4 w-full grid lg:grid-cols-12 gap-10 items-center">
           
