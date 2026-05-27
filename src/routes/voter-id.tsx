@@ -441,7 +441,7 @@ function VoterIdPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleSearch())}
-                  className="flex-1 border border-input bg-background rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 min-h-[44px]"
+                  className="flex-1 border border-input bg-background rounded-md px-3 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 min-h-[44px]"
                 />
                 <button
                   type="button"
@@ -547,7 +547,7 @@ function VoterIdPage() {
                     title="Name should contain only letters, dots, and spaces (பெயரில் எழுத்துக்கள் மற்றும் இடைவெளிகள் மட்டுமே இருக்க வேண்டும்)"
                     value={formData.VOTER_NAME} 
                     onChange={e => handleFieldChange("VOTER_NAME", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+                    className={`w-full border rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 ${
                       errors.VOTER_NAME 
                         ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
                         : "border-input bg-background focus:ring-primary/40"
@@ -568,7 +568,7 @@ function VoterIdPage() {
                     title="EPIC No must be 3 letters followed by 7 digits (எ.கா: RJE1234567)"
                     value={formData.EPIC_NO} 
                     onChange={e => handleFieldChange("EPIC_NO", e.target.value.toUpperCase())} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 uppercase ${
+                    className={`w-full border rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 uppercase ${
                       errors.EPIC_NO 
                         ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
                         : "border-input bg-background focus:ring-primary/40"
@@ -589,7 +589,7 @@ function VoterIdPage() {
                     title="Please enter a valid 10-digit mobile number starting with 6-9 (6-9 இல் தொடங்கும் 10 இலக்க கைபேசி எண்)"
                     value={formData.MOBILE_NUMBER} 
                     onChange={e => handleFieldChange("MOBILE_NUMBER", e.target.value.replace(/\D/g, ""))} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+                    className={`w-full border rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 ${
                       errors.MOBILE_NUMBER 
                         ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
                         : "border-input bg-background focus:ring-primary/40"
@@ -611,7 +611,7 @@ function VoterIdPage() {
                     title="Age must be between 18 and 120 (வயது 18 முதல் 120 வரை இருக்க வேண்டும்)"
                     value={formData.AGE} 
                     onChange={e => handleFieldChange("AGE", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+                    className={`w-full border rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 ${
                       errors.AGE 
                         ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
                         : "border-input bg-background focus:ring-primary/40"
@@ -628,7 +628,7 @@ function VoterIdPage() {
                   <select 
                     value={formData.GENDER} 
                     onChange={e => handleFieldChange("GENDER", e.target.value)} 
-                    className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    className="w-full border border-input bg-background rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
                   >
                     <option>Male</option>
                     <option>Female</option>
@@ -641,7 +641,7 @@ function VoterIdPage() {
                   <select 
                     value={formData.BLOOD_GROUP} 
                     onChange={e => handleFieldChange("BLOOD_GROUP", e.target.value)} 
-                    className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    className="w-full border border-input bg-background rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
                   >
                     <option>O+</option>
                     <option>O-</option>
@@ -662,7 +662,7 @@ function VoterIdPage() {
                     title="Assembly should contain only letters, dots, and spaces (தொகுதி பெயர் எழுத்துக்கள் மற்றும் இடைவெளிகளில் இருக்க வேண்டும்)"
                     value={formData.ASSEMBLY_NAME} 
                     onChange={e => handleFieldChange("ASSEMBLY_NAME", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+                    className={`w-full border rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 ${
                       errors.ASSEMBLY_NAME 
                         ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
                         : "border-input bg-background focus:ring-primary/40"
@@ -682,7 +682,7 @@ function VoterIdPage() {
                     title="District should contain only letters, dots, and spaces (மாவட்டம் பெயர் எழுத்துக்கள் மற்றும் இடைவெளிகளில் இருக்க வேண்டும்)"
                     value={formData.DISTRICT} 
                     onChange={e => handleFieldChange("DISTRICT", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+                    className={`w-full border rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 ${
                       errors.DISTRICT 
                         ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
                         : "border-input bg-background focus:ring-primary/40"
@@ -701,7 +701,7 @@ function VoterIdPage() {
                     required
                     value={formData.POLLING_STATION_ADDRESS} 
                     onChange={e => handleFieldChange("POLLING_STATION_ADDRESS", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+                    className={`w-full border rounded-md px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 ${
                       errors.POLLING_STATION_ADDRESS 
                         ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
                         : "border-input bg-background focus:ring-primary/40"

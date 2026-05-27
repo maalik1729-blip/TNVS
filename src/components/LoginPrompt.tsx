@@ -34,7 +34,7 @@ export function LoginPrompt({ onLogin }: { onLogin: (epic: string) => void }) {
     onLogin(epic);
   };
 
-  const inp = "w-full border border-input bg-background rounded-md px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/40 focus:border-primary transition min-h-[44px]";
+  const inp = "w-full border border-input bg-background rounded-md px-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-ring/40 focus:border-primary transition min-h-[44px]";
 
   return (
     <div className="min-h-[65vh] flex items-center justify-center px-4 py-10">

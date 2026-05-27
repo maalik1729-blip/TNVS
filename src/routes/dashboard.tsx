@@ -764,7 +764,7 @@ function Dashboard() {
                         placeholder={t("விருப்பத் தொகை (எ.கா. ₹15,00,000)", "Custom amount (e.g. ₹15,00,000)")}
                         value={loanInputs.amount}
                         onChange={(e) => setLoanInputs({ ...loanInputs, amount: e.target.value })}
-                        className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primary"
+                        className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-base sm:text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primary"
                       />
                       {loanInputs.amount.trim() !== "" && loanChatStep === 1 && (
                         <button

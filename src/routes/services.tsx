@@ -329,7 +329,7 @@ function Services() {
                           <input 
                             required 
                             type="text" 
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm uppercase focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm uppercase focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="e.g. TNVS9873" 
                             value={formInput.epic}
                             onChange={e => setFormInput({...formInput, epic: e.target.value})}
@@ -341,7 +341,7 @@ function Services() {
                             required 
                             type="tel" 
                             maxLength={10}
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="e.g. 9876543210" 
                             value={formInput.phone}
                             onChange={e => setFormInput({...formInput, phone: e.target.value.replace(/\D/g, "")})}
@@ -440,7 +440,7 @@ function Services() {
                           <input 
                             required 
                             type="text" 
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm uppercase focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm uppercase focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="e.g. TNVS7390" 
                             value={formInput.epic}
                             onChange={e => setFormInput({...formInput, epic: e.target.value})}
@@ -451,7 +451,7 @@ function Services() {
                           <input 
                             required 
                             type="text" 
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="e.g. Senthil Kumar N" 
                             value={formInput.name}
                             onChange={e => setFormInput({...formInput, name: e.target.value})}
@@ -467,7 +467,7 @@ function Services() {
                           <label className="text-xs font-semibold text-slate-700 font-tamil">கோரிக்கை விவரம் / Claim Description</label>
                           <textarea 
                             rows={3}
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="Brief details about the insurance cover or educational needs..." 
                             value={formInput.details}
                             onChange={e => setFormInput({...formInput, details: e.target.value})}
@@ -521,7 +521,7 @@ function Services() {
                           <input 
                             required 
                             type="text" 
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="e.g. Suman Agencies / சுமன் ஏஜென்சிஸ்" 
                             value={formInput.name}
                             onChange={e => setFormInput({...formInput, name: e.target.value})}
@@ -531,7 +531,7 @@ function Services() {
                           <label className="text-xs font-semibold text-slate-700 font-tamil">உறுப்பினர் எண் / EPIC ID (If registered)</label>
                           <input 
                             type="text" 
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm uppercase focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm uppercase focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="e.g. TNVS9823" 
                             value={formInput.epic}
                             onChange={e => setFormInput({...formInput, epic: e.target.value})}
@@ -543,7 +543,7 @@ function Services() {
                             required 
                             type="tel" 
                             maxLength={10}
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="e.g. 9876543210" 
                             value={formInput.phone}
                             onChange={e => setFormInput({...formInput, phone: e.target.value.replace(/\D/g, "")})}
@@ -554,7 +554,7 @@ function Services() {
                           <textarea 
                             rows={3}
                             required
-                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
+                            className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-base sm:text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" 
                             placeholder="Describe your issue or what support you need (GST help, MSME filing, dispute resolution etc.)..." 
                             value={formInput.details}
                             onChange={e => setFormInput({...formInput, details: e.target.value})}

@@ -57,7 +57,7 @@ export function FloatingInput({ label, error, success, value, onChange, classNam
         placeholder=" "   /* space keeps :placeholder-shown working */
         className={[
           "peer w-full bg-white border rounded-xl px-4 pt-[22px] pb-[10px]",
-          "text-sm font-medium text-slate-800 outline-none min-h-[56px]",
+          "text-base sm:text-sm font-medium text-slate-800 outline-none min-h-[56px]",
           "transition-all duration-200",
           `${borderColor} ring-4 ${ringColor}`,
           className,
@@ -113,7 +113,7 @@ export function FloatingTextarea({ label, error, value, onChange, className = ""
         placeholder=" "
         className={[
           "peer w-full bg-white border rounded-xl px-4 pt-[26px] pb-[10px]",
-          "text-sm font-medium text-slate-800 outline-none resize-none",
+          "text-base sm:text-sm font-medium text-slate-800 outline-none resize-none",
           "transition-all duration-200",
           `${borderColor} ring-4 ${ringColor}`,
           className,
@@ -164,7 +164,7 @@ export function FloatingSelect({ label, error, value, onChange, children, classN
         onBlur={() => setFocused(false)}
         className={[
           "w-full bg-white border rounded-xl px-4 pt-[22px] pb-[10px]",
-          "text-sm font-medium text-slate-800 outline-none min-h-[56px]",
+          "text-base sm:text-sm font-medium text-slate-800 outline-none min-h-[56px]",
           "transition-all duration-200 appearance-none cursor-pointer",
           `${borderColor} ring-4 ${ringColor}`,
           className,
