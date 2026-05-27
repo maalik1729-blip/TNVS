@@ -421,7 +421,7 @@ function Membership() {
   return (
     <div className="min-h-screen overflow-x-hidden">
       <section className="border-b border-slate-200/60 bg-white shadow-xs">
-        <div className="max-w-5xl mx-auto px-4 py-8 md:py-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="max-w-5xl mx-auto px-5 sm:px-6 py-8 md:py-10 flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
           <div>
             <div className="mb-2">
               <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all">
@@ -444,7 +444,7 @@ function Membership() {
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 py-10">
+      <div className="max-w-5xl mx-auto px-5 sm:px-6 py-10 w-full">
         
         {/* Sleek Horizontal badges Stepper (Timeline) */}
         <div className="mb-8 sm:mb-10 bg-white rounded-2xl border border-slate-200/60 p-3 sm:p-4 md:p-5 shadow-xs">

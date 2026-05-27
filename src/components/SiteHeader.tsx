@@ -130,7 +130,7 @@ export function SiteHeader() {
 
         {/* Announcement ticker bar */}
         <div className="bg-primary text-white border-b border-primary-foreground/5 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2 lg:gap-4">
+          <div className="max-w-7xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between gap-2 lg:gap-4 w-full">
             <span className="text-xs font-semibold font-tamil flex items-center gap-1.5 shrink-0 select-none border-r border-white/20 pr-4">
               <span aria-hidden="true" className="text-gold">✦</span>
               {language === "ta" ? "பதிவு எண். 2012/TNVS" : "Reg. No. 2012/TNVS"}
@@ -163,7 +163,7 @@ export function SiteHeader() {
         </div>
 
         {/* Brand + Nav row */}
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between gap-4 w-full">
 
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Tamil Nadu Vanigargalin Sangamam — Home">

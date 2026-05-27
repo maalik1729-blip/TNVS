@@ -49,7 +49,7 @@ function About() {
   return (
     <div>
       <section className="border-b border-border bg-secondary/40">
-        <div className="max-w-7xl mx-auto px-4 py-10 sm:py-16">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-10 sm:py-16 w-full">
           <SectionLabel>{t("எங்களைப் பற்றி", "About")}</SectionLabel>
           <h1 className="mt-3 sm:mt-4 font-display font-semibold max-w-3xl">
             {t("நூறு ஆண்டு இயக்கம், நவீன போர்ட்டல்.", "A century-old movement, a modern portal.")}

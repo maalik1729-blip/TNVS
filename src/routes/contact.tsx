@@ -37,7 +37,7 @@ function Contact() {
   return (
     <div>
       <section className="border-b border-border bg-secondary/40">
-        <div className="max-w-7xl mx-auto px-4 py-10 sm:py-16">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-10 sm:py-16 w-full">
           <SectionLabel>{t("தொடர்பு", "Contact")}</SectionLabel>
           <h1 className="mt-3 sm:mt-4 font-display font-semibold">
             {t("நாங்கள் உதவ தயாராக இருக்கிறோம்.", "We're here to help.")}

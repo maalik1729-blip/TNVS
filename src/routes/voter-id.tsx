@@ -401,7 +401,7 @@ function VoterIdPage() {
     <div className="relative min-h-screen overflow-x-hidden">
       {/* Hero */}
       <section className="border-b border-border bg-secondary/40">
-        <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 sm:py-12 w-full">
           <div className="mb-3 sm:mb-4">
             <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-all">
               <ArrowLeft className="w-3.5 h-3.5" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}

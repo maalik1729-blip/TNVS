@@ -9,7 +9,7 @@ export function SiteFooter() {
       {/* Saffron/Gold stripe */}
       <div className="gov-stripe h-[3px]" aria-hidden="true" />
       
-      <div className="max-w-7xl mx-auto px-4 py-10 md:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-10 md:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10 w-full">
         
         {/* Main Logo section */}
         <div className="sm:col-span-2 lg:col-span-2 space-y-4">
@@ -103,7 +103,7 @@ export function SiteFooter() {
 
       {/* Footer CTA */}
       <div className="border-t border-slate-800/60">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 w-full">
           <span className="text-xs text-slate-400">{t("இன்றே உருப்பினராகுங்கள்", "Ready to join us?")}</span>
           <Link to="/membership" className="text-xs text-gold font-semibold hover:underline flex items-center gap-1">
             {t("உறுப்பினர் சேர்க்கைக்கு விண்ணப்பிக்கவும் →", "Apply for Membership →")}
@@ -113,7 +113,7 @@ export function SiteFooter() {
 
       {/* Footer Bottom copyright section */}
       <div className="border-t border-slate-800/80 bg-slate-950/40">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-xs text-slate-400 flex flex-col sm:flex-row flex-wrap justify-between gap-2">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-4 text-xs text-slate-400 flex flex-col sm:flex-row flex-wrap justify-between gap-2 w-full">
           <span>© {new Date().getFullYear()} TN Vanigargalin Sangamam. {t("அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.", "All rights reserved.")}</span>
           <span className="font-semibold text-slate-300 text-xs">{t("தமிழ்நாடு அரசு · பதிவுசெய்யப்பட்ட சங்கம்", "Government of Tamil Nadu · Registered Society")}</span>
         </div>

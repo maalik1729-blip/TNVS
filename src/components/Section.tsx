@@ -15,7 +15,7 @@ export function Section({ children, className = "" }: { children: ReactNode; cla
   }, []);
 
   return (
-    <section ref={ref} className={`section-reveal max-w-7xl mx-auto px-4 ${className}`}>
+    <section ref={ref} className={`section-reveal max-w-7xl mx-auto px-5 sm:px-6 ${className}`}>
       {children}
     </section>
   );

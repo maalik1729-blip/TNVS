@@ -114,7 +114,7 @@ function Dashboard() {
 
       {/* Page Header */}
       <section className="border-b border-slate-200/60 bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-8 md:py-10">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-8 md:py-10 w-full">
 
           {/* Demo Mode Banner — full width, top of page */}
           <div className="mb-5">
