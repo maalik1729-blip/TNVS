@@ -516,7 +516,7 @@ function Dashboard() {
                         readOnly
                         type="text"
                         value={referralUrl}
-                        className="flex-1 bg-slate-900 border border-slate-800 rounded-[10px] px-3.5 py-2.5 text-xs font-mono text-slate-300 focus:outline-none min-h-[44px]"
+                        className="flex-1 bg-slate-900 border border-slate-800 rounded-[10px] px-3.5 py-2.5 text-base md:text-xs font-mono text-slate-300 focus:outline-none min-h-[44px]"
                         aria-label="Your referral link — read only"
                       />
                       <button
@@ -764,7 +764,7 @@ function Dashboard() {
                         placeholder={t("விருப்பத் தொகை (எ.கா. ₹15,00,000)", "Custom amount (e.g. ₹15,00,000)")}
                         value={loanInputs.amount}
                         onChange={(e) => setLoanInputs({ ...loanInputs, amount: e.target.value })}
-                        className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-base sm:text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primary"
+                        className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-base md:text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primary"
                       />
                       {loanInputs.amount.trim() !== "" && loanChatStep === 1 && (
                         <button
