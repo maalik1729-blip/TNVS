@@ -31,7 +31,9 @@ export function LoginPrompt({ onLogin }: { onLogin: (epic: string) => void }) {
     // ✅ Grant access
     setSession(epic);
     toast.success("Login successful! Welcome back.");
-    onLogin(epic);
+    setTimeout(() => {
+      onLogin(epic);
+    }, 150);
   };
 
   const inp = "w-full border border-input bg-background rounded-md px-3 py-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-ring/40 focus:border-primary transition min-h-[44px]";
