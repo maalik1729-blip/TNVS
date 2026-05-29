@@ -6,7 +6,7 @@ import {
   LogOut, ArrowLeft, Copy, Award, Users, Smartphone, Play,
   CheckCircle2, UserPlus, Sparkles, Clock, AlertCircle,
   Coins, Store, Rocket, ArrowRight, X,
-  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight
+  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight, Search
 } from "lucide-react";
 import {
   growthData, wingMetrics, districtStats, welfareDistribution
@@ -77,6 +77,30 @@ function Dashboard() {
     return false;
   });
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // Referred Members CRM Search & Filter States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "pending" | "expired">("all");
+
+  const mockReferredMembers = useMemo(() => [
+    { id: "TNVS-5098", name: "Karthikeyan M", shop: "Karthik Traders", phone: "+91 98450 11234", district: "Chennai", date: "24 May 2026", status: "active" },
+    { id: "TNVS-8891", name: "Selvam Kumar", shop: "Selvi Rice Stores", phone: "+91 97720 90812", district: "Madurai", date: "22 May 2026", status: "active" },
+    { id: "TNVS-4112", name: "Arul Murugan N", shop: "Murugan Provisions", phone: "+91 94432 10091", district: "Trichy", date: "20 May 2026", status: "pending" },
+    { id: "TNVS-3908", name: "Meenakshi Sundaram", shop: "Meenakshi Silks", phone: "+91 91234 56789", district: "Coimbatore", date: "18 May 2026", status: "active" },
+    { id: "TNVS-1224", name: "Rajesh Kannan", shop: "Kannan Electricals", phone: "+91 80567 12345", district: "Salem", date: "15 May 2026", status: "expired" },
+  ], []);
+
+  const filteredReferredMembers = useMemo(() => {
+    return mockReferredMembers.filter((m) => {
+      const matchesSearch = 
+        m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.shop.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        m.district.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesFilter = statusFilter === "all" || m.status === statusFilter;
+      return matchesSearch && matchesFilter;
+    });
+  }, [searchQuery, statusFilter, mockReferredMembers]);
 
   const handleLogout = () => {
     clearSession();
@@ -490,20 +514,23 @@ function Dashboard() {
                   {/* Progress */}
                   <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3">
                     <div className="flex justify-between text-sm font-semibold">
-                      <span className="text-gold">0 / 25</span>
+                      <span className="text-gold">{mockReferredMembers.length} / 25</span>
                       <span className="text-xs text-slate-400 font-tamil">
-                        {t("25 மேலும் பரிந்துரைகள் தேவை", "25 more referrals needed")}
+                        {t(
+                          `${25 - mockReferredMembers.length} மேலும் பரிந்துரைகள் தேவை`,
+                          `${25 - mockReferredMembers.length} more referrals needed`
+                        )}
                       </span>
                     </div>
                     <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
                       <div
                         className="bg-linear-to-r from-primary to-navy h-2 rounded-full"
-                        style={{ width: "0%" }}
+                        style={{ width: `${(mockReferredMembers.length / 25) * 100}%` }}
                         role="progressbar"
-                        aria-valuenow={0}
+                        aria-valuenow={mockReferredMembers.length}
                         aria-valuemin={0}
                         aria-valuemax={25}
-                        aria-label="Referral progress: 0 of 25"
+                        aria-label={`Referral progress: ${mockReferredMembers.length} of 25`}
                       />
                     </div>
                   </div>
@@ -544,22 +571,118 @@ function Dashboard() {
                     </p>
                   </div>
 
-                  {/* Referred Members — zero state (no mock data) */}
-                  <div className="border-t border-slate-800 pt-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Users className="w-4 h-4 text-slate-400" aria-hidden="true" />
-                      <span className="text-sm font-semibold text-slate-300">
-                        {t("பரிந்துரை உறுப்பினர்கள்", "Referred Members")}
+                  {/* Referred Members — CRM Smart Search & Filter */}
+                  <div className="border-t border-slate-800 pt-5 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-gold" aria-hidden="true" />
+                        <span className="text-sm font-bold text-slate-200">
+                          {t("பரிந்துரை உறுப்பினர்கள்", "Referred Members")}
+                        </span>
+                      </div>
+                      <span className="text-[10px] bg-slate-900 text-slate-400 font-bold px-2 py-0.5 rounded border border-slate-800 font-mono">
+                        {filteredReferredMembers.length} {t("நபர்", "matches")}
                       </span>
                     </div>
-                    <EmptyState
-                      icon={Users}
-                      title={t("இன்னும் பரிந்துரைகள் இல்லை", "No referrals yet")}
-                      subtitle={t(
-                        "உங்கள் பரிந்துரை இணைப்பை பகிர்ந்து உறுப்பினர்களை சேர்க்கவும்.",
-                        "Share your referral link to start building your network."
+
+                    {/* Search Bar Input */}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-3 w-4 h-4 text-slate-500" />
+                      <input
+                        type="text"
+                        placeholder={t("பெயர், கடை, மாவட்டம் அல்லது ID மூலம் தேடுக...", "Search by name, shop, district, or ID...")}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-300 placeholder-slate-500 focus:outline-none focus:border-slate-700 min-h-[40px]"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery("")}
+                          className="absolute right-3 top-3.5 text-[9px] font-bold text-slate-400 hover:text-white"
+                        >
+                          CLEAR
+                        </button>
                       )}
-                    />
+                    </div>
+
+                    {/* Status Filter Pills */}
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      {[
+                        { id: "all", label: "All" },
+                        { id: "active", label: "Active" },
+                        { id: "pending", label: "Pending" },
+                        { id: "expired", label: "Expired" },
+                      ].map((pill) => {
+                        const active = statusFilter === pill.id;
+                        return (
+                          <button
+                            key={pill.id}
+                            type="button"
+                            onClick={() => setStatusFilter(pill.id as any)}
+                            className={`px-2.5 py-1 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                              active
+                                ? "bg-white text-slate-950 font-black shadow-xs"
+                                : "bg-slate-900/50 hover:bg-slate-900 text-slate-400 border border-slate-800"
+                            }`}
+                          >
+                            {pill.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Animated Member Search Results Grid */}
+                    <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
+                      <AnimatePresence mode="popLayout">
+                        {filteredReferredMembers.length > 0 ? (
+                          filteredReferredMembers.map((m) => (
+                            <motion.div
+                              key={m.id}
+                              initial={{ opacity: 0, y: 5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              transition={{ duration: 0.2 }}
+                              className="bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition"
+                            >
+                              <div className="space-y-0.5 text-left">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-display font-bold text-slate-200 text-xs">{m.name}</span>
+                                  <span className="text-[9px] bg-slate-800 text-slate-400 px-1 py-0.2 rounded font-mono font-semibold">{m.id}</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 leading-none">
+                                  {m.shop} • <span className="text-slate-500 font-bold">{m.district}</span>
+                                </div>
+                                <div className="text-[9px] text-slate-500 font-mono">
+                                  Joined: {m.date}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-between sm:justify-end gap-3.5 border-t border-slate-900 sm:border-0 pt-2 sm:pt-0 shrink-0">
+                                <span className="text-[9px] font-bold text-slate-400 font-mono">{m.phone}</span>
+                                <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                                  m.status === "active"
+                                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                    : m.status === "pending"
+                                    ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                    : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                                }`}>
+                                  {m.status}
+                                </span>
+                              </div>
+                            </motion.div>
+                          ))
+                        ) : (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="py-6 text-center"
+                          >
+                            <p className="text-xs text-slate-500 font-tamil">பொருந்தும் உறுப்பினர்கள் இல்லை</p>
+                            <p className="text-[10px] text-slate-600 mt-0.5">No matching members found.</p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
                 </div>
               </div>
