@@ -1,7 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ArrowLeft, ArrowRight, Download, FileCheck, Loader2, Upload, Camera, AlertCircle, RefreshCw } from "lucide-react";
+import {
+  Check,
+  ArrowLeft,
+  ArrowRight,
+  Download,
+  FileCheck,
+  Loader2,
+  Upload,
+  Camera,
+  RefreshCw,
+  User,
+  Briefcase,
+  FolderOpen,
+  ClipboardList,
+  Star,
+  Shield,
+  Info,
+  Building2,
+  Phone,
+  Mail,
+  MapPin,
+  Lock,
+  CreditCard,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/hooks/useLanguage";
 import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
@@ -10,6 +33,12 @@ import signImg from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
 import { FloatingInput, FloatingTextarea, FloatingSelect } from "@/components/FloatingInput";
 import { z } from "zod";
 import { WINGS } from "@/data/wings";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const membershipSearchSchema = z.object({
   wing: z.string().optional(),
@@ -33,11 +62,56 @@ export const Route = createFileRoute("/membership")({
 });
 
 const STEPS = [
-  { n: 1, t: "Personal",   ta: "தனிநபர்" },
-  { n: 2, t: "Business",   ta: "வணிகம்" },
-  { n: 3, t: "Documents",  ta: "ஆவணம்" },
-  { n: 4, t: "Review",     ta: "சரிபார்" },
-  { n: 5, t: "Success",    ta: "சான்று" },
+  {
+    n: 1,
+    t: "Personal",
+    ta: "தனிநபர்",
+    icon: User,
+    desc: "Your name, mobile number, email, and district",
+    descTa: "உங்கள் பெயர், கைபேசி, மின்னஞ்சல் மற்றும் மாவட்டம்",
+    tip: "Use your Aadhaar-linked mobile number for easier verification.",
+    tipTa: "சரிபார்க்க உங்கள் ஆதார் இணைந்த கைபேசி எண்ணை பயன்படுத்தவும்.",
+  },
+  {
+    n: 2,
+    t: "Business",
+    ta: "வணிகம்",
+    icon: Briefcase,
+    desc: "Shop name, type, wing, and address",
+    descTa: "கடை பெயர், வகை, பிரிவு மற்றும் முகவரி",
+    tip: "Select the wing that best matches your business activity.",
+    tipTa: "உங்கள் வணிக நடவடிக்கைக்கு பொருந்தும் பிரிவைத் தேர்ந்தெடுக்கவும்.",
+  },
+  {
+    n: 3,
+    t: "Documents",
+    ta: "ஆவணம்",
+    icon: FolderOpen,
+    desc: "Aadhaar, shop photo, business proof, passport photo",
+    descTa: "ஆதார், கடை புகைப்படம், வணிக சான்று, பாஸ்போர்ட் புகைப்படம்",
+    tip: "All files must be under 5 MB. JPG, PNG and PDF formats are accepted.",
+    tipTa: "அனைத்து கோப்புகளும் 5 MB க்கும் குறைவாக இருக்க வேண்டும். JPG, PNG மற்றும் PDF ஏற்றுக்கொள்ளப்படும்.",
+  },
+  {
+    n: 4,
+    t: "Review",
+    ta: "சரிபார்",
+    icon: ClipboardList,
+    desc: "Verify your details and set a security PIN",
+    descTa: "உங்கள் விவரங்களை சரிபார்க்கவும் மற்றும் பாதுகாப்பு PIN ஐ அமைக்கவும்",
+    tip: "Double-check your details before submitting. PIN is used to protect your digital membership card.",
+    tipTa: "சமர்ப்பிக்கும் முன் உங்கள் விவரங்களை சரிபார்க்கவும். PIN உங்கள் டிஜிட்டல் உறுப்பினர் அட்டையை பாதுகாக்கிறது.",
+  },
+  {
+    n: 5,
+    t: "Success",
+    ta: "நிறைவு",
+    icon: Star,
+    desc: "Download your membership certificate",
+    descTa: "உங்கள் உறுப்பினர் சான்றிதழை பதிவிறக்கவும்",
+    tip: "",
+    tipTa: "",
+  },
 ];
 
 const DISTRICTS = [
@@ -108,56 +182,49 @@ const WING_CATEGORIES = [
   }
 ];
 
-
 function Membership() {
   const { t, language } = useLanguage();
   const search = Route.useSearch();
 
-  // 1. Form Progress Auto-Saving via LocalStorage
   const [step, setStep] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("tnvs_form_step");
-      return saved ? Math.min(5, Math.max(1, parseInt(saved, 10))) : 1;
+      const parsed = saved ? parseInt(saved, 10) : 1;
+      return parsed >= 5 ? 1 : Math.min(4, Math.max(1, parsed));
     }
     return 1;
   });
 
   const [form, setForm] = useState(() => {
     const baseForm = {
-      name: search.name || "", 
-      mobile: search.mobile || "", 
-      email: "", 
+      name: search.name || "",
+      mobile: search.mobile || "",
+      email: "",
       district: search.district || "Chennai",
-      shop: "", 
-      type: "Retail", 
-      address: search.address || "", 
-      years: "", 
+      shop: "",
+      type: "Retail",
+      address: search.address || "",
+      years: "",
       wing: search.wing || "",
     };
-    if (search.name || search.epic) {
-      return baseForm;
-    }
+    if (search.name || search.epic) return baseForm;
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("tnvs_form_data");
       if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          return { ...baseForm, ...parsed };
-        } catch (e) {
-          return baseForm;
-        }
+        try { return { ...baseForm, ...JSON.parse(saved) }; }
+        catch { return baseForm; }
       }
     }
     return baseForm;
   });
 
-  const [docs, setDocs] = useState<Record<string, File | string | null>>({ 
-    idProof: null, 
-    shopPhoto: null, 
+  const [docs, setDocs] = useState<Record<string, File | string | null>>({
+    idProof: null,
+    shopPhoto: null,
     bizProof: null,
-    selfie: null 
+    selfie: null,
   });
-  
+
   const [useWebcam, setUseWebcam] = useState(false);
   const [webcamCapturing, setWebcamCapturing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -177,66 +244,44 @@ function Membership() {
     }
   }, [search.name, search.epic, language]);
 
-  // Persistence triggers
+  useEffect(() => { localStorage.setItem("tnvs_form_data", JSON.stringify(form)); }, [form]);
   useEffect(() => {
-    localStorage.setItem("tnvs_form_data", JSON.stringify(form));
-  }, [form]);
-
-  useEffect(() => {
-    localStorage.setItem("tnvs_form_step", step.toString());
+    if (step < 5) {
+      localStorage.setItem("tnvs_form_step", step.toString());
+    } else {
+      localStorage.removeItem("tnvs_form_step");
+    }
   }, [step]);
 
   const clearDraft = () => {
     if (window.confirm(language === "ta" ? "உங்கள் படிவத் தகவல்களை நீக்க விரும்புகிறீர்களா?" : "Are you sure you want to clear your registration draft?")) {
       localStorage.removeItem("tnvs_form_data");
       localStorage.removeItem("tnvs_form_step");
-      setForm({
-        name: "", mobile: "", email: "", district: "Chennai",
-        shop: "", type: "Retail", address: "", years: "", wing: ""
-      });
+      setForm({ name: "", mobile: "", email: "", district: "Chennai", shop: "", type: "Retail", address: "", years: "", wing: "" });
       setDocs({ idProof: null, shopPhoto: null, bizProof: null, selfie: null });
       setStep(1);
       toast.success(language === "ta" ? "படிவம் மீட்டமைக்கப்பட்டது" : "Form draft reset successfully");
     }
   };
 
-  /* ── Validation ── */
   const validate = (): boolean => {
     if (step === 1) {
-      if (!form.name.trim()) { 
-        toast.error(language === "ta" ? "உங்கள் முழுப் பெயரை உள்ளிடவும்" : "Enter your full name"); 
-        return false; 
-      }
-      if (!/^\d{10}$/.test(form.mobile.replace(/\D/g,"").slice(-10))) { 
-        toast.error(language === "ta" ? "சரியான 10-இலக்க மொபைல் எண்ணை உள்ளிடவும்" : "Enter valid 10-digit mobile"); 
-        return false; 
-      }
-      if (!form.email.includes("@")) { 
-        toast.error(language === "ta" ? "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்" : "Enter valid email"); 
-        return false; 
-      }
+      if (!form.name.trim()) { toast.error(language === "ta" ? "உங்கள் முழுப் பெயரை உள்ளிடவும்" : "Enter your full name"); return false; }
+      if (!/^\d{10}$/.test(form.mobile.replace(/\D/g, "").slice(-10))) { toast.error(language === "ta" ? "சரியான 10-இலக்க மொபைல் எண்ணை உள்ளிடவும்" : "Enter valid 10-digit mobile"); return false; }
+      if (!form.email.includes("@")) { toast.error(language === "ta" ? "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்" : "Enter valid email"); return false; }
     }
     if (step === 2) {
-      if (!form.shop.trim()) { 
-        toast.error(language === "ta" ? "வணிகப் பெயரை உள்ளிடவும்" : "Enter shop/business name"); 
-        return false; 
-      }
-      if (!form.wing) {
-        toast.error(language === "ta" ? "தயவுசெய்து வணிகப் பிரிவைத் தேர்ந்தெடுக்கவும்" : "Please select your business wing");
-        return false;
-      }
+      if (!form.shop.trim()) { toast.error(language === "ta" ? "வணிகப் பெயரை உள்ளிடவும்" : "Enter shop/business name"); return false; }
+      if (!form.wing) { toast.error(language === "ta" ? "தயவுசெய்து வணிகப் பிரிவைத் தேர்ந்தெடுக்கவும்" : "Please select your business wing"); return false; }
     }
     if (step === 3) {
       const missing = [
-        !docs.idProof && (language === "ta" ? "அடையாள ஆவணம்" : "Aadhaar / Voter ID"), 
-        !docs.shopPhoto && (language === "ta" ? "கடை புகைப்படம்" : "Shop Front Photo"), 
+        !docs.idProof && (language === "ta" ? "அடையாள ஆவணம்" : "Aadhaar / Voter ID"),
+        !docs.shopPhoto && (language === "ta" ? "கடை புகைப்படம்" : "Shop Front Photo"),
         !docs.bizProof && (language === "ta" ? "வணிக சான்று" : "Business Proof"),
-        !docs.selfie && (language === "ta" ? "பாஸ்போர்ட் புகைப்படம்" : "Passport Photo")
+        !docs.selfie && (language === "ta" ? "பாஸ்போர்ட் புகைப்படம்" : "Passport Photo"),
       ].filter(Boolean);
-      if (missing.length) { 
-        toast.error(`${language === "ta" ? "ஆவணங்களைப் பதிவேற்றவும்: " : "Please upload: "}${missing.join(", ")}`); 
-        return false; 
-      }
+      if (missing.length) { toast.error(`${language === "ta" ? "ஆவணங்களைப் பதிவேற்றவும்: " : "Please upload: "}${missing.join(", ")}`); return false; }
     }
     return true;
   };
@@ -247,25 +292,18 @@ function Membership() {
   const handlePaySubmit = async () => {
     if (!validate()) return;
     if (pin.length !== 4) {
-      toast.error(
-        language === "ta"
-          ? "தயவுசெய்து 4-இலக்க பாதுகாப்பு PIN ஐ உள்ளிடவும்"
-          : "Please create a valid 4-digit security PIN"
-      );
+      toast.error(language === "ta" ? "தயவுசெய்து 4-இலக்க பாதுகாப்பு PIN ஐ உள்ளிடவும்" : "Please create a valid 4-digit security PIN");
       return;
     }
     setSubmitting(true);
     await new Promise(r => setTimeout(r, 2000));
     setSubmitting(false);
     localStorage.setItem("tnvs_last_epic", epic);
-    
-    // Clear draft storage upon success
     localStorage.removeItem("tnvs_form_data");
     localStorage.removeItem("tnvs_form_step");
     setStep(5);
   };
 
-  /* ── Certificate download ── */
   const downloadCertificate = () => {
     const W = 900, H = 700;
     const canvas = document.createElement("canvas");
@@ -273,45 +311,30 @@ function Membership() {
     const ctx = canvas.getContext("2d")!;
 
     const draw = () => {
-      // Draw border
       ctx.fillStyle = "#1e3a8a"; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = "#fff"; ctx.fillRect(16, 16, W-32, H-32);
-
-      // Decorative top stripe
-      ctx.fillStyle = "#ebdca5"; ctx.fillRect(16, 16, W-32, 8);
-
-      // Card Header
+      ctx.fillStyle = "#fff"; ctx.fillRect(16, 16, W - 32, H - 32);
+      ctx.fillStyle = "#ebdca5"; ctx.fillRect(16, 16, W - 32, 8);
       ctx.fillStyle = "#1e3a8a"; ctx.textAlign = "center"; ctx.font = "bold 24px Georgia, serif";
-      ctx.fillText("TAMILNADU VANIGARGALIN SANGAMAM", W/2, 60);
-      
+      ctx.fillText("TAMILNADU VANIGARGALIN SANGAMAM", W / 2, 60);
       ctx.fillStyle = "#d4b26f"; ctx.font = "bold 15px Georgia, serif";
-      ctx.fillText("MEMBERSHIP CERTIFICATE", W/2, 90);
-
-      // Certificate Main text
+      ctx.fillText("MEMBERSHIP CERTIFICATE", W / 2, 90);
       ctx.fillStyle = "#333"; ctx.font = "italic 16px Georgia, serif";
-      ctx.fillText("This is to certify that", W/2, 140);
-
+      ctx.fillText("This is to certify that", W / 2, 140);
       ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 26px Georgia, serif";
-      ctx.fillText(form.name.toUpperCase(), W/2, 185);
-
+      ctx.fillText(form.name.toUpperCase(), W / 2, 185);
       ctx.fillStyle = "#333"; ctx.font = "italic 15px Georgia, serif";
-      ctx.fillText("is officially enrolled as an esteemed member of", W/2, 230);
-      ctx.fillText("Tamilnadu Vanigargalin Sangamam.", W/2, 252);
-
-      // Details Box
+      ctx.fillText("is officially enrolled as an esteemed member of", W / 2, 230);
+      ctx.fillText("Tamilnadu Vanigargalin Sangamam.", W / 2, 252);
       ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 1.5;
-      ctx.strokeRect(100, 290, W-200, 200);
-
+      ctx.strokeRect(100, 290, W - 200, 200);
       ctx.textAlign = "left"; ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
       ctx.fillText("Membership ID / EPIC:", 120, 330);
       ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 16px monospace";
       ctx.fillText(epic, 310, 330);
-
       ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
       ctx.fillText("District / Location:", 120, 370);
       ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 15px Georgia, serif";
       ctx.fillText(form.district, 310, 370);
-
       const wingData = WINGS.find(w => w.id === form.wing);
       if (wingData) {
         ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
@@ -319,89 +342,62 @@ function Membership() {
         ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 14px Georgia, serif";
         ctx.fillText(wingData.nameEn, 310, 410);
       }
-      
       if (form.shop) {
         ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
         ctx.fillText("Shop / Business Name:", 120, 450);
         ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 15px Georgia, serif";
         ctx.fillText(form.shop, 310, 450);
       }
-
-      // Issue date
       ctx.textAlign = "center"; ctx.fillStyle = "#666"; ctx.font = "13px Georgia, serif";
-      const date = new Date().toLocaleDateString("en-IN", {year:"numeric",month:"long",day:"numeric"});
-      ctx.fillText("Issued on: " + date, W/2, 530);
-
-      // Signature line
+      const date = new Date().toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" });
+      ctx.fillText("Issued on: " + date, W / 2, 530);
       ctx.strokeStyle = "#1e3a8a"; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(W/2-80, 545); ctx.lineTo(W/2+80, 545); ctx.stroke();
-
-      // Company info below signature
+      ctx.beginPath(); ctx.moveTo(W / 2 - 80, 545); ctx.lineTo(W / 2 + 80, 545); ctx.stroke();
       ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 12px Georgia, serif"; ctx.textAlign = "center";
-      ctx.fillText("SENTHIL KUMAR N", W/2, 570);
+      ctx.fillText("SENTHIL KUMAR N", W / 2, 570);
       ctx.fillStyle = "#555"; ctx.font = "11px Georgia, serif";
-      ctx.fillText("Founder & State President", W/2, 586);
-      ctx.fillText("Tamilnadu Vanigargalin Sangamam", W/2, 601);
-      ctx.fillText("No 5/79, Saidapet, Chennai - 600015", W/2, 617);
-
-      // Trigger download
+      ctx.fillText("Founder & State President", W / 2, 586);
+      ctx.fillText("Tamilnadu Vanigargalin Sangamam", W / 2, 601);
+      ctx.fillText("No 5/79, Saidapet, Chennai - 600015", W / 2, 617);
       const link = document.createElement("a");
       link.download = "membership-certificate-" + epic + ".png";
       link.href = canvas.toDataURL("image/png");
       link.click();
     };
 
-    // Load static assets
-    const imgLeft  = new Image(); imgLeft.src  = ownerPhoto;
+    const imgLeft = new Image(); imgLeft.src = ownerPhoto;
     const imgRight = new Image(); imgRight.src = orgLogo;
-    const imgSign  = new Image(); imgSign.src  = signImg;
+    const imgSign = new Image(); imgSign.src = signImg;
     let loaded = 0;
-    const totalImgs = 3;
-    
     const onLoad = () => {
       loaded++;
-      if (loaded === totalImgs) {
+      if (loaded === 3) {
         draw();
-
-        // circular clip owner
         const ph = 72, pw = 72;
         ctx.save();
         ctx.beginPath();
-        ctx.arc(45 + pw/2, 40 + ph/2, ph/2, 0, Math.PI*2);
+        ctx.arc(45 + pw / 2, 40 + ph / 2, ph / 2, 0, Math.PI * 2);
         ctx.clip();
         ctx.drawImage(imgLeft, 45, 40, pw, ph);
         ctx.restore();
-        ctx.strokeStyle = "rgba(30,58,138,0.2)"; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(45+pw/2, 40+ph/2, ph/2, 0, Math.PI*2); ctx.stroke();
-
-        // Right org logo
-        ctx.drawImage(imgRight, W-45-pw, 40, pw, ph);
-
-        // Signature image — centred
+        ctx.drawImage(imgRight, W - 45 - pw, 40, pw, ph);
         const sw = 110, sh = 44;
-        ctx.drawImage(imgSign, W/2 - sw/2, 545 - sh - 3, sw, sh);
-
-        // Re-draw company info
+        ctx.drawImage(imgSign, W / 2 - sw / 2, 545 - sh - 3, sw, sh);
         ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 12px Georgia, serif"; ctx.textAlign = "center";
-        ctx.fillText("SENTHIL KUMAR N", W/2, 570);
+        ctx.fillText("SENTHIL KUMAR N", W / 2, 570);
         ctx.fillStyle = "#555"; ctx.font = "11px Georgia, serif";
-        ctx.fillText("Founder & State President", W/2, 586);
-        ctx.fillText("Tamilnadu Vanigargalin Sangamam", W/2, 601);
-
-        // Final download with images
+        ctx.fillText("Founder & State President", W / 2, 586);
+        ctx.fillText("Tamilnadu Vanigargalin Sangamam", W / 2, 601);
         const link2 = document.createElement("a");
         link2.download = "membership-certificate-" + epic + ".png";
         link2.href = canvas.toDataURL("image/png");
         link2.click();
       }
     };
-    imgLeft.onload  = onLoad;
-    imgRight.onload = onLoad;
-    imgSign.onload  = onLoad;
-    imgLeft.onerror = imgRight.onerror = imgSign.onerror = () => { loaded++; if (loaded===totalImgs) draw(); };
+    imgLeft.onload = imgRight.onload = imgSign.onload = onLoad;
+    imgLeft.onerror = imgRight.onerror = imgSign.onerror = () => { loaded++; if (loaded === 3) draw(); };
   };
 
-  /* ── File handlers ── */
   const handleFile = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setDocs(prev => ({ ...prev, [key]: file }));
@@ -418,496 +414,806 @@ function Membership() {
     }, 1800);
   };
 
+  const currentStep = STEPS[step - 1];
+  const StepIcon = currentStep.icon;
+
+  const docsConfig = [
+    { k: "selfie", icon: Camera, l: "Passport Size Photo", ta: "பாஸ்போர்ட் புகைப்படம்", accept: "image/jpeg,image/png,image/webp", webcam: true },
+    { k: "idProof", icon: User, l: "Aadhaar / Voter ID", ta: "அடையாள ஆவணம்", accept: "image/*,application/pdf" },
+    { k: "shopPhoto", icon: Building2, l: "Shop Front Photo", ta: "கடை புகைப்படம்", accept: "image/*" },
+    { k: "bizProof", icon: FileCheck, l: "Business Proof (GST / License)", ta: "வணிக சான்று", accept: "image/*,application/pdf" },
+  ];
+
+  const cardMaxWidth = step === 4 || step === 5 ? "max-w-4xl" : "max-w-3xl";
+
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <section className="border-b border-slate-200/60 bg-white shadow-xs">
-        <div className="max-w-5xl mx-auto px-5 sm:px-6 py-8 md:py-10 flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+    <div className="min-h-screen overflow-x-hidden bg-slate-50/50 pb-12">
+      {/* ── Page Header ── */}
+      <header className="bg-slate-900 text-white border-b border-slate-800 shadow-xs relative overflow-hidden">
+        <div className="absolute inset-0 bg-radial-at-t from-primary/30 to-transparent pointer-events-none" />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
           <div>
-            <div className="mb-2">
-              <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all">
-                <ArrowLeft className="w-3.5 h-3.5" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
-              </Link>
+            <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-350 hover:text-white pt-6 pb-2 mb-2 transition">
+              <ArrowLeft className="w-3.5 h-3.5" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
+            </Link>
+            <div className="flex">
+              <div className="inline-flex items-center gap-1.5 bg-primary/25 text-blue-300 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-1.5 border border-primary/30">
+                Apply · இணைய
+              </div>
             </div>
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Apply · இணைய</div>
-            <h1 className="mt-1 font-display text-2xl md:text-3xl font-bold text-slate-900 leading-tight">Member Registration</h1>
-            <p className="font-tamil text-xs md:text-sm text-slate-500 mt-0.5">5 நிமிடத்தில் உறுப்பினராக பதிவு செய்யுங்கள்.</p>
+            <h1 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">
+              Member Registration
+            </h1>
+            <p className="font-tamil text-xs text-slate-400 mt-1">5 நிமிடங்களில் உறுப்பினராகப் பதிவு செய்யுங்கள்.</p>
           </div>
           {step < 5 && (
             <button
               onClick={clearDraft}
-              className="inline-flex items-center gap-1.5 self-start md:self-center border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer min-h-[38px]"
+              className="inline-flex items-center gap-1.5 border border-slate-700 bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer self-start sm:self-center backdrop-blur-xs shadow-sm hover:scale-[1.02] active:scale-98"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+              <RefreshCw className="w-3.5 h-3.5 text-slate-550" />
               {language === "ta" ? "படிவத்தை மீட்டமை" : "Reset Draft"}
             </button>
           )}
         </div>
-      </section>
+      </header>
 
-      <div className="max-w-5xl mx-auto px-5 sm:px-6 py-10 w-full">
-        
-        {/* Sleek Horizontal badges Stepper (Timeline) */}
-        <div className="mb-8 sm:mb-10 bg-white rounded-2xl border border-slate-200/60 p-3 sm:p-4 md:p-5 shadow-xs">
-          <div className="scroll-x">
-            <div className="relative flex items-center justify-between min-w-max md:min-w-0 pb-1 gap-3 sm:gap-4 px-1">
-              <div className="absolute top-5 left-0 right-0 h-0.5 bg-slate-100 hidden md:block" />
-            {STEPS.map((s, i) => {
-              const done = step > s.n, active = step === s.n;
-              return (
-                <div key={s.n} className="flex items-center shrink-0 relative z-10">
-                  <div className="flex flex-col items-center min-w-[72px]">
-                    <div 
-                      className={`w-10 h-10 rounded-full grid place-items-center text-sm font-semibold border-2 transition duration-300 ${
-                        done 
-                          ? "bg-primary text-white border-primary shadow-xs" 
-                          : active 
-                            ? "border-primary text-primary bg-white shadow-md ring-4 ring-primary/5" 
-                            : "border-slate-200 text-slate-400 bg-white"
+      {/* ── Unified Stepper ── */}
+      {step < 5 && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
+          <div className="bg-white rounded-2xl border border-slate-200/60 p-4 md:p-5 shadow-xs">
+            {/* Desktop Stepper */}
+            <div className="hidden sm:flex items-center justify-between relative">
+              {/* Stepper background track line */}
+              <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-0.5 bg-slate-105 z-0" />
+              {/* Stepper active track line */}
+              <div 
+                className="absolute left-6 top-1/2 -translate-y-1/2 h-0.5 bg-primary transition-all duration-500 z-0"
+                style={{ width: `${((step - 1) / 3) * 88}%` }}
+              />
+              
+              {STEPS.slice(0, 4).map((s) => {
+                const Icon = s.icon;
+                const done = step > s.n;
+                const active = step === s.n;
+                return (
+                  <div key={s.n} className="flex flex-col items-center relative z-10 bg-white px-4">
+                    <button
+                      onClick={() => {
+                        if (s.n < step) setStep(s.n);
+                      }}
+                      disabled={s.n >= step}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center border font-bold text-sm transition-all duration-300 ${
+                        done
+                          ? "bg-primary text-white border-primary cursor-pointer hover:bg-primary/95"
+                          : active
+                          ? "bg-white border-primary text-primary ring-4 ring-primary/10"
+                          : "bg-white border-slate-200 text-slate-400 cursor-not-allowed"
                       }`}
                     >
-                      {done ? <Check className="w-4 h-4" /> : s.n}
-                    </div>
-                    <div className={`mt-1.5 text-xs font-semibold ${active ? "text-primary" : "text-slate-500"}`}>{s.t}</div>
-                    <div className={`text-xs font-tamil mt-0.5 ${active ? "text-primary/80" : "text-slate-400"}`}>{s.ta}</div>
+                      {done ? <Check className="w-4 h-4" /> : <span>{s.n}</span>}
+                    </button>
+                    <span className={`text-xs font-bold mt-2 ${active ? "text-primary" : done ? "text-slate-700" : "text-slate-400"}`}>
+                      {s.t}
+                    </span>
+                    <span className={`font-tamil text-[10px] mt-0.5 ${active ? "text-primary/80" : done ? "text-slate-500" : "text-slate-400/70"}`}>
+                      {s.ta}
+                    </span>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+
+            {/* Mobile Stepper */}
+            <div className="sm:hidden flex flex-col gap-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+                <span className="text-primary font-extrabold uppercase tracking-wide">
+                  Step {step} of 4: {currentStep.t}
+                </span>
+                <span className="font-tamil text-slate-400 font-normal">
+                  {currentStep.ta}
+                </span>
+              </div>
+              <div className="flex gap-1.5 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className={`flex-1 h-full rounded-full transition-all duration-550 ${
+                      step >= i ? "bg-primary" : "bg-slate-200/60"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      )}
 
-        {/* Form Container */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-10 shadow-sm min-h-[420px] sm:min-h-[460px] flex flex-col justify-between">
-          <AnimatePresence mode="wait">
-            <motion.div key={step} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} transition={{duration:0.2}}>
-
-              {/* Step 1 — Personal */}
-              {step===1 && (
-                <Form title="Personal Details" ta="தனிநபர் தகவல்கள்">
-                  <FloatingInput
-                    label="Full Name / பெயர்"
-                    value={form.name}
-                    onChange={e => upd("name", e.target.value)}
-                    autoComplete="name"
-                  />
-                  <FloatingInput
-                    label="Mobile / கைபேசி"
-                    value={form.mobile}
-                    onChange={e => upd("mobile", e.target.value)}
-                    inputMode="numeric"
-                    maxLength={10}
-                  />
-                  <FloatingInput
-                    label="Email / மின்னஞ்சல்"
-                    type="email"
-                    value={form.email}
-                    onChange={e => upd("email", e.target.value)}
-                    autoComplete="email"
-                  />
-                  <FloatingSelect
-                    label="District / மாவட்டம்"
-                    value={form.district}
-                    onChange={e => upd("district", e.target.value)}
-                  >
-                    {DISTRICTS.map(d => (
-                      <option key={d.en} value={d.en}>
-                        {language === "ta" ? `${d.ta} / ${d.en}` : `${d.en} / ${d.ta}`}
-                      </option>
-                    ))}
-                  </FloatingSelect>
-                </Form>
-              )}
-
-              {/* Step 2 — Business Details */}
-              {step===2 && (
-                <Form title="Business Details" ta="வணிக விவரங்கள்">
-                  <FloatingInput
-                    label="Shop / Business Name (கடை பெயர்)"
-                    value={form.shop}
-                    onChange={e => upd("shop", e.target.value)}
-                  />
-                  <FloatingSelect
-                    label="Business Type / வகை"
-                    value={form.type}
-                    onChange={e => upd("type", e.target.value)}
-                  >
-                    {["Retail","Wholesale","Manufacturing","Service","Online"].map(d => <option key={d}>{d}</option>)}
-                  </FloatingSelect>
-
-                  <FloatingSelect
-                    label="Wing / பிரிவு"
-                    value={form.wing}
-                    onChange={e => upd("wing", e.target.value)}
-                  >
-                    <option value="">-- Select Wing / பிரிவு --</option>
-                    {WING_CATEGORIES.map(category => (
-                      <optgroup
-                        key={category.id}
-                        label={language === "ta" ? category.nameTa : category.nameEn}
-                      >
-                        {WINGS.filter(w => category.wings.includes(w.id)).map(w => (
-                          <option key={w.id} value={w.id}>
-                            {language === "ta" ? w.nameTa : w.nameEn}
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </FloatingSelect>
-
-                  <FloatingInput
-                    label="Years in Business (அனுபவம்)"
-                    value={form.years}
-                    onChange={e => upd("years", e.target.value)}
-                    inputMode="numeric"
-                  />
-                  <div className="md:col-span-2">
-                    <FloatingTextarea
-                      label="Shop Address / முகவரி"
-                      value={form.address}
-                      onChange={e => upd("address", e.target.value)}
-                      rows={3}
-                    />
+      {/* ── Main Container ── */}
+      <div className={`mx-auto px-4 sm:px-6 py-8 w-full ${cardMaxWidth}`}>
+        {/* Form Card */}
+        <div className="bg-white rounded-3xl border border-slate-250/70 shadow-sm overflow-hidden transition-all duration-300">
+          {/* Step Header inside card */}
+          {step < 5 && (
+            <div className="px-6 sm:px-10 pt-8 pb-6 border-b border-slate-100">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/5 text-primary flex items-center justify-center shrink-0">
+                    <StepIcon className="w-6 h-6" />
                   </div>
-                </Form>
-              )}
-
-              {/* Step 3 — Documents with camera/upload toggle fallbacks */}
-              {step===3 && (
-                <div>
-                  <h2 className="font-display text-2xl font-bold text-slate-800">Upload Documents</h2>
-                  <p className="font-tamil text-xs md:text-sm text-slate-500 mb-6">ஆவணங்களை பதிவேற்றவும்</p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    
-                    {/* Selfie Webcam scanner / Drag fallback container */}
-                    <div className="col-span-full border border-slate-200/80 rounded-2xl p-5 bg-slate-50/50 flex flex-col md:flex-row gap-5 items-center">
-                      <div className="w-24 h-24 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shrink-0 relative overflow-hidden">
-                        {docs.selfie ? (
-                          <div className="absolute inset-0 bg-emerald-50 flex flex-col items-center justify-center text-emerald-800">
-                            <Check className="w-7 h-7" />
-                            <span className="text-xs font-semibold mt-1">Photo Added</span>
-                          </div>
-                        ) : (
-                          <Camera className="w-8 h-8" />
-                        )}
-                      </div>
-                      
-                      <div className="flex-1 space-y-2 text-center md:text-left">
-                        <div className="font-semibold text-sm text-slate-800">Owner Passport Size Photo</div>
-                        <p className="text-xs text-slate-500 leading-relaxed font-tamil">
-                          நேரடியாக வெப்கேம் மூலம் புகைப்படம் எடுக்கலாம் அல்லது கோப்பாக பதிவேற்றலாம்.
-                        </p>
-                        
-                        <div className="flex flex-wrap gap-2 pt-1 justify-center md:justify-start">
-                          <button
-                            type="button"
-                            onClick={() => { setUseWebcam(true); }}
-                            className="inline-flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary/20 px-3.5 py-2 rounded-lg text-xs font-semibold transition cursor-pointer min-h-[38px]"
-                          >
-                            <Camera className="w-3.5 h-3.5" /> 
-                            {language === "ta" ? "கேமரா மூலம் எடு" : "Capture with Webcam"}
-                          </button>
-                          
-                          <label className="inline-flex items-center gap-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 px-3.5 py-2 rounded-lg text-xs font-semibold transition cursor-pointer min-h-[38px]">
-                            <Upload className="w-3.5 h-3.5 text-slate-400" />
-                            {language === "ta" ? "கோப்பைத் தேர்ந்தெடு" : "Upload File"}
-                            <input 
-                              type="file" 
-                              accept="image/jpeg,image/png,image/webp" 
-                              className="hidden" 
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (!file) return;
-                                if (file.size > 5 * 1024 * 1024) {
-                                  toast.error("Photo must be under 5MB");
-                                  return;
-                                }
-                                const allowed = ["image/jpeg", "image/png", "image/webp"];
-                                if (!allowed.includes(file.type)) {
-                                  toast.error("Please upload a JPG, PNG or WebP image");
-                                  return;
-                                }
-                                setDocs(prev => ({ ...prev, selfie: file }));
-                                toast.success("Passport photo uploaded ✓");
-                              }} 
-                            />
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Camera Modal Simulator overlay */}
-                    {useWebcam && (
-                      <div className="fixed inset-0 z-100 bg-slate-900/80 backdrop-blur-sm grid place-items-center p-4">
-                        <div className="bg-white rounded-2xl p-5 max-w-sm w-full text-center space-y-4 shadow-xl border border-slate-100">
-                          <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                            <span className="font-bold text-sm text-slate-800">Selfie Camera Scanner</span>
-                            <button onClick={() => setUseWebcam(false)} className="text-slate-400 hover:text-slate-600 text-xs font-semibold">✕ Close</button>
-                          </div>
-                          
-                          {/* Face circle scanner mask overlay */}
-                          <div className="aspect-square bg-slate-950 rounded-xl relative overflow-hidden flex items-center justify-center">
-                            <div className="w-40 h-40 rounded-full border-4 border-dashed border-primary/60 animate-pulse absolute" />
-                            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-primary/40 -translate-y-1/2 animate-bounce" />
-                            {webcamCapturing ? (
-                              <div className="text-white text-xs space-y-2">
-                                <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
-                                <span>Scanning Face...</span>
-                              </div>
-                            ) : (
-                              <span className="text-slate-500 text-xs">Position your face inside the circle</span>
-                            )}
-                          </div>
-                          
-                          <p className="text-xs text-slate-500">Align your face inside the scanning circle</p>
-                          <button
-                            type="button"
-                            onClick={handleSelfieSimulate}
-                            disabled={webcamCapturing}
-                            className="w-full inline-flex justify-center items-center gap-1.5 bg-primary text-white hover:bg-primary/90 px-4 py-3 rounded-xl text-sm font-semibold transition"
-                          >
-                            {webcamCapturing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
-                            Capture Photo
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Standard Files Uploader Inputs with dashed drag zones */}
-                    {[
-                      { k:"idProof",   l:"Aadhaar / Voter ID Document",    ta:"அடையாள ஆவணம்",  accept:"image/*,application/pdf" },
-                      { k:"shopPhoto", l:"Shop Front Photo Document",      ta:"கடை புகைப்படம்", accept:"image/*" },
-                      { k:"bizProof",  l:"Business Proof (GST / License)", ta:"வணிக சான்று",    accept:"image/*,application/pdf" },
-                    ].map(d => (
-                      <div
-                        key={d.k}
-                        className="border-2 border-dashed border-slate-200 hover:border-primary/50 rounded-2xl p-6 text-center hover:bg-slate-50/50 transition cursor-pointer relative group flex flex-col items-center justify-center gap-3 min-h-[140px]"
-                        onDragOver={(e) => { e.preventDefault(); }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          const file = e.dataTransfer.files?.[0];
-                          if (file) {
-                            setDocs(prev => ({ ...prev, [d.k]: file }));
-                            toast.success(`${file.name} uploaded ✓`);
-                          }
-                        }}
-                      >
-                    <div className="w-12 h-12 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:scale-110 transition duration-300">
-                          <Upload className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-sm text-slate-800">{d.l}</div>
-                           <div className="font-tamil text-xs text-slate-400 mt-0.5">{d.ta}</div>
-                        </div>
-                        {docs[d.k] ? (
-                          <div className="text-xs text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full font-medium flex items-center gap-1 border border-emerald-100">
-                            <Check className="w-3.5 h-3.5" /> {(docs[d.k] as File).name}
-                          </div>
-                        ) : (
-                          <div className="text-xs text-slate-400 font-medium">
-                            Drag & drop or <span className="text-primary hover:underline font-semibold">browse</span>
-                          </div>
-                        )}
-                        <input
-                          type="file"
-                          accept={d.accept}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            if (file.size > 5 * 1024 * 1024) {
-                              toast.error("File must be under 5MB");
-                              return;
-                            }
-                            setDocs(prev => ({ ...prev, [d.k]: file }));
-                            toast.success(`${file.name} uploaded ✓`);
-                          }}
-                        />
-                      </div>
-                    ))}
+                  <div>
+                    <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+                      {currentStep.t} Details
+                    </h2>
+                    <p className="font-tamil text-xs text-slate-500 mt-0.5">{currentStep.ta} விவரங்கள்</p>
                   </div>
                 </div>
-              )}
-
-              {/* Step 4 — Review Details */}
-              {step===4 && (
-                <Form title="Review Details" ta="விவரங்களை சரிபார்க்கவும்">
-                  <div className="col-span-full grid md:grid-cols-2 gap-4 bg-slate-50/50 rounded-2xl p-5 border border-slate-200/80">
-                    {[
-                      ["Full Name (பெயர்)", form.name || "—"],
-                      ["Mobile (கைபேசி)", form.mobile || "—"],
-                      ["Email (மின்னஞ்சல்)", form.email || "—"],
-                      ["District (மாவட்டம்)", form.district],
-                      ["Shop / Business Name", form.shop || "—"],
-                      ["Business Type", form.type],
-                      ["Wing / பிரிவு", WINGS.find(w => w.id === form.wing)?.[language === "ta" ? "nameTa" : "nameEn"] || "—"],
-                      ["Years in Business", form.years || "—"],
-                      ["Shop Address", form.address || "—"]
-                    ].map(([k,v])=>(
-                      <div key={k} className="bg-white p-4 rounded-xl border border-slate-100 shadow-xs">
-                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400">{k}</div>
-                        <div className="mt-1 text-xs md:text-sm text-slate-800 font-semibold break-all">{v}</div>
-                      </div>
-                    ))}
+                
+                {/* Visual Fee Badge (Always clear to users so they aren't confused) */}
+                <div className="bg-emerald-50 border border-emerald-100/80 rounded-2xl px-4 py-2 flex items-center gap-2.5 self-start sm:self-auto shrink-0 shadow-xxs">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <div>
+                    <div className="text-[9px] font-extrabold text-emerald-800 uppercase tracking-wider leading-none">Annual Fee</div>
+                    <div className="text-sm font-black text-emerald-950 mt-1 leading-none">₹ 500</div>
                   </div>
+                </div>
+              </div>
 
-                  {/* 4-Digit Security PIN Validation Gate */}
-                  <div className="col-span-full border-t border-slate-100 pt-6 mt-4">
-                    <div className="max-w-xs mx-auto text-center space-y-3">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-500">
-                        {language === "ta" ? "பாதுகாப்பு PIN குறியீட்டை உருவாக்கவும் (4 இலக்கங்கள்)" : "Create Security PIN (4 Digits) *"}
-                      </label>
-                      <p className="text-[11px] text-slate-400 leading-normal font-tamil">
-                        {language === "ta"
-                          ? "உறுப்பினர் அட்டை மற்றும் தகவல்களைப் பாதுகாக்க 4-இலக்க PIN ஐ உள்ளிடவும்."
-                          : "Set a 4-digit PIN to secure your digital membership card."}
-                      </p>
-                      
-                      <div className="relative inline-block w-48 mt-2">
-                        {/* Invisible input overlay */}
-                        <input
-                          type="text"
-                          pattern="[0-9]*"
-                          maxLength={4}
-                          value={pin}
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/\D/g, "");
-                            setPin(val);
-                          }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                          autoComplete="one-time-code"
+              {/* Spacious Alert Box for description and tip */}
+              <div className="mt-6 bg-slate-50 rounded-2xl px-5 py-4 border border-slate-100 space-y-2 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-slate-100/40 rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+                <p className="text-xs text-slate-650 leading-relaxed font-medium">{currentStep.desc}</p>
+                <p className="font-tamil text-xs text-slate-400 leading-relaxed">{currentStep.descTa}</p>
+                {currentStep.tip && (
+                  <div className="mt-3 pt-3 border-t border-slate-200/80 flex items-start gap-2.5">
+                    <Shield className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-[9px] font-extrabold text-amber-800 uppercase tracking-wider leading-none">Tip / குறிப்பு</span>
+                      <p className="text-xs text-amber-700 leading-relaxed mt-1">{language === "ta" ? currentStep.tipTa : currentStep.tip}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Step Content */}
+          <div className="p-6 sm:p-10">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.22 }}
+              >
+                {/* ─── Step 1: Personal Details ─── */}
+                {step === 1 && (
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="relative group">
+                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-205 text-slate-350 group-focus-within:text-primary">
+                          <User className="w-4 h-4" />
+                        </div>
+                        <FloatingInput
+                          label="Full Name / பெயர்"
+                          value={form.name}
+                          onChange={e => upd("name", e.target.value)}
+                          autoComplete="name"
+                          className="pl-10 h-[52px]"
                         />
-                        
-                        {/* 4 beautiful custom slot boxes */}
-                        <div className="flex justify-between gap-3">
-                          {[0, 1, 2, 3].map((index) => {
-                            const char = pin[index] || "";
-                            const isFocused = pin.length === index;
+                      </div>
+                      <div className="relative group">
+                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-205 text-slate-350 group-focus-within:text-primary">
+                          <Phone className="w-4 h-4" />
+                        </div>
+                        <FloatingInput
+                          label="Mobile / கைபேசி"
+                          value={form.mobile}
+                          onChange={e => upd("mobile", e.target.value)}
+                          inputMode="numeric"
+                          maxLength={10}
+                          className="pl-10 h-[52px]"
+                        />
+                      </div>
+                      <div className="relative group">
+                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-205 text-slate-350 group-focus-within:text-primary">
+                          <Mail className="w-4 h-4" />
+                        </div>
+                        <FloatingInput
+                          label="Email / மின்னஞ்சல்"
+                          type="email"
+                          value={form.email}
+                          onChange={e => upd("email", e.target.value)}
+                          autoComplete="email"
+                          className="pl-10 h-[52px]"
+                        />
+                      </div>
+                      <div className="relative group">
+                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-205 text-slate-350 group-focus-within:text-primary">
+                          <MapPin className="w-4 h-4" />
+                        </div>
+                        <FloatingSelect
+                          label="District / மாவட்டம்"
+                          value={form.district}
+                          onChange={e => upd("district", e.target.value)}
+                          className="pl-10 h-[52px]"
+                        >
+                          {DISTRICTS.map(d => (
+                            <option key={d.en} value={d.en}>
+                              {language === "ta" ? `${d.ta} / ${d.en}` : `${d.en} / ${d.ta}`}
+                            </option>
+                          ))}
+                        </FloatingSelect>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ─── Step 2: Business Details ─── */}
+                {step === 2 && (
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2">
+                        <FloatingInput
+                          label="Shop / Business Name (கடை பெயர்)"
+                          value={form.shop}
+                          onChange={e => upd("shop", e.target.value)}
+                          className="h-[52px]"
+                        />
+                      </div>
+                      <FloatingSelect
+                        label="Business Type / வகை"
+                        value={form.type}
+                        onChange={e => upd("type", e.target.value)}
+                        className="h-[52px]"
+                      >
+                        {["Retail", "Wholesale", "Manufacturing", "Service", "Online"].map(d => (
+                          <option key={d}>{d}</option>
+                        ))}
+                      </FloatingSelect>
+                      <FloatingInput
+                        label="Years in Business (அனுபவம்)"
+                        value={form.years}
+                        onChange={e => upd("years", e.target.value)}
+                        inputMode="numeric"
+                        className="h-[52px]"
+                      />
+                      <div className="md:col-span-2">
+                        <FloatingSelect
+                          label="Wing / பிரிவு"
+                          value={form.wing}
+                          onChange={e => upd("wing", e.target.value)}
+                          className="h-[52px]"
+                        >
+                          <option value="">-- Select Your Business Wing / பிரிவு --</option>
+                          {WING_CATEGORIES.map(category => (
+                            <optgroup
+                              key={category.id}
+                              label={language === "ta" ? category.nameTa : category.nameEn}
+                            >
+                              {WINGS.filter(w => category.wings.includes(w.id)).map(w => (
+                                <option key={w.id} value={w.id}>
+                                  {language === "ta" ? w.nameTa : w.nameEn}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ))}
+                        </FloatingSelect>
+                      </div>
+                      <div className="md:col-span-2">
+                        <FloatingTextarea
+                          label="Shop Address / முகவரி"
+                          value={form.address}
+                          onChange={e => upd("address", e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ─── Step 3: Documents ─── */}
+                {step === 3 && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      {docsConfig.map(doc => {
+                        const DocIcon = doc.icon;
+                        const uploaded = docs[doc.k];
+                        return (
+                          <div
+                            key={doc.k}
+                            className={`relative rounded-2xl border-2 transition-all duration-300 overflow-hidden group shadow-xxs ${
+                              uploaded
+                                ? "border-emerald-300 bg-emerald-50/40"
+                                : "border-dashed border-slate-200 hover:border-primary/50 hover:bg-slate-50/50 hover:scale-[1.01]"
+                            }`}
+                          >
+                            <div className="p-5 flex flex-col justify-between h-full min-h-[160px]">
+                              {/* Header */}
+                              <div className="flex items-start gap-3">
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${uploaded ? "bg-emerald-100 text-emerald-600 scale-105" : "bg-slate-100 text-slate-500 group-hover:bg-primary/10 group-hover:text-primary"}`}>
+                                  {uploaded ? <Check className="w-5 h-5" /> : <DocIcon className="w-5 h-5" />}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-sm font-bold text-slate-800 leading-tight">{doc.l}</div>
+                                  <div className="font-tamil text-xs text-slate-400 mt-0.5">{doc.ta}</div>
+                                </div>
+                              </div>
+
+                              {/* Upload Action/Status Area */}
+                              <div className="mt-4">
+                                {uploaded ? (
+                                  <div className="text-xs text-emerald-800 font-bold bg-emerald-100/70 border border-emerald-200/50 px-3 py-2 rounded-xl flex items-center justify-between gap-1.5 animate-fadeIn">
+                                    <span className="truncate max-w-[80%]">
+                                      {typeof uploaded === "string" ? uploaded : (uploaded as File).name}
+                                    </span>
+                                    <label className="text-primary hover:underline cursor-pointer shrink-0 text-[10px] font-bold uppercase tracking-wider bg-white px-2 py-0.5 rounded-md border border-slate-200 shadow-xxs">
+                                      Change
+                                      <input
+                                        type="file"
+                                        accept={doc.accept}
+                                        className="hidden"
+                                        onChange={handleFile(doc.k)}
+                                      />
+                                    </label>
+                                  </div>
+                                ) : (
+                                  <div className="text-xs text-slate-450">
+                                    {doc.webcam ? (
+                                      <div className="flex gap-2">
+                                        <button
+                                          type="button"
+                                          onClick={() => setUseWebcam(true)}
+                                          className="flex-1 inline-flex justify-center items-center gap-1.5 bg-primary text-white hover:bg-primary/95 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shadow-xs"
+                                        >
+                                          <Camera className="w-3.5 h-3.5" />
+                                          {language === "ta" ? "கேமரா" : "Camera"}
+                                        </button>
+                                        <label className="flex-1 inline-flex justify-center items-center gap-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shadow-xxs">
+                                          <Upload className="w-3.5 h-3.5 text-slate-400" />
+                                          {language === "ta" ? "பதிவேற்று" : "Upload File"}
+                                          <input
+                                            type="file"
+                                            accept={doc.accept}
+                                            className="hidden"
+                                            onChange={e => {
+                                              const file = e.target.files?.[0];
+                                              if (!file) return;
+                                              if (file.size > 5 * 1024 * 1024) { toast.error("Photo must be under 5MB"); return; }
+                                              setDocs(prev => ({ ...prev, selfie: file }));
+                                              toast.success("Passport photo uploaded ✓");
+                                            }}
+                                          />
+                                        </label>
+                                      </div>
+                                    ) : (
+                                      <label className="w-full inline-flex justify-center items-center gap-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shadow-xxs">
+                                        <Upload className="w-3.5 h-3.5 text-slate-400" />
+                                        {language === "ta" ? "கோப்பைத் தேர்ந்தெடு" : "Choose File or Drag & Drop"}
+                                        <input
+                                          type="file"
+                                          accept={doc.accept}
+                                          className="hidden"
+                                          onChange={e => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            if (file.size > 5 * 1024 * 1024) { toast.error("File must be under 5MB"); return; }
+                                            setDocs(prev => ({ ...prev, [doc.k]: file }));
+                                            toast.success(`${file.name} uploaded ✓`);
+                                          }}
+                                        />
+                                      </label>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Drag overlay for non-webcam items */}
+                            {!doc.webcam && (
+                              <div
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                onDragOver={e => e.preventDefault()}
+                                onDrop={e => {
+                                  e.preventDefault();
+                                  const file = e.dataTransfer.files?.[0];
+                                  if (file) {
+                                    if (file.size > 5 * 1024 * 1024) { toast.error("File must be under 5MB"); return; }
+                                    setDocs(prev => ({ ...prev, [doc.k]: file }));
+                                    toast.success(`${file.name} uploaded ✓`);
+                                  }
+                                }}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* File size note */}
+                    <div className="flex items-center gap-2.5 text-xs text-slate-550 bg-slate-50 border border-slate-200/50 rounded-2xl px-4 py-3 shadow-xxs">
+                      <Info className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>Max file size: <strong>5 MB</strong> per document. Accepted formats: <strong>JPG, PNG, PDF</strong></span>
+                    </div>
+                  </div>
+                )}
+
+                {/* ─── Step 4: Review & Submit ─── */}
+                {step === 4 && (
+                  <div className="space-y-6">
+                    {/* Unified Grid Summary */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      
+                      {/* Personal Info Summary Card */}
+                      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
+                        <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
+                          <div className="flex items-center gap-2">
+                            <User className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-bold text-slate-800">Personal Details</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setStep(1)}
+                            className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-3.5">
+                          {[
+                            { label: "Full Name", value: form.name || "—", icon: User },
+                            { label: "Mobile", value: form.mobile || "—", icon: Phone },
+                            { label: "Email", value: form.email || "—", icon: Mail },
+                            { label: "District", value: form.district, icon: MapPin },
+                          ].map(({ label, value, icon: Icon }) => (
+                            <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
+                              <div className="text-sm text-slate-850 font-bold mt-1.5 break-all">{value}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Business Info Summary Card */}
+                      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
+                        <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
+                          <div className="flex items-center gap-2">
+                            <Briefcase className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-bold text-slate-800">Business Details</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setStep(2)}
+                            className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-3.5">
+                          {[
+                            { label: "Shop Name", value: form.shop || "—" },
+                            { label: "Type", value: form.type },
+                            { label: "Wing / Division", value: WINGS.find(w => w.id === form.wing)?.[language === "ta" ? "nameTa" : "nameEn"] || "—" },
+                            { label: "Experience", value: form.years ? `${form.years} Years` : "—" },
+                          ].map(({ label, value }) => (
+                            <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
+                              <div className="text-sm text-slate-850 font-bold mt-1.5 break-all">{value}</div>
+                            </div>
+                          ))}
+                        </div>
+                        {form.address && (
+                          <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
+                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Shop Address</div>
+                            <div className="text-sm text-slate-855 font-bold mt-1.5 leading-relaxed">{form.address}</div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Documents Uploaded Card */}
+                      <div className="md:col-span-2 bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
+                        <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
+                          <div className="flex items-center gap-2">
+                            <FolderOpen className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-bold text-slate-800">Uploaded Documents</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setStep(3)}
+                            className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                        </div>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          {docsConfig.map(doc => {
+                            const isUploaded = !!docs[doc.k];
                             return (
                               <div
-                                key={index}
-                                className={`w-10 h-12 rounded-xl border text-lg font-bold flex items-center justify-center transition-all duration-200 ${
-                                  isFocused
-                                    ? "border-primary ring-4 ring-primary/10 scale-105"
-                                    : char
-                                    ? "border-emerald-300 bg-emerald-50/30 text-emerald-900"
-                                    : "border-slate-200 bg-slate-50/50 text-slate-400"
+                                key={doc.k}
+                                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold shadow-xxs transition-colors ${
+                                  isUploaded
+                                    ? "bg-white text-emerald-800 border-emerald-200/60"
+                                    : "bg-red-50/50 text-red-600 border-red-150"
                                 }`}
                               >
-                                {char ? "•" : ""}
+                                <span className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${isUploaded ? "bg-emerald-100 text-emerald-650" : "bg-red-100 text-red-600"}`}>
+                                  {isUploaded ? "✓" : "✕"}
+                                </span>
+                                <span className="truncate">{doc.l}</span>
                               </div>
                             );
                           })}
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="col-span-full mt-4 bg-linear-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl p-5 shadow-xs">
-                    <div className="flex justify-between items-baseline">
-                      <span className="font-semibold text-emerald-800 text-sm">Annual Membership Fee</span>
-                      <span className="font-display text-2xl font-bold text-emerald-950">₹ 500</span>
-                    </div>
-                    <div className="text-xs text-emerald-600/90 mt-1">Secure payment via UPI / Netbanking / Credit Card</div>
-                    <div className="mt-3 p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700">
-                      ⚠️ UPI integration is in progress. Clicking "Pay ₹500 &amp; Submit" will complete your application in preview mode — no real charge is processed yet.
-                    </div>
-                  </div>
-                </Form>
-              )}
 
-              {/* Step 5 — Success Certificate page */}
-              {step===5 && (
-                <div className="text-center py-6 max-w-lg mx-auto">
-                  <div className="w-20 h-20 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 grid place-items-center mx-auto shadow-sm">
-                    <Check className="w-10 h-10" />
-                  </div>
-                  <h2 className="mt-6 font-display text-2xl md:text-3xl font-bold text-slate-800 leading-tight">Welcome aboard!</h2>
-                  <p className="font-tamil text-xs md:text-sm text-slate-500 mt-1">உறுப்பினராக பதிவு வெற்றிகரமாக முடிந்தது.</p>
-                  
-                  <div className="mt-8 bg-white/80 border border-slate-200/80 rounded-2xl p-6 text-left shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full translate-x-1/3 -translate-y-1/3" />
-                     <div className="text-xs uppercase font-bold tracking-wider text-slate-400">Your Official EPIC ID</div>
-                    <div className="font-mono text-2xl font-bold text-primary tracking-wider mt-1">{epic}</div>
-                    
-                    <div className="border-t border-slate-100 mt-4 pt-4 space-y-2">
-                      <div className="text-xs text-slate-500 flex justify-between">Name: <span className="text-slate-800 font-semibold">{form.name || "Member"}</span></div>
-                      <div className="text-xs text-slate-500 flex justify-between">District: <span className="text-slate-800 font-semibold">{form.district}</span></div>
+                    {/* Security PIN Section */}
+                    <div className="border-t border-slate-150 pt-6">
+                      <div className="max-w-md">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <div className="p-1 rounded-lg bg-primary/10 text-primary">
+                            <Lock className="w-4 h-4" />
+                          </div>
+                          <label className="text-sm font-extrabold text-slate-900">
+                            {language === "ta" ? "பாதுகாப்பு PIN குறியீட்டை உருவாக்கவும்" : "Create Security PIN"}
+                          </label>
+                        </div>
+                        <p className="text-xs text-slate-500 leading-relaxed mb-4 font-tamil">
+                          {language === "ta"
+                            ? "உறுப்பினர் அட்டை மற்றும் தகவல்களைப் பாதுகாக்க 4-இலக்க PIN ஐ உள்ளிடவும்."
+                            : "Set a 4-digit security PIN to protect your digital membership pass."}
+                        </p>
+                        <div className="relative inline-block group">
+                          <input
+                            type="text"
+                            pattern="[0-9]*"
+                            maxLength={4}
+                            value={pin}
+                            onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            autoComplete="one-time-code"
+                          />
+                          <div className="flex gap-3">
+                            {[0, 1, 2, 3].map(index => {
+                              const char = pin[index] || "";
+                              const isFocused = pin.length === index;
+                              return (
+                                <div
+                                  key={index}
+                                  className={`w-12 h-14 rounded-2xl border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
+                                    isFocused
+                                      ? "border-primary ring-4 ring-primary/15 scale-105 bg-white shadow-md shadow-primary/5"
+                                      : char
+                                      ? "border-emerald-400 bg-emerald-50 text-emerald-850"
+                                      : "border-slate-200 bg-slate-50 text-slate-300"
+                                  }`}
+                                >
+                                  {char ? "•" : ""}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Premium Checkout fee card */}
+                    <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-md">
+                      <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
+                      <div className="absolute top-0 right-10 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
+                      
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="w-4 h-4 text-emerald-400" />
+                            <span className="font-extrabold text-sm text-slate-200 tracking-wide uppercase">Annual Member Subscription</span>
+                          </div>
+                          <p className="text-xs text-slate-400">Includes Digital Membership Card & Official Trade Wings access</p>
+                        </div>
+                        <div className="flex items-baseline gap-1 self-start sm:self-center shrink-0">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold">Total:</span>
+                          <span className="font-display text-3xl font-black text-emerald-450 tracking-tight">₹500</span>
+                          <span className="text-xs text-slate-400">/year</span>
+                        </div>
+                      </div>
+                      
+                      <div className="h-px bg-slate-800/80 my-4" />
+                      
+                      <div className="flex flex-col sm:flex-row justify-between gap-3 text-[11px] text-slate-400 relative z-10">
+                        <span className="flex items-center gap-1.5">
+                          <Shield className="w-3.5 h-3.5 text-emerald-400" /> 256-bit Secure Encryption Checkout
+                        </span>
+                        <span className="bg-slate-800 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-slate-700/50">
+                          Demo Mode: No real payment processed
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="mt-8 flex justify-center gap-3 flex-wrap">
-                    <button 
-                      onClick={downloadCertificate} 
-                      className="inline-flex items-center gap-2 bg-primary text-white hover:bg-primary/95 px-5 py-3.5 rounded-xl text-xs font-semibold shadow-md active:scale-95 transition cursor-pointer min-h-[44px]"
-                    >
-                      <Download className="w-4 h-4" /> Download Certificate
-                    </button>
-                    
-                    <Link 
-                      to="/dashboard" 
-                      className="inline-flex items-center gap-2 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 px-5 py-3.5 rounded-xl text-xs font-semibold shadow-sm active:scale-95 transition cursor-pointer min-h-[44px]"
-                    >
-                      <FileCheck className="w-4 h-4" /> Go to Dashboard
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Stepper Buttons */}
-          {step < 5 && (
-            <div className="mt-10 pt-6 border-t border-slate-100 flex justify-between">
-              <button 
-                onClick={back} 
-                disabled={step===1||submitting} 
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-slate-500 hover:text-slate-800 disabled:opacity-40 min-h-[44px] cursor-pointer"
-              >
-                <ArrowLeft className="w-4 h-4" /> Back
-              </button>
-              
-              <button
-                onClick={step===4 ? handlePaySubmit : next}
-                disabled={submitting}
-                className="inline-flex items-center gap-2 bg-primary text-white hover:bg-primary/95 px-6 py-2.5 rounded-xl text-xs font-semibold active:scale-95 transition min-h-[44px] cursor-pointer shadow-sm"
-              >
-                {submitting ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
-                ) : step === 4 ? (
-                  <>Pay ₹500 &amp; Submit <ArrowRight className="w-4 h-4" /></>
-                ) : (
-                  <>Continue <ArrowRight className="w-4 h-4" /></>
                 )}
-              </button>
-            </div>
-          )}
+
+                {/* ─── Step 5: Success ─── */}
+                {step === 5 && (
+                  <div className="py-6 flex flex-col items-center animate-fadeIn">
+                    {/* Success badge */}
+                    <div className="text-center max-w-md mx-auto mb-8">
+                      <div className="relative inline-block">
+                        <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-700 grid place-items-center mx-auto shadow-md">
+                          <Check className="w-10 h-10" />
+                        </div>
+                        <div className="absolute -right-1 -top-1 w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow-sm">
+                          <Star className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                        </div>
+                      </div>
+                      <h2 className="mt-6 font-display text-2xl sm:text-3xl font-black text-slate-850 tracking-tight">Registration Complete!</h2>
+                      <p className="font-tamil text-sm text-slate-500 mt-1.5">உறுப்பினர் பதிவு வெற்றிகரமாக முடிந்தது.</p>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">Welcome to the Tamil Nadu Vanigargalin Sangamam community.</p>
+                    </div>
+
+                    {/* Premium Digital Membership Card Mockup */}
+                    <div className="w-full max-w-md bg-linear-to-br from-slate-900 to-blue-950 border border-slate-800/80 rounded-3xl p-6 mb-8 relative overflow-hidden shadow-xl shadow-primary/10 group">
+                      {/* Decorative backdrop elements */}
+                      <div className="absolute top-0 right-0 w-44 h-44 bg-primary/20 rounded-full blur-3xl translate-x-1/4 -translate-y-1/4 pointer-events-none group-hover:bg-primary/25 transition duration-500" />
+                      <div className="absolute bottom-0 left-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl -translate-x-1/4 translate-y-1/4 pointer-events-none" />
+                      
+                      {/* Card Header branding */}
+                      <div className="flex justify-between items-start gap-4 mb-6 relative z-10 pb-4 border-b border-white/10">
+                        <div className="flex items-center gap-2">
+                          <img src={orgLogo} className="w-8 h-8 rounded-full border border-white/20 bg-white object-contain" alt="TNVS Logo" />
+                          <div>
+                            <div className="text-[10px] font-black text-white leading-none tracking-wider uppercase">TNVS</div>
+                            <div className="text-[8px] text-slate-455 mt-0.5 leading-none font-tamil font-normal">வணிகர்களின் சங்கமம்</div>
+                          </div>
+                        </div>
+                        <div className="bg-primary/30 border border-primary/45 rounded-full px-2.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-blue-300">
+                          Active Member
+                        </div>
+                      </div>
+
+                      {/* Official EPIC ID Code */}
+                      <div className="mb-6 relative z-10">
+                        <div className="text-[9px] uppercase font-bold tracking-wider text-slate-455 mb-1">Official ID / EPIC</div>
+                        <div className="font-mono text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-blue-200 via-indigo-100 to-blue-100 tracking-widest">{epic}</div>
+                      </div>
+
+                      {/* Credentials Grid */}
+                      <div className="grid grid-cols-2 gap-4 relative z-10 text-white pt-2">
+                        <div>
+                          <div className="text-[9px] text-slate-455 font-bold uppercase tracking-wider mb-0.5">Name / பெயர்</div>
+                          <div className="text-sm font-bold text-slate-100 truncate">{form.name || "Sangamam Member"}</div>
+                        </div>
+                        <div>
+                          <div className="text-[9px] text-slate-455 font-bold uppercase tracking-wider mb-0.5">District / மாவட்டம்</div>
+                          <div className="text-sm font-bold text-slate-100 truncate">{form.district}</div>
+                        </div>
+                        {form.shop && (
+                          <div className="col-span-2">
+                            <div className="text-[9px] text-slate-455 font-bold uppercase tracking-wider mb-0.5">Business Name / கடை பெயர்</div>
+                            <div className="text-sm font-bold text-slate-100 truncate leading-snug">{form.shop}</div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Bottom decorative barcode pattern representation */}
+                      <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center relative z-10">
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[8px] text-slate-500 uppercase font-black tracking-wider leading-none">TAMIL NADU, INDIA</span>
+                          <span className="text-[7px] text-slate-655 font-tamil font-normal mt-0.5 leading-none">அதிகாரப்பூர்வ அட்டை</span>
+                        </div>
+                        <div className="h-6 w-24 opacity-60 bg-[repeating-linear-gradient(90deg,#fff,#fff_2px,#000_2px,#000_5px)]" />
+                      </div>
+                    </div>
+
+                    {/* Next Steps info */}
+                    <div className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8 space-y-3 shadow-xxs">
+                      <div className="text-xs font-bold text-slate-700 uppercase tracking-wider pb-1.5 border-b border-slate-200">What's Next?</div>
+                      {[
+                        { text: "Download your PDF Membership Certificate", ta: "உறுப்பினர் சான்றிதழை பதிவிறக்கவும்", done: true },
+                        { text: "View and edit your profile on the dashboard", ta: "டாஷ்போர்டில் உங்கள் சுயவிவரத்தை பாருங்கள்", done: false },
+                      ].map((item, i) => (
+                        <div key={i} className="flex items-start gap-3 text-xs text-slate-650">
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${item.done ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-500"}`}>
+                            {item.done ? <Check className="w-3 h-3" /> : <span className="text-[10px] font-bold">{i + 1}</span>}
+                          </div>
+                          <div className="space-y-0.5">
+                            <p className="font-semibold text-slate-800">{language === "ta" ? item.ta : item.text}</p>
+                            <p className="text-[10px] text-slate-450">{i === 0 ? "Generate high-resolution printable pass" : "Manage your wings and local constituencies"}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* CTA Actions */}
+                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                      <button
+                        onClick={downloadCertificate}
+                        className="btn-primary flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-md cursor-pointer transition active:scale-95"
+                      >
+                        <Download className="w-4 h-4" /> Download Certificate
+                      </button>
+                      <Link
+                        to="/dashboard"
+                        className="btn-secondary flex-1 justify-center py-3 rounded-xl text-xs font-bold border border-slate-200 bg-white hover:bg-slate-50 shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5"
+                      >
+                        <FileCheck className="w-4 h-4 text-slate-500" /> Go to Dashboard
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* ── Navigation Buttons ── */}
+            {step < 5 && (
+              <div className="mt-8 pt-6 border-t border-slate-150 flex justify-between items-center">
+                <button
+                  onClick={back}
+                  disabled={step === 1 || submitting}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-850 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition cursor-pointer rounded-xl"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Back
+                </button>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={step === 4 ? handlePaySubmit : next}
+                    disabled={submitting}
+                    className="btn-primary py-2.5 px-5 rounded-xl text-xs font-bold cursor-pointer hover:shadow-md transition duration-200 flex items-center gap-1.5"
+                  >
+                    {submitting ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
+                    ) : step === 4 ? (
+                      <>Pay ₹500 & Submit <ArrowRight className="w-4 h-4" /></>
+                    ) : (
+                      <>Continue <ArrowRight className="w-4 h-4" /></>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* ── Webcam Modal ── */}
+      {useWebcam && (
+        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm grid place-items-center p-4">
+          <div className="bg-white rounded-2xl p-5 max-w-sm w-full text-center space-y-4 shadow-2xl border border-slate-100 animate-scaleIn">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <Camera className="w-4 h-4 text-primary" />
+                <span className="font-bold text-sm text-slate-800">Selfie Camera Scanner</span>
+              </div>
+              <button onClick={() => setUseWebcam(false)} className="text-slate-400 hover:text-slate-600 text-xs font-semibold">✕ Close</button>
+            </div>
+            <div className="aspect-square bg-slate-950 rounded-xl relative overflow-hidden flex items-center justify-center">
+              <div className="w-40 h-40 rounded-full border-4 border-dashed border-primary/60 animate-pulse absolute" />
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-primary/40 -translate-y-1/2 animate-bounce" />
+              {webcamCapturing ? (
+                <div className="text-white text-xs space-y-2">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
+                  <span>Scanning Face...</span>
+                </div>
+              ) : (
+                <span className="text-slate-500 text-xs">Position your face inside the circle</span>
+              )}
+            </div>
+            <p className="text-xs text-slate-500">Align your face inside the scanning circle</p>
+            <button
+              type="button"
+              onClick={handleSelfieSimulate}
+              disabled={webcamCapturing}
+              className="btn-primary w-full justify-center"
+            >
+              {webcamCapturing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+              Capture Photo
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-const inp = "w-full border border-slate-200 bg-slate-50/30 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition duration-300 placeholder:text-slate-400 min-h-[44px]";
-
-function Form({ title, ta, children }: { title: string; ta: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="font-display text-2xl font-bold text-slate-800">{title}</h2>
-        <p className="font-tamil text-xs md:text-sm text-slate-500">{ta}</p>
-      </div>
-      <div className="grid md:grid-cols-2 gap-5 pt-3">{children}</div>
-    </div>
-  );
-}
-
-function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
-  return (
-    <label className={`flex flex-col gap-1.5 ${full?"col-span-full":""}`}>
-      <span className="text-xs font-semibold text-slate-600">{label}</span>
-      {children}
-    </label>
-  );
-}
+export default Membership;
