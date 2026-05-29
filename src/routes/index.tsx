@@ -298,6 +298,50 @@ function Home() {
         </div>
       </Section>
 
+      {/* OFFICIAL BADGES & CERTIFICATIONS */}
+      <Section className="py-10">
+        <ScrollReveal direction="up" blur>
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                    Official Recognition
+                  </span>
+                </div>
+                <h3 className="font-display text-lg md:text-xl font-bold mb-1">
+                  {t("அரசு பதிவு எண்: 2012/TNVS", "Registered No: 2012/TNVS")}
+                </h3>
+                <p className="text-xs text-slate-400 font-tamil">
+                  {t("தமிழ்நாடு அரசியல் பதிவு செய்யப்பட்ட வணிகர்கள் சங்கமம்", "Govt. of Tamil Nadu Registered Traders Association")}
+                </p>
+              </div>
+              <div className="flex gap-4">
+                <div className="text-center">
+                  <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2 mx-auto">
+                    <Award className="w-6 h-6 text-gold" />
+                  </div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                    {t("ISO", "ISO")}
+                  </div>
+                  <div className="text-xs font-bold">9001</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2 mx-auto">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                    {t("சான்று", "Certified")}
+                  </div>
+                  <div className="text-xs font-bold">2024</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+      </Section>
+
       {/* HOW IT WORKS — Horizontal scroll-linked steps */}
       <HorizontalSteps />
 
