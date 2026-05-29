@@ -21,8 +21,8 @@ export const Route = createFileRoute("/analytics")({
 
 // ─── DATA MODELS & MOCKS ──────────────────────────────────────────────────────
 
-type MonthData = { month: string; members: number; labelTa: string; labelEn: string };
-const growthData: MonthData[] = [
+export type MonthData = { month: string; members: number; labelTa: string; labelEn: string };
+export const growthData: MonthData[] = [
   { month: "May 25", members: 85200,  labelTa: "மே 25", en: "May 25" },
   { month: "Jun 25", members: 88400,  labelTa: "ஜூன் 25", en: "Jun 25" },
   { month: "Jul 25", members: 91900,  labelTa: "ஜூலை 25", en: "Jul 25" },
@@ -37,16 +37,16 @@ const growthData: MonthData[] = [
   { month: "Apr 26", members: 124560, labelTa: "ஏப் 26", en: "Apr 26" },
 ] as any;
 
-type WingMetric = { id: string; nameEn: string; nameTa: string; count: number; colorClass: string; percentage: number };
-const wingMetrics: WingMetric[] = [
+export type WingMetric = { id: string; nameEn: string; nameTa: string; count: number; colorClass: string; percentage: number };
+export const wingMetrics: WingMetric[] = [
   { id: "professional", nameEn: "Professional Services", nameTa: "தொழில்முறைப் பிரிவுகள்", count: 38450, colorClass: "bg-violet-500", percentage: 31 },
   { id: "agricultural", nameEn: "Agricultural & Food", nameTa: "விவசாயம் & உணவு", count: 24120, colorClass: "bg-emerald-500", percentage: 19 },
   { id: "industrial", nameEn: "Industrial & Manufacturing", nameTa: "தொழில் & வர்த்தகம்", count: 31900, colorClass: "bg-amber-500", percentage: 26 },
   { id: "public", nameEn: "Public & General Services", nameTa: "பொது & சமூகப் பிரிவுகள்", count: 30090, colorClass: "bg-blue-500", percentage: 24 },
 ];
 
-type DistrictStat = { nameEn: string; nameTa: string; zone: string; count: number; claims: number; ratio: string };
-const districtStats: DistrictStat[] = [
+export type DistrictStat = { nameEn: string; nameTa: string; zone: string; count: number; claims: number; ratio: string };
+export const districtStats: DistrictStat[] = [
   { nameEn: "Chennai", nameTa: "சென்னை", zone: "North Zone", count: 28450, claims: 24, ratio: "0.08%" },
   { nameEn: "Coimbatore", nameTa: "கோயம்புத்தூர்", zone: "West Zone", count: 18120, claims: 15, ratio: "0.08%" },
   { nameEn: "Madurai", nameTa: "மதுரை", zone: "South Zone", count: 14200, claims: 11, ratio: "0.07%" },
@@ -59,8 +59,8 @@ const districtStats: DistrictStat[] = [
   { nameEn: "Others", nameTa: "இதர மாவட்டங்கள்", zone: "Statewide", count: 10000, claims: 9, ratio: "0.09%" },
 ];
 
-type WelfareSegment = { nameEn: string; nameTa: string; value: number; amount: string; percentage: number; color: string; dashArray: string; dashOffset: string };
-const welfareDistribution: WelfareSegment[] = [
+export type WelfareSegment = { nameEn: string; nameTa: string; value: number; amount: string; percentage: number; color: string; dashArray: string; dashOffset: string };
+export const welfareDistribution: WelfareSegment[] = [
   { nameEn: "Medical Health Cover", nameTa: "சுகாதார காப்பீடு", value: 45, amount: "₹3.78 Cr", percentage: 45, color: "#10b981", dashArray: "282.7", dashOffset: "0" },
   { nameEn: "Educational Aid", nameTa: "கல்வி உதவித்தொகை", value: 30, amount: "₹2.52 Cr", percentage: 30, color: "#3b82f6", dashArray: "282.7", dashOffset: "127.2" },
   { nameEn: "Emergency Relief", nameTa: "அவசர நிவாரணம்", value: 25, amount: "₹2.10 Cr", percentage: 25, color: "#f59e0b", dashArray: "282.7", dashOffset: "212.0" },

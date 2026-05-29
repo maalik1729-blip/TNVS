@@ -1,12 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Section } from "@/components/Section";
 import {
   Download, FileText, CreditCard, Bell, ChevronRight, ShieldCheck,
   LogOut, ArrowLeft, Copy, Award, Users, Smartphone, Play,
   CheckCircle2, UserPlus, Sparkles, Clock, AlertCircle,
-  Coins, Store, Rocket, ArrowRight, X
+  Coins, Store, Rocket, ArrowRight, X,
+  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight
 } from "lucide-react";
+import {
+  growthData, wingMetrics, districtStats, welfareDistribution
+} from "./analytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { getSession, clearSession } from "@/lib/session";
@@ -564,6 +568,11 @@ function Dashboard() {
           </div>
         </div>
 
+        {/* Unlocked Admin Analytics Gated Section */}
+        {isCoordinator && (
+          <AdminAnalyticsPanel t={t} language={language} />
+        )}
+
         {/* Full-width Loan Categories Row */}
         <div id="loan-categories-section" className="mt-10 pt-10 border-t border-slate-200/80 animate-fade-in scroll-mt-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -866,6 +875,499 @@ function Dashboard() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+
+function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
+  const [activeTab, setActiveTab] = useState<"overview" | "regional" | "welfare">("overview");
+  
+  // Sort State for Districts Leaderboard
+  const [sortField, setSortField] = useState<"count" | "claims">("count");
+  const [sortAsc, setSortAsc] = useState(false);
+
+  // Line Chart Interactive Tooltip State
+  const [hoveredPoint, setHoveredPoint] = useState<any | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  // Sorting Handler
+  const sortedDistricts = useMemo(() => {
+    return [...districtStats].sort((a, b) => {
+      const valA = a[sortField];
+      const valB = b[sortField];
+      return sortAsc ? valA - valB : valB - valA;
+    });
+  }, [sortField, sortAsc]);
+
+  const toggleSort = (field: "count" | "claims") => {
+    if (sortField === field) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortField(field);
+      setSortAsc(false);
+    }
+  };
+
+  // SVG Chart Configs
+  const chartHeight = 220;
+  const chartWidth = 720;
+  const padding = { top: 20, right: 30, bottom: 40, left: 60 };
+
+  const points = useMemo(() => {
+    const xRange = chartWidth - padding.left - padding.right;
+    const yRange = chartHeight - padding.top - padding.bottom;
+    const maxVal = 135000;
+    const minVal = 70000;
+
+    return growthData.map((d, index) => {
+      const x = padding.left + (index / (growthData.length - 1)) * xRange;
+      const y = chartHeight - padding.bottom - ((d.members - minVal) / (maxVal - minVal)) * yRange;
+      return { x, y, data: d };
+    });
+  }, [chartWidth, chartHeight]);
+
+  const linePath = useMemo(() => {
+    if (points.length === 0) return "";
+    return points.reduce((path, p, idx) => {
+      return idx === 0 ? `M ${p.x} ${p.y}` : `${path} L ${p.x} ${p.y}`;
+    }, "");
+  }, [points]);
+
+  const areaPath = useMemo(() => {
+    if (points.length === 0) return "";
+    const startX = points[0].x;
+    const endX = points[points.length - 1].x;
+    const bottomY = chartHeight - padding.bottom;
+    return `${linePath} L ${endX} ${bottomY} L ${startX} ${bottomY} Z`;
+  }, [points, linePath]);
+
+  return (
+    <div className="mt-10 pt-10 border-t border-slate-200/80 animate-fade-in max-w-7xl mx-auto w-full">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <div className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-[4px]">
+            {t("நிர்வாகி அணுகல்", "ADMIN / COORDINATOR ACCESS")}
+          </div>
+          <h2 className="mt-2 font-display text-lg md:text-xl font-bold text-slate-800 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-primary animate-pulse" />
+            {t("மாநில சங்க பகுப்பாய்வு", "Statewide Association Analytics")}
+          </h2>
+          <p className="text-xs text-slate-500 font-tamil mt-1 leading-relaxed">
+            {t("அசோசியேஷன் வளர்ச்சி, வட்டார முன்னிலை மற்றும் நிதி ஒதுக்கீடு விவரங்கள்.", "Comprehensive administrative oversight of member growth, district rankings, and welfare segments.")}
+          </p>
+        </div>
+
+        {/* Sub-Header Tab Switcher */}
+        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50 self-start sm:self-center">
+          {[
+            { id: "overview", ta: "வளர்ச்சி", en: "Overview" },
+            { id: "regional", ta: "வட்டாரம்", en: "Regional Layout" },
+            { id: "welfare", ta: "நிதி", en: "Welfare & Credit" },
+          ].map((tab) => {
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`py-1.5 px-3 rounded-lg font-display text-xs font-bold transition-all cursor-pointer ${
+                  active ? "bg-white text-primary shadow-xs font-extrabold" : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                {language === "ta" ? tab.ta : tab.en}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <AnimatePresence mode="wait">
+        {/* TAB 1: OVERVIEW */}
+        {activeTab === "overview" && (
+          <motion.div
+            key="overview-panel"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-6"
+          >
+            {/* Metric Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Card 1 */}
+              <div className="card-base p-5 bg-gradient-to-br from-white to-blue-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
+                      {t("மொத்த உறுப்பினர்கள்", "ACTIVE MEMBERS")}
+                    </span>
+                    <div className="text-2xl font-extrabold text-slate-800 mt-1.5 tabular-nums">
+                      1,24,560
+                    </div>
+                  </div>
+                  <div className="p-1.5 bg-primary/10 text-primary rounded-lg"><Users className="w-4 h-4" /></div>
+                </div>
+                <div className="text-[10px] font-semibold text-emerald-600 mt-2 flex items-center gap-0.5">
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <span>+12.4% {t("இந்த மாதம்", "this month")}</span>
+                </div>
+              </div>
+              {/* Card 2 */}
+              <div className="card-base p-5 bg-gradient-to-br from-white to-emerald-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
+                      {t("நலத்திட்ட நிதி", "WELFARE DISBURSED")}
+                    </span>
+                    <div className="text-2xl font-extrabold text-slate-800 mt-1.5 tabular-nums">
+                      ₹8.40 Cr
+                    </div>
+                  </div>
+                  <div className="p-1.5 bg-emerald-500/10 text-emerald-600 rounded-lg"><HeartPulse className="w-4 h-4" /></div>
+                </div>
+                <div className="text-[10px] font-semibold text-emerald-600 mt-2 flex items-center gap-0.5">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>94.8% {t("ஒப்புதல் விகிதம்", "approval rate")}</span>
+                </div>
+              </div>
+              {/* Card 3 */}
+              <div className="card-base p-5 bg-gradient-to-br from-white to-amber-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
+                      {t("வட்டியில்லா வணிகக் கடன்", "0% INTEREST LOANS")}
+                    </span>
+                    <div className="text-2xl font-extrabold text-slate-800 mt-1.5 tabular-nums">
+                      ₹12.50 Cr
+                    </div>
+                  </div>
+                  <div className="p-1.5 bg-amber-500/10 text-amber-600 rounded-lg"><Coins className="w-4 h-4" /></div>
+                </div>
+                <div className="text-[10px] font-semibold text-primary mt-2 flex items-center gap-0.5">
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <span>420+ {t("விண்ணப்பதாரர்கள்", "traders assisted")}</span>
+                </div>
+              </div>
+              {/* Card 4 */}
+              <div className="card-base p-5 bg-gradient-to-br from-white to-indigo-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
+                      {t("மாநில மாவட்டங்கள்", "DISTRICT FOOTPRINT")}
+                    </span>
+                    <div className="text-2xl font-extrabold text-slate-800 mt-1.5 tabular-nums">
+                      38 / 38
+                    </div>
+                  </div>
+                  <div className="p-1.5 bg-indigo-500/10 text-indigo-600 rounded-lg"><Globe className="w-4 h-4" /></div>
+                </div>
+                <div className="text-[10px] font-semibold text-slate-500 mt-2 flex items-center gap-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-indigo-500" />
+                  <span>100% {t("மாநிலப் பரப்பளவு", "statewide")}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* SVG Line Chart */}
+            <div className="card-base p-5 bg-white border border-slate-200/80 shadow-xs">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                <h3 className="font-display font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                  <TrendingUp className="w-4 h-4 text-primary animate-pulse" />
+                  {t("உறுப்பினர் சேர்க்கை வளர்ச்சி", "Membership Growth Over Time")}
+                </h3>
+              </div>
+
+              <div className="relative pt-2 pb-1 bg-gradient-to-b from-slate-50/50 to-white rounded-xl border border-slate-100 overflow-x-auto select-none">
+                <svg 
+                  viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
+                  className="min-w-[640px] w-full h-[180px]"
+                  onMouseLeave={() => {
+                    setHoveredPoint(null);
+                    setHoveredIndex(null);
+                  }}
+                >
+                  <defs>
+                    <linearGradient id="chartGradientDashboard" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.15" />
+                      <stop offset="100%" stopColor="#1e3a8a" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Grid Lines */}
+                  {[80000, 100000, 120000].map((gridVal, i) => {
+                    const yRange = chartHeight - padding.top - padding.bottom;
+                    const y = chartHeight - padding.bottom - ((gridVal - 70000) / (135000 - 70000)) * yRange;
+                    return (
+                      <g key={i}>
+                        <line x1={padding.left} y1={y} x2={chartWidth - padding.right} y2={y} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="4 4" />
+                        <text x={padding.left - 10} y={y + 3} fill="#94a3b8" fontSize="8" fontWeight="bold" textAnchor="end" className="font-mono">{`${gridVal / 1000}k`}</text>
+                      </g>
+                    );
+                  })}
+
+                  <path d={areaPath} fill="url(#chartGradientDashboard)" />
+                  <path d={linePath} fill="none" stroke="#1e3a8a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <line x1={padding.left} y1={chartHeight - padding.bottom} x2={chartWidth - padding.right} y2={chartHeight - padding.bottom} stroke="#cbd5e1" strokeWidth="1.5" />
+
+                  {points.map((p, index) => (
+                    <g key={index}>
+                      <text x={p.x} y={chartHeight - padding.bottom + 15} fill={hoveredIndex === index ? "#1e3a8a" : "#94a3b8"} fontSize="8" fontWeight="bold" textAnchor="middle" className="font-display font-sans">
+                        {language === "ta" ? p.data.labelTa : p.data.month}
+                      </text>
+                      {hoveredIndex === index && <circle cx={p.x} cy={p.y} r="5" fill="#1e3a8a" stroke="#ffffff" strokeWidth="1.5" />}
+                      <rect
+                        x={p.x - 18}
+                        y={padding.top}
+                        width="36"
+                        height={chartHeight - padding.top - padding.bottom}
+                        fill="transparent"
+                        className="cursor-pointer"
+                        onMouseEnter={() => {
+                          setHoveredPoint(p.data);
+                          setHoveredIndex(index);
+                        }}
+                      />
+                    </g>
+                  ))}
+                </svg>
+
+                {/* Floating Tooltip */}
+                <AnimatePresence>
+                  {hoveredPoint && hoveredIndex !== null && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                      className="absolute bg-slate-900 text-white rounded-lg p-2.5 shadow-md border border-slate-800 pointer-events-none text-xs space-y-0.5"
+                      style={{
+                        left: `${Math.min(Math.max((hoveredIndex / (growthData.length - 1)) * 82 + 6, 10), 80)}%`,
+                        top: "16px"
+                      }}
+                    >
+                      <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                        {language === "ta" ? hoveredPoint.labelTa : hoveredPoint.month}
+                      </div>
+                      <div className="font-mono text-xs font-black text-amber-400">
+                        {hoveredPoint.members.toLocaleString()} {language === "ta" ? "வணிகர்கள்" : "Traders"}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* TAB 2: REGIONAL */}
+        {activeTab === "regional" && (
+          <motion.div
+            key="regional-panel"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="grid lg:grid-cols-12 gap-5 animate-fade-in"
+          >
+            {/* Districts Leaderboard */}
+            <div className="lg:col-span-7 card-base p-5 bg-white border border-slate-200/80 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 className="font-display font-bold text-sm text-slate-800">
+                  {t("மாவட்ட முன்னிலை அட்டவணை", "Active Districts Leaderboard")}
+                </h3>
+                <div className="flex gap-1.5 text-[9px] font-bold uppercase">
+                  <button 
+                    onClick={() => toggleSort("count")}
+                    className={`px-2 py-1 border rounded-md flex items-center gap-0.5 transition cursor-pointer ${sortField === "count" ? "bg-primary border-primary text-white" : "bg-white border-slate-200 hover:bg-slate-50 text-slate-500"}`}
+                  >
+                    <span>{t("உறுப்பினர்கள்", "Traders")}</span>
+                    <ArrowUpDown className="w-2.5 h-2.5" />
+                  </button>
+                  <button 
+                    onClick={() => toggleSort("claims")}
+                    className={`px-2 py-1 border rounded-md flex items-center gap-0.5 transition cursor-pointer ${sortField === "claims" ? "bg-primary border-primary text-white" : "bg-white border-slate-200 hover:bg-slate-50 text-slate-500"}`}
+                  >
+                    <span>{t("கோரிக்கைகள்", "Claims")}</span>
+                    <ArrowUpDown className="w-2.5 h-2.5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto rounded-lg border border-slate-100 max-h-[280px] overflow-y-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead className="sticky top-0 bg-slate-50 border-b border-slate-100 z-10">
+                    <tr>
+                      <th className="px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase">{t("மாவட்டம்", "District")}</th>
+                      <th className="px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase text-right">{t("உறுப்பினர்கள்", "Traders")}</th>
+                      <th className="px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase text-right">{t("கோரிக்கைகள்", "Claims")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedDistricts.map((dist, idx) => (
+                      <tr key={dist.nameEn} className="border-b border-slate-100 hover:bg-slate-50/50 transition text-slate-700">
+                        <td className="px-3 py-2.5 text-xs font-bold text-slate-800">
+                          <span className="text-[10px] text-slate-400 font-mono mr-1">{idx + 1}.</span>
+                          {language === "ta" ? dist.nameTa : dist.nameEn}
+                        </td>
+                        <td className="px-3 py-2.5 text-xs font-bold font-mono text-slate-800 text-right tabular-nums">{dist.count.toLocaleString()}</td>
+                        <td className="px-3 py-2.5 text-xs font-bold font-mono text-right text-indigo-600 tabular-nums">
+                          {dist.claims} <span className="text-[9px] font-normal text-slate-400">({dist.ratio})</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Wings Distribution */}
+            <div className="lg:col-span-5 card-base p-5 bg-white border border-slate-200/80 shadow-xs space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h3 className="font-display font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                  <BarChart3 className="w-4 h-4 text-primary animate-pulse" />
+                  {t("துறை வாரியான பகிர்வு", "Wings Distribution")}
+                </h3>
+              </div>
+
+              <div className="space-y-3.5 pt-1">
+                {wingMetrics.map((wing) => (
+                  <div key={wing.id} className="space-y-1">
+                    <div className="flex justify-between items-baseline text-xs">
+                      <span className="font-bold text-slate-600 text-xxs">
+                        {language === "ta" ? wing.nameTa : wing.nameEn}
+                      </span>
+                      <div className="flex gap-1.5 items-center font-mono text-xxs">
+                        <span className="font-bold text-slate-800">{wing.count.toLocaleString()}</span>
+                        <span className="text-[9px] text-slate-400 bg-slate-50 px-1 rounded font-semibold">{wing.percentage}%</span>
+                      </div>
+                    </div>
+                    
+                    <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${wing.percentage}%` }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className={`h-full rounded-full ${wing.colorClass}`}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* TAB 3: WELFARE & CREDIT */}
+        {activeTab === "welfare" && (
+          <motion.div
+            key="welfare-panel"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="grid lg:grid-cols-12 gap-5 animate-fade-in"
+          >
+            {/* Donut Chart */}
+            <div className="lg:col-span-5 card-base p-5 bg-white border border-slate-200/80 shadow-xs space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h3 className="font-display font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                  <PieIcon className="w-4 h-4 text-primary animate-pulse" />
+                  {t("நலத்திட்ட நிதி ஒதுக்கீடு", "Welfare Allocation Donut")}
+                </h3>
+              </div>
+
+              <div className="flex flex-col items-center justify-center space-y-3">
+                <div className="relative w-28 h-28">
+                  <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="10" />
+                    {welfareDistribution.map((seg, idx) => (
+                      <circle
+                        key={idx}
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke={seg.color}
+                        strokeWidth="10"
+                        strokeDasharray={seg.dashArray}
+                        strokeDashoffset={seg.dashOffset}
+                        strokeLinecap="round"
+                      />
+                    ))}
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-[8px] font-black text-slate-400 font-sans tracking-wide">TOTAL</span>
+                    <span className="text-xs font-black text-slate-800 font-mono">₹8.40 Cr</span>
+                  </div>
+                </div>
+
+                <div className="w-full space-y-1.5 text-xxs">
+                  {welfareDistribution.map((seg, idx) => (
+                    <div key={idx} className="flex justify-between items-center bg-slate-50 border border-slate-100/50 px-2 py-1.5 rounded-lg">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
+                        <span className="font-bold text-slate-600">
+                          {language === "ta" ? seg.nameTa : seg.nameEn}
+                        </span>
+                      </div>
+                      <div className="font-mono font-bold text-slate-800">
+                        {seg.amount} <span className="text-[8px] text-slate-400 font-normal">({seg.percentage}%)</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Credit Info */}
+            <div className="lg:col-span-7 card-base p-5 bg-white border border-slate-200/80 shadow-xs space-y-5">
+              <div className="border-b border-slate-100 pb-3">
+                <h3 className="font-display font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                  <Coins className="w-4 h-4 text-emerald-600" />
+                  {t("வட்டியற்ற கடனுதவி", "0% Interest Credit Scheme")}
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3.5">
+                <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg space-y-0.5">
+                  <div className="text-[8px] font-black uppercase text-slate-400 tracking-wide">ASSISTANCE CAP</div>
+                  <div className="text-base font-black text-slate-800">₹25,00,000</div>
+                </div>
+                <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg space-y-0.5">
+                  <div className="text-[8px] font-black uppercase text-slate-400 tracking-wide">REQUEST TIME</div>
+                  <div className="text-base font-black text-slate-800">48-72 Hours</div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="font-display font-bold text-[10px] text-slate-400 uppercase tracking-widest">
+                  {t("கடன் விநியோகப் பிரிவு", "Capital Distribution")}
+                </h4>
+                
+                {[
+                  { label: "Proprietorship & Retail", percentage: 55, amount: "₹6.87 Cr", color: "bg-amber-500" },
+                  { label: "Partnership & Pvt Ltd", percentage: 30, amount: "₹3.75 Cr", color: "bg-blue-500" },
+                  { label: "Freelancers & Home-based", percentage: 15, amount: "₹1.88 Cr", color: "bg-purple-500" },
+                ].map((sec) => (
+                  <div key={sec.label} className="space-y-1">
+                    <div className="flex justify-between text-xxs font-semibold">
+                      <span className="text-slate-500 font-display">{sec.label}</span>
+                      <span className="font-mono text-slate-800">{sec.amount} ({sec.percentage}%)</span>
+                    </div>
+                    <div className="w-full bg-slate-150 rounded-full h-2 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${sec.percentage}%` }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className={`h-full rounded-full ${sec.color}`}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
