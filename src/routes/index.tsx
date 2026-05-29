@@ -323,8 +323,7 @@ function Home() {
                 poster="/favicon.png"
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
-                className="w-full block aspect-video object-cover cursor-pointer"
-                onClick={handlePlayPause}
+                className="w-full block aspect-video object-cover"
                 aria-label={t(
                   "தமிழ்நாடு வணிகர்களின் சங்கமம் வரவேற்பு காணொளி",
                   "Tamil Nadu Vanigargalin Sangamam welcome video"
