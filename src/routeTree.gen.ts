@@ -12,9 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WingsRouteImport } from './routes/wings'
 import { Route as VoterIdRouteImport } from './routes/voter-id'
 import { Route as TermsConditionsRouteImport } from './routes/terms-conditions'
-import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
 import { Route as ServicesRouteImport } from './routes/services'
-import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -40,19 +38,9 @@ const TermsConditionsRoute = TermsConditionsRouteImport.update({
   path: '/terms-conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
-  id: '/shipping-policy',
-  path: '/shipping-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RefundPolicyRoute = RefundPolicyRouteImport.update({
-  id: '/refund-policy',
-  path: '/refund-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
@@ -110,9 +98,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/membership': typeof MembershipRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/refund-policy': typeof RefundPolicyRoute
   '/services': typeof ServicesRoute
-  '/shipping-policy': typeof ShippingPolicyRoute
   '/terms-conditions': typeof TermsConditionsRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
@@ -127,9 +113,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/membership': typeof MembershipRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/refund-policy': typeof RefundPolicyRoute
   '/services': typeof ServicesRoute
-  '/shipping-policy': typeof ShippingPolicyRoute
   '/terms-conditions': typeof TermsConditionsRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
@@ -145,9 +129,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/membership': typeof MembershipRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/refund-policy': typeof RefundPolicyRoute
   '/services': typeof ServicesRoute
-  '/shipping-policy': typeof ShippingPolicyRoute
   '/terms-conditions': typeof TermsConditionsRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
@@ -164,9 +146,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/membership'
     | '/privacy-policy'
-    | '/refund-policy'
     | '/services'
-    | '/shipping-policy'
     | '/terms-conditions'
     | '/voter-id'
     | '/wings'
@@ -181,9 +161,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/membership'
     | '/privacy-policy'
-    | '/refund-policy'
     | '/services'
-    | '/shipping-policy'
     | '/terms-conditions'
     | '/voter-id'
     | '/wings'
@@ -198,9 +176,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/membership'
     | '/privacy-policy'
-    | '/refund-policy'
     | '/services'
-    | '/shipping-policy'
     | '/terms-conditions'
     | '/voter-id'
     | '/wings'
@@ -216,9 +192,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   MembershipRoute: typeof MembershipRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  RefundPolicyRoute: typeof RefundPolicyRoute
   ServicesRoute: typeof ServicesRoute
-  ShippingPolicyRoute: typeof ShippingPolicyRoute
   TermsConditionsRoute: typeof TermsConditionsRoute
   VoterIdRoute: typeof VoterIdRoute
   WingsRoute: typeof WingsRoute
@@ -248,25 +222,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/shipping-policy': {
-      id: '/shipping-policy'
-      path: '/shipping-policy'
-      fullPath: '/shipping-policy'
-      preLoaderRoute: typeof ShippingPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/services': {
       id: '/services'
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/refund-policy': {
-      id: '/refund-policy'
-      path: '/refund-policy'
-      fullPath: '/refund-policy'
-      preLoaderRoute: typeof RefundPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy-policy': {
@@ -344,9 +304,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   MembershipRoute: MembershipRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
-  RefundPolicyRoute: RefundPolicyRoute,
   ServicesRoute: ServicesRoute,
-  ShippingPolicyRoute: ShippingPolicyRoute,
   TermsConditionsRoute: TermsConditionsRoute,
   VoterIdRoute: VoterIdRoute,
   WingsRoute: WingsRoute,

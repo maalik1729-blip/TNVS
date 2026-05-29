@@ -79,16 +79,6 @@ export function SiteFooter() {
                 {t("தனியுரிமைக் கொள்கை", "Privacy Policy")}
               </Link>
             </li>
-            <li>
-              <Link to="/shipping-policy" className="hover:underline hover:text-white transition duration-200">
-                {t("கப்பல் கொள்கை", "Shipping Policy")}
-              </Link>
-            </li>
-            <li>
-              <Link to="/refund-policy" className="hover:underline hover:text-white transition duration-200">
-                {t("ரத்து மற்றும் பணத்தைத் திரும்பப்பெறுதல்", "Cancellation & Refund")}
-              </Link>
-            </li>
           </ul>
         </div>
 
