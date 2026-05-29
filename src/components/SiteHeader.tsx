@@ -230,6 +230,21 @@ export function SiteHeader() {
           {/* Desktop Right Controls */}
           <div className="hidden xl:flex items-center gap-1 lg:gap-2 shrink-0">
 
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
+            >
+              <User className="w-3.5 h-3.5" aria-hidden="true" />
+              {language === "ta" ? "எனது கணக்கு" : "My Account"}
+            </Link>
+
+            <Link
+              to="/membership"
+              className="btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-3 py-2 min-h-[44px]"
+            >
+              {language === "ta" ? "இணைவு" : "Join Now"}
+            </Link>
+
             {/* Language Toggle - Prominent */}
             <button
               onClick={toggleLanguage}
@@ -246,21 +261,6 @@ export function SiteHeader() {
               <Globe className="w-4 h-4" aria-hidden="true" />
               <span>{language === "ta" ? "தமிழ்" : "English"}</span>
             </button>
-
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
-            >
-              <User className="w-3.5 h-3.5" aria-hidden="true" />
-              {language === "ta" ? "எனது கணக்கு" : "My Account"}
-            </Link>
-
-            <Link
-              to="/membership"
-              className="btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-3 py-2 min-h-[44px]"
-            >
-              {language === "ta" ? "இணைவு" : "Join Now"}
-            </Link>
           </div>
 
           {/* Mobile Hamburger */}
