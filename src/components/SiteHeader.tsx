@@ -132,7 +132,7 @@ export function SiteHeader() {
 
         {/* Announcement ticker bar */}
         <div className="bg-primary text-white border-b border-primary-foreground/5 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between gap-2 lg:gap-4 w-full">
+          <div className="max-w-7xl mx-auto px-5 sm:px-6 py-2 flex items-center justify-between gap-2 lg:gap-4 w-full">
             <span className="text-xs font-semibold font-tamil flex items-center gap-1.5 shrink-0 select-none border-r border-white/20 pr-4">
               <span aria-hidden="true" className="text-gold">✦</span>
               {language === "ta" ? "பதிவு எண். 2012/TNVS" : "Reg. No. 2012/TNVS"}
@@ -165,7 +165,7 @@ export function SiteHeader() {
         </div>
 
         {/* Brand + Nav row */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6 py-3 flex items-center justify-between gap-2 sm:gap-4 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6 py-2 flex items-center justify-between gap-2 sm:gap-4 w-full">
 
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Tamil Nadu Vanigargalin Sangamam — Home">
@@ -176,11 +176,11 @@ export function SiteHeader() {
               width={40}
               height={40}
             />
-            <div className="leading-tight">
-              <div className="font-display font-bold text-slate-800 text-sm md:text-[15px] truncate max-w-[200px] md:max-w-none">
+            <div className="leading-tight min-w-0">
+              <div className="font-display font-bold text-slate-800 text-sm md:text-[15px] truncate">
                 Tamil Nadu Vanigargalin Sangamam
               </div>
-              <div className="font-tamil text-xs text-slate-500 mt-0.5">
+              <div className="font-tamil text-xs text-slate-500 mt-0.5 truncate">
                 தமிழ்நாடு வணிகர்களின் சங்கமம்
               </div>
             </div>
@@ -196,14 +196,14 @@ export function SiteHeader() {
                   to={n.to}
                   aria-current={active ? "page" : undefined}
                   className={[
-                    "relative px-1.5 sm:px-2 lg:px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg whitespace-nowrap group",
+                    "relative px-2 sm:px-3 lg:px-4 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg whitespace-nowrap group",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                     active
                       ? "text-primary font-bold"
                       : "text-slate-500 hover:text-primary hover:bg-slate-50/60",
                   ].join(" ")}
                 >
-                  <span className="relative z-10">{language === "ta" ? n.label : n.en}</span>
+                  <span className="relative z-10 text-xs sm:text-sm">{language === "ta" ? n.label : n.en}</span>
                   
                   {active ? (
                     <motion.div
