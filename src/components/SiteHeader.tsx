@@ -10,6 +10,7 @@ const NAV = [
   { to: "/services",  label: "சேவைகள்",     en: "Services" },
   { to: "/wings",     label: "பிரிவுகள்",   en: "Divisions" },
   { to: "/membership",label: "இணைவு",       en: "Join" },
+  { to: "/analytics", label: "விவரங்கள்",   en: "Analytics" },
   { to: "/assistant", label: "உதவி மையம்", en: "Support" },
 ] as const;
 
