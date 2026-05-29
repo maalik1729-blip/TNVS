@@ -4,8 +4,8 @@ import { ArrowLeft, ShieldCheck } from "lucide-react";
 export const Route = createFileRoute("/privacy-policy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy · K R Pathavan Trading Company" },
-      { name: "description", content: "Privacy and data security guidelines for K R Pathavan Trading Company customers." },
+      { title: "Privacy Policy · Tamil Nadu Vanigargalin Sangamam" },
+      { name: "description", content: "Privacy and data security guidelines for Tamil Nadu Vanigargalin Sangamam members." },
     ],
   }),
   component: PrivacyPolicy,
@@ -34,7 +34,7 @@ function PrivacyPolicy() {
           </div>
 
           <p className="text-sm text-slate-600 leading-relaxed">
-            At <strong>K R Pathavan Trading Company</strong>, we value the trust you place in us when choosing our premium teas, nuts, and dry fruits. Protecting your personal information is as important to us as ensuring the quality and authenticity of the products we deliver. This Privacy Policy explains what information we collect, how we use it, how we safeguard it, and your rights when engaging with our business—whether in-store, wholesale, or online.
+            At <strong>Tamil Nadu Vanigargalin Sangamam (தமிழ்நாடு வணிகர்களின் சங்கமம்)</strong>, we value the trust you place in us as our member. Protecting your personal information is as important to us as ensuring the quality of advocacy, certification, and welfare services we provide. This Privacy Policy explains what information we collect, how we use it, how we safeguard it, and your rights when engaging with our portal—whether for membership, renewal, or welfare applications.
           </p>
 
           {/* Section 1 */}
@@ -128,15 +128,15 @@ function PrivacyPolicy() {
           {/* Policy Updates & Contact Details */}
           <div className="border-t border-slate-100 pt-6 mt-8 space-y-4">
             <div className="text-xxs text-slate-400 font-mono">
-              Last Updated: August 2025 | © 2025 K R Pathavan Trading Company. All Rights Reserved.
+              Last Updated: August 2025 | © 2025 Tamil Nadu Vanigargalin Sangamam. All Rights Reserved.
             </div>
             <h4 className="font-display text-sm font-bold text-slate-800">Contact Us</h4>
             <div className="bg-slate-50 border border-slate-150 rounded-xl p-4 text-xs font-mono text-slate-700 space-y-2">
-              <div className="font-sans font-bold text-slate-800 text-xs">K R Pathavan Trading Company</div>
-              <div>📍 43/A, ULKOTTAI ROAD, PAAPANKULAM, JAYANKONDAM, ARIYALUR, TAMIL NADU - 621802</div>
-              <div>📞 Phone: +91 93604 28764</div>
-              <div>📧 Emails: info@krpathavan.com &nbsp;&nbsp;&nbsp;&nbsp; krpathavantradingcompany@gmail.com</div>
-              <div>🌐 Website: <a href="https://krpathavan.com" target="_blank" rel="noopener noreferrer" className="text-emerald-600 underline">krpathavan.com</a></div>
+              <div className="font-sans font-bold text-slate-800 text-xs">Tamil Nadu Vanigargalin Sangamam (தமிழ்நாடு வணிகர்களின் சங்கமம்)</div>
+              <div>📍 Mylapore, Chennai — 600 004, Tamil Nadu, India</div>
+              <div>📞 Helpline: 044-2345-6789</div>
+              <div>📧 Email: info@tnvs.gov.in</div>
+              <div>🌐 Website: <span className="text-emerald-600 underline">tnvs.gov.in</span></div>
             </div>
           </div>
         </div>
