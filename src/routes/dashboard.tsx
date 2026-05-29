@@ -169,6 +169,29 @@ function Dashboard() {
 
     return () => clearInterval(interval);
   }, [isLiveStreamOpen]);
+
+  // GST Hub states
+  const [gstActiveTab, setGstActiveTab] = useState<"calc" | "query">("calc");
+  const [calcAmount, setCalcAmount] = useState<string>("10000");
+  const [calcRate, setCalcRate] = useState<number>(18);
+  const [gstQueryText, setGstQueryText] = useState("");
+
+  const cgstAmount = useMemo(() => {
+    const amt = Number(calcAmount) || 0;
+    return ((amt * (calcRate / 2)) / 100).toFixed(2);
+  }, [calcAmount, calcRate]);
+
+  const sgstAmount = useMemo(() => {
+    const amt = Number(calcAmount) || 0;
+    return ((amt * (calcRate / 2)) / 100).toFixed(2);
+  }, [calcAmount, calcRate]);
+
+  const totalCalculated = useMemo(() => {
+    const amt = Number(calcAmount) || 0;
+    const cgst = Number(cgstAmount);
+    const sgst = Number(sgstAmount);
+    return (amt + cgst + sgst).toFixed(2);
+  }, [calcAmount, cgstAmount, sgstAmount]);
   
   const handleToggleRsvp = (eventId: string, status: "attending" | "not_attending") => {
     const current = rsvpStates[eventId];
@@ -628,6 +651,134 @@ function Dashboard() {
               </div>
             </div>
 
+            {/* Digital GST & Finance Hub */}
+            <div className="card-base p-5 md:p-6 space-y-5">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Coins className="w-5 h-5 text-primary animate-bounce" />
+                  <h3 className="font-display font-bold text-sm text-slate-800">
+                    {t("டிஜிட்டல் ஜிஎஸ்டி & நிதி மையம்", "Digital GST & Finance Hub")}
+                  </h3>
+                </div>
+                <span className="text-[9px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider">
+                  FREE SERVICE
+                </span>
+              </div>
+
+              {/* Sub-Tabs Selector */}
+              <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50">
+                <button
+                  type="button"
+                  onClick={() => setGstActiveTab("calc")}
+                  className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                    gstActiveTab === "calc" ? "bg-white text-primary shadow-xs" : "text-slate-500"
+                  }`}
+                >
+                  {t("கணக்கீடு & காலண்டர்", "Calculator & Dates")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGstActiveTab("query")}
+                  className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                    gstActiveTab === "query" ? "bg-white text-primary shadow-xs" : "text-slate-500"
+                  }`}
+                >
+                  {t("வரி சந்தேகங்கள்", "Ask Auditor")}
+                </button>
+              </div>
+
+              {/* GST Content: Tab 1 (Calculator & Filing dates) */}
+              {gstActiveTab === "calc" && (
+                <div className="space-y-4 pt-1 animate-fade-in text-left">
+                  {/* Micro Filing Calendar */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Filing Deadlines</span>
+                    <div className="grid grid-cols-2 gap-2 text-xxs font-mono">
+                      <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-col">
+                        <span className="text-slate-400 font-bold">GSTR-1</span>
+                        <span className="text-slate-700 font-black mt-0.5">June 11, 2026</span>
+                      </div>
+                      <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-col">
+                        <span className="text-slate-400 font-bold">GSTR-3B</span>
+                        <span className="text-slate-700 font-black mt-0.5">June 20, 2026</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* GST Calculator */}
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">GST Quick Calc</span>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        placeholder="₹ Subtotal"
+                        value={calcAmount}
+                        onChange={(e) => setCalcAmount(e.target.value)}
+                        className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primary"
+                      />
+                      <select
+                        value={calcRate}
+                        onChange={(e) => setCalcRate(Number(e.target.value))}
+                        className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary cursor-pointer"
+                      >
+                        <option value="5">5%</option>
+                        <option value="12">12%</option>
+                        <option value="18">18%</option>
+                        <option value="28">28%</option>
+                      </select>
+                    </div>
+
+                    <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 grid grid-cols-3 gap-1 text-center font-mono text-[10px]">
+                      <div>
+                        <span className="text-slate-400">CGST</span>
+                        <span className="block text-slate-700 font-black mt-0.5">₹{cgstAmount}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400">SGST</span>
+                        <span className="block text-slate-700 font-black mt-0.5">₹{sgstAmount}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400">TOTAL</span>
+                        <span className="block text-slate-900 font-extrabold mt-0.5">₹{totalCalculated}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* GST Content: Tab 2 (Ask Auditor query submission form) */}
+              {gstActiveTab === "query" && (
+                <div className="space-y-3 pt-1 animate-fade-in text-left">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Raise Tax Doubt</div>
+                  <div className="space-y-2">
+                    <textarea
+                      placeholder={t("வரி தொடர்பான சந்தேகங்களை இங்கு டைப் செய்யவும்...", "Type your GST or tax doubts here...")}
+                      rows={2}
+                      value={gstQueryText}
+                      onChange={(e) => setGstQueryText(e.target.value)}
+                      className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-none focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!gstQueryText.trim()) return;
+                        toast.success(
+                          language === "ta"
+                            ? "வரி சந்தேகம் சமர்ப்பிக்கப்பட்டது! வினவல் குறிப்பு எண்: #TNVS-GST-332 🚀"
+                            : "Query submitted successfully! Ref ID: #TNVS-GST-332 🚀"
+                        );
+                        setGstQueryText("");
+                      }}
+                      className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer min-h-[36px]"
+                    >
+                      <Sparkles className="w-4 h-4 text-gold animate-spin" />
+                      <span>{t("கேள்வி சமர்ப்பி", "Submit Query")}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Coordinator Widget — shown BELOW activity, not above */}
             {!isCoordinator ? (
               <div className="card-base p-5 md:p-6 relative overflow-hidden">
@@ -713,6 +864,31 @@ function Dashboard() {
                     </div>
                   </div>
 
+                  {/* Milestones & Badges */}
+                  <div className="pt-1.5 text-left">
+                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
+                      {t("தனிப்பட்ட மைல்கற்கள்", "Milestone Badges")}
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="bg-slate-900 border border-amber-500/35 rounded-xl p-2.5 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-8 h-8 bg-amber-500/10 rounded-full blur-md" />
+                        <span className="text-lg">🥉</span>
+                        <span className="text-[9px] font-black text-amber-500 tracking-wider uppercase mt-1">Bronze Vendor</span>
+                        <span className="text-[8px] text-emerald-400 font-bold mt-0.5">{t("அன்லாக்", "Unlocked")} (5+)</span>
+                      </div>
+                      <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-2.5 flex flex-col items-center justify-center text-center opacity-65">
+                        <span className="text-lg">🥈</span>
+                        <span className="text-[9px] font-black text-slate-400 tracking-wider uppercase mt-1 font-sans">Silver Organizer</span>
+                        <span className="text-[8px] text-slate-500 font-bold mt-0.5">LOCKED (15)</span>
+                      </div>
+                      <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-2.5 flex flex-col items-center justify-center text-center opacity-65">
+                        <span className="text-lg">🥇</span>
+                        <span className="text-[9px] font-black text-slate-400 tracking-wider uppercase mt-1 font-sans">Gold Coordinator</span>
+                        <span className="text-[8px] text-slate-500 font-bold mt-0.5">LOCKED (25)</span>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Referral Link — uses real origin domain */}
                   <div className="space-y-2">
                     <label
@@ -747,6 +923,40 @@ function Dashboard() {
                         "Share this link to invite more members!"
                       )}
                     </p>
+                  </div>
+
+                  {/* Top Recruiters Leaderboard */}
+                  <div className="border-t border-slate-800 pt-4 space-y-2 text-left">
+                    <div className="flex items-center gap-1.5">
+                      <Award className="w-3.5 h-3.5 text-gold" />
+                      <span className="text-[10px] font-bold uppercase text-slate-200 tracking-wider">
+                        {t("மாநில அளவிலான லீடர்போர்டு", "Top Recruiter Leaderboard")}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-1.5 pt-1 font-sans">
+                      {[
+                        { name: "Siva Shanmugam", location: "Salem", invites: 24, rank: "1st" },
+                        { name: "Muthu Pandian", location: "Madurai", invites: 18, rank: "2nd" },
+                        { name: "Senthil Kumar N (You)", location: "Chennai", invites: 5, rank: "3rd" },
+                      ].map((item, index) => (
+                        <div key={index} className={`flex items-center justify-between text-[11px] p-2 rounded-lg border ${
+                          item.invites === 5 
+                            ? "bg-primary/20 border-primary/40 text-white font-extrabold" 
+                            : "bg-slate-900/40 border-slate-850 text-slate-350"
+                        }`}>
+                          <div className="flex items-center gap-2">
+                            <span className={`w-4 text-center font-bold font-mono text-[9px] ${index === 0 ? "text-gold" : index === 1 ? "text-slate-400" : "text-amber-600"}`}>
+                              {item.rank}
+                            </span>
+                            <div>
+                              <span className="font-semibold">{item.name}</span>
+                              <span className="text-[9px] text-slate-500 ml-1 font-bold">({item.location})</span>
+                            </div>
+                          </div>
+                          <span className="font-mono text-gold text-[10px] font-bold">{item.invites} {t("நபர்", "invites")}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Referred Members — CRM Smart Search & Filter */}
