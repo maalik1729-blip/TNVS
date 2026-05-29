@@ -604,60 +604,8 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN — Activity + Notices + Coordinator */}
+          {/* RIGHT COLUMN — Meetings, Welfare, GST, Activity, Coordinator */}
           <div className="lg:col-span-7 space-y-6">
-
-            {/* Recent Activity */}
-            <div className="card-base p-5 md:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-base font-bold text-slate-800">
-                  {t("சமீபத்திய செயல்பாடுகள்", "Recent Activity")}
-                </h2>
-                <span className="text-xs bg-slate-50 text-slate-500 px-2.5 py-1 rounded-full font-semibold border border-slate-100">
-                  {t("கடந்த 30 நாட்கள்", "Last 30 days")}
-                </span>
-              </div>
-
-              {/* Desktop Table */}
-              <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-100">
-                <table className="w-full text-left border-collapse" aria-label="Recent activity">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100">
-                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("தேதி", "Date")}</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("விவரம்", "Description")}</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("நிலை", "Status")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ACTIVITIES.map((a) => (
-                      <tr key={a.t} className="border-b border-slate-100 hover:bg-slate-50/60 transition">
-                        <td className="px-4 py-3.5 text-xs text-slate-400 font-mono whitespace-nowrap tabular-nums">{a.d}</td>
-                        <td className="px-4 py-3.5">
-                          <div className="text-sm font-semibold text-slate-800">{a.t}</div>
-                          <div className="text-xs text-slate-400 mt-0.5">{a.s}</div>
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <StatusPill status={a.status} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Mobile Card List */}
-              <div className="md:hidden divide-y divide-slate-100">
-                {ACTIVITIES.map((a) => (
-                  <ActivityCard
-                    key={a.t}
-                    date={a.d}
-                    title={a.t}
-                    subtitle={a.s}
-                    status={a.status}
-                  />
-                ))}
-              </div>
-            </div>
 
             {/* Notices */}
             {/* Interactive Meetings & Events Section */}
@@ -1565,7 +1513,59 @@ function Dashboard() {
               )}
             </div>
 
-            {/* Coordinator Widget — shown BELOW activity, not above */}
+            {/* Recent Activity — shown after GST Hub for better user flow */}
+            <div className="card-base p-5 md:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-display text-base font-bold text-slate-800">
+                  {t("சமீபத்திய செயல்பாடுகள்", "Recent Activity")}
+                </h2>
+                <span className="text-xs bg-slate-50 text-slate-500 px-2.5 py-1 rounded-full font-semibold border border-slate-100">
+                  {t("கடந்த 30 நாட்கள்", "Last 30 days")}
+                </span>
+              </div>
+
+              {/* Desktop Table */}
+              <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-100">
+                <table className="w-full text-left border-collapse" aria-label="Recent activity">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-100">
+                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("தேதி", "Date")}</th>
+                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("விவரம்", "Description")}</th>
+                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("நிலை", "Status")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ACTIVITIES.map((a) => (
+                      <tr key={a.t} className="border-b border-slate-100 hover:bg-slate-50/60 transition">
+                        <td className="px-4 py-3.5 text-xs text-slate-400 font-mono whitespace-nowrap tabular-nums">{a.d}</td>
+                        <td className="px-4 py-3.5">
+                          <div className="text-sm font-semibold text-slate-800">{a.t}</div>
+                          <div className="text-xs text-slate-400 mt-0.5">{a.s}</div>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <StatusPill status={a.status} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card List */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {ACTIVITIES.map((a) => (
+                  <ActivityCard
+                    key={a.t}
+                    date={a.d}
+                    title={a.t}
+                    subtitle={a.s}
+                    status={a.status}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Coordinator Widget — shown at the bottom */}
             {!isCoordinator ? (
               <div className="card-base p-5 md:p-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gold/5 rounded-full translate-x-1/3 -translate-y-1/3" aria-hidden="true" />
