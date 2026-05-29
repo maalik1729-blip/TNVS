@@ -40,18 +40,18 @@ const ACTIVITIES = [
 ];
 const EVENTS = [
   {
-    id: "agm-2026",
-    t: "Annual General Meeting (AGM) · Chennai",
+    id: "agm-live",
+    t: "Annual General Meeting (AGM) · Online Livecast",
     d: "Live Now · (In case you cannot attend offline, connect directly)",
-    ta: "ஆண்டு பொதுக்குழு கூட்டம் · (நேரில் வர முடியாதவர்கள் நேரலையில் இணையலாம்)",
+    ta: "ஆண்டு பொதுக்குழு கூட்டம் · நேரலை (நேரில் வர முடியாதவர்கள் நேரலையில் இணையலாம்)",
     status: "live",
     attendees: 428,
   },
   {
-    id: "gst-webinar",
-    t: "GST Compliance & Trader Advisory Seminar",
-    d: "15 June 2026 · Mylapore Office Hub",
-    ta: "ஜிஎஸ்டி மற்றும் வணிகர் ஆலோசனை கருத்தரங்கம்",
+    id: "agm-offline",
+    t: "Annual General Meeting (AGM) · Chennai",
+    d: "28 June 2026 · Mylapore Office Hub",
+    ta: "ஆண்டு பொதுக்குழு கூட்டம் · சென்னை (நேரடி முகவரி: மயிலாப்பூர் அலுவலகம்)",
     status: "upcoming",
     attendees: 184,
   },
@@ -64,6 +64,7 @@ const EVENTS = [
     attendees: 0,
   },
 ];
+
 function Dashboard() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
@@ -123,14 +124,14 @@ function Dashboard() {
 
   // RSVP Toggles States
   const [rsvpStates, setRsvpStates] = useState<Record<string, "attending" | "not_attending" | "none">>({
-    "agm-2026": "none",
-    "gst-webinar": "none",
+    "agm-live": "none",
+    "agm-offline": "none",
     "scholarship-2026": "none",
   });
 
   const [attendeeCounts, setAttendeeCounts] = useState<Record<string, number>>({
-    "agm-2026": 428,
-    "gst-webinar": 184,
+    "agm-live": 428,
+    "agm-offline": 184,
     "scholarship-2026": 0,
   });
 
