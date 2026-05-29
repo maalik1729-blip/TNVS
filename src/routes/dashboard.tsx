@@ -949,7 +949,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <div className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-[4px]">
-            {t("நிர்வாகி அணுகல்", "ADMIN / COORDINATOR ACCESS")}
+            {t("சங்கப் புள்ளிவிவரங்கள்", "ASSOCIATION ANALYTICS")}
           </div>
           <h2 className="mt-2 font-display text-lg md:text-xl font-bold text-slate-800 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-primary animate-pulse" />
