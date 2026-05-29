@@ -383,16 +383,28 @@ function Wings() {
               aria-controls="wings-panel"
               id="wings-tab"
               onClick={() => setActiveTab("wings")}
-              className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+              className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group ${
                 activeTab === "wings" ? "text-primary" : "text-slate-400 hover:text-slate-600"
               }`}
             >
-              {t("34 வணிகப் பிரிவுகள்", "34 Specialized Wings")}
-              {activeTab === "wings" && (
+              <span className="relative z-10">{t("34 வணிகப் பிரிவுகள்", "34 Specialized Wings")}</span>
+              
+              {activeTab === "wings" ? (
                 <motion.div
                   layoutId="activeTabUnderline"
-                  className="absolute bottom-0 left-0 right-0 h-0.75 bg-primary rounded-full"
-                />
+                  className="absolute -bottom-px left-6 right-6 h-[8px] z-0 text-primary flex items-center"
+                  transition={{ type: "tween", ease: [0.32, 0.72, 0, 1], duration: 0.35 }}
+                >
+                  <svg viewBox="0 0 100 10" preserveAspectRatio="none" className="w-full h-full" fill="none">
+                    <path d="M 2,2 Q 6,8 12,8 L 88,8 Q 94,8 98,2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                  </svg>
+                </motion.div>
+              ) : (
+                <div className="absolute -bottom-px left-6 right-6 h-[8px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] z-0 origin-center text-primary/30 flex items-center">
+                  <svg viewBox="0 0 100 10" preserveAspectRatio="none" className="w-full h-full" fill="none">
+                    <path d="M 2,2 Q 6,8 12,8 L 88,8 Q 94,8 98,2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                  </svg>
+                </div>
               )}
             </button>
             <button
@@ -401,16 +413,28 @@ function Wings() {
               aria-controls="zones-panel"
               id="zones-tab"
               onClick={() => setActiveTab("zones")}
-              className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+              className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group ${
                 activeTab === "zones" ? "text-primary" : "text-slate-400 hover:text-slate-600"
               }`}
             >
-              {t("மண்டல வாரியான தொகுதிகள்", "Regional Zone Breakdown")}
-              {activeTab === "zones" && (
+              <span className="relative z-10">{t("மண்டல வாரியான தொகுதிகள்", "Regional Zone Breakdown")}</span>
+              
+              {activeTab === "zones" ? (
                 <motion.div
                   layoutId="activeTabUnderline"
-                  className="absolute bottom-0 left-0 right-0 h-0.75 bg-primary rounded-full"
-                />
+                  className="absolute -bottom-px left-6 right-6 h-[8px] z-0 text-primary flex items-center"
+                  transition={{ type: "tween", ease: [0.32, 0.72, 0, 1], duration: 0.35 }}
+                >
+                  <svg viewBox="0 0 100 10" preserveAspectRatio="none" className="w-full h-full" fill="none">
+                    <path d="M 2,2 Q 6,8 12,8 L 88,8 Q 94,8 98,2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                  </svg>
+                </motion.div>
+              ) : (
+                <div className="absolute -bottom-px left-6 right-6 h-[8px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] z-0 origin-center text-primary/30 flex items-center">
+                  <svg viewBox="0 0 100 10" preserveAspectRatio="none" className="w-full h-full" fill="none">
+                    <path d="M 2,2 Q 6,8 12,8 L 88,8 Q 94,8 98,2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                  </svg>
+                </div>
               )}
             </button>
           </div>
@@ -498,7 +522,7 @@ function Wings() {
               <div className="mt-8 stats-grid max-w-md">
                 <button
                   onClick={handleStatsZoneClick}
-                  className="group relative overflow-hidden bg-gradient-to-br from-white to-blue-50/30 border border-blue-100/80 rounded-2xl stats-card-padding shadow-xs hover:shadow-md hover:shadow-blue-500/5 hover:border-blue-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
+                  className="group relative overflow-hidden bg-linear-to-br from-white to-blue-50/30 border border-blue-100/80 rounded-2xl stats-card-padding shadow-xs hover:shadow-md hover:shadow-blue-500/5 hover:border-blue-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
                 >
                   <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-blue-500/10 group-hover:scale-110 pointer-events-none" />
                   <div className="flex justify-between items-start">
@@ -517,7 +541,7 @@ function Wings() {
                 </button>
                 <button
                   onClick={handleStatsDistrictClick}
-                  className="group relative overflow-hidden bg-gradient-to-br from-white to-amber-50/30 border border-amber-100/80 rounded-2xl stats-card-padding shadow-xs hover:shadow-md hover:shadow-amber-500/5 hover:border-amber-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
+                  className="group relative overflow-hidden bg-linear-to-br from-white to-amber-50/30 border border-amber-100/80 rounded-2xl stats-card-padding shadow-xs hover:shadow-md hover:shadow-amber-500/5 hover:border-amber-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
                 >
                   <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-amber-500/10 group-hover:scale-110 pointer-events-none" />
                   <div className="flex justify-between items-start">
@@ -754,7 +778,7 @@ function Wings() {
                               setSelectedZone(zone);
                               setZoneQuery("");
                             }}
-                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none block w-full bg-white border border-slate-200 shadow-xxs min-h-[44px]"
+                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none w-full bg-white border border-slate-200 shadow-xxs min-h-[44px]"
                           >
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
@@ -804,7 +828,7 @@ function Wings() {
                               setSelectedDistrict(district);
                               setZoneQuery("");
                             }}
-                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none block w-full bg-white border border-slate-200 shadow-xxs min-h-[44px]"
+                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none w-full bg-white border border-slate-200 shadow-xxs min-h-[44px]"
                           >
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
@@ -908,7 +932,7 @@ function Wings() {
                               setSelectedWingZone(wing.id);
                               setZoneQuery("");
                             }}
-                            className="card-base card-interactive p-4 md:p-5 flex flex-col justify-between group text-left cursor-pointer focus:outline-none block w-full bg-white border border-slate-200 shadow-xxs min-h-[170px]"
+                            className="card-base card-interactive p-4 md:p-5 flex flex-col justify-between group text-left cursor-pointer focus:outline-none w-full bg-white border border-slate-200 shadow-xxs min-h-[170px]"
                           >
                             <div className="space-y-3">
                               <div className="w-9 h-9 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">

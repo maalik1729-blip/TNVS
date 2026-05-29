@@ -70,7 +70,7 @@ export function FloatingInput({ label, error, success, value, onChange, classNam
         htmlFor={id}
         className={[
           "absolute left-4 font-medium pointer-events-none select-none",
-          "transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          "transition-all duration-200 ease-in-out",
           floated
             ? "top-[8px] text-[10px] tracking-wide font-semibold " +
               (error ? "text-red-500" : focused ? "text-primary" : "text-slate-400")
@@ -124,7 +124,7 @@ export function FloatingTextarea({ label, error, value, onChange, className = ""
         htmlFor={id}
         className={[
           "absolute left-4 font-medium pointer-events-none select-none",
-          "transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          "transition-all duration-200 ease-in-out",
           floated
             ? "top-[8px] text-[10px] tracking-wide font-semibold " +
               (error ? "text-red-500" : focused ? "text-primary" : "text-slate-400")

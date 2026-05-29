@@ -620,7 +620,7 @@ function Services() {
                     {/* Step 0: Welcome and Ad Banner */}
                     {chatStep === 0 && (
                       <div className="space-y-5 animate-fade-in">
-                        <div className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl p-5 shadow-sm space-y-3 relative overflow-hidden">
+                        <div className="bg-linear-to-br from-emerald-600 to-teal-700 text-white rounded-2xl p-5 shadow-sm space-y-3 relative overflow-hidden">
                           <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
                           <h5 className="font-display font-bold text-sm text-gold">கடன் கோரிக்கை</h5>
                           <p className="text-xs text-emerald-100 leading-relaxed font-tamil">
@@ -746,7 +746,7 @@ function Services() {
                         </div>
 
                         <div className="space-y-2">
-                          <h4 className="font-display font-bold text-base text-emerald-900 leading-relaxed font-tamil px-4">
+                          <h4 className="font-display font-bold text-base text-emerald-900 leading-relaxed px-4">
                             25 லட்சம் வட்டியில்லா கடனுக்கு விண்ணப்பித்ததற்கு நன்றி! எங்கள் குழு விரைவில் தொடர்பு கொள்ளும்.
                           </h4>
                         </div>

@@ -48,7 +48,7 @@ export function HorizontalSteps() {
               className="card-base card-interactive w-full p-6 sm:p-8 bg-card border border-border rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between min-h-[200px] sm:min-h-[230px] relative group"
             >
               {/* Corner Saffron Gold Accent */}
-              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-gold/15 to-transparent rounded-tr-2xl rounded-bl-full" />
+              <div className="absolute top-0 right-0 w-16 h-16 bg-linear-to-br from-gold/15 to-transparent rounded-tr-2xl rounded-bl-full" />
               
               {/* Header: Step Number */}
               <div className="flex justify-between items-center">

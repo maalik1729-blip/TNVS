@@ -305,17 +305,19 @@ function Dashboard() {
               </div>
               <p className="text-xs text-slate-500 leading-relaxed font-tamil">
                 {t(
-                  "சிறந்த அனுபவத்திற்கு Google Play Store இல் இருந்து அதிகாரப்பூர்வ வணிகம் ஆப்பை பதிவிறக்கவும்.",
-                  "For the best experience, download the official Vanigam app from the Google Play Store."
+                  "சிறந்த அனுபவத்திற்கு Google Play Store இல் இருந்து அதிகாரப்பூர்வ வணிகன் AI ஆப்பை பதிவிறக்கவும்.",
+                  "For the best experience, download the official Vanigan AI app from the Google Play Store."
                 )}
               </p>
-              <button
-                onClick={() => toast.success(t("ஆப் விரைவில் கிடைக்கும்! 🚀", "App coming to Google Play Store soon! 🚀"))}
+              <a
+                href="https://play.google.com/store/apps/details?id=com.thirumoolar.vanigan"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-[10px] text-sm font-semibold flex items-center justify-center gap-2 transition active:scale-[0.98] min-h-[48px]"
               >
                 <Play className="w-4 h-4 fill-white" aria-hidden="true" />
                 <span className="font-tamil">{t("Play Store இல் பதிவிறக்கம்", "Download on Play Store")}</span>
-              </button>
+              </a>
             </div>
           </div>
 

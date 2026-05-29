@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Menu, X, User, Phone } from "lucide-react";
 import templeLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
 import { useLanguage } from "@/hooks/useLanguage";
+import { motion } from "framer-motion";
 
 const NAV = [
   { to: "/",          label: "முகப்பு",     en: "Home" },
@@ -194,14 +195,32 @@ export function SiteHeader() {
                   to={n.to}
                   aria-current={active ? "page" : undefined}
                   className={[
-                    "relative px-2 lg:px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg whitespace-nowrap",
+                    "relative px-2 lg:px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg whitespace-nowrap group",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                     active
-                      ? "text-primary after:absolute after:bottom-0 after:left-1.5 after:right-1.5 after:h-[2px] after:bg-gold after:rounded-full"
-                      : "text-slate-500 hover:text-primary hover:bg-slate-50/70 after:absolute after:bottom-0 after:left-1.5 after:right-1.5 after:h-[2px] after:bg-gold after:rounded-full after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300",
+                      ? "text-primary font-bold"
+                      : "text-slate-500 hover:text-primary hover:bg-slate-50/60",
                   ].join(" ")}
                 >
-                  {language === "ta" ? n.label : n.en}
+                  <span className="relative z-10">{language === "ta" ? n.label : n.en}</span>
+                  
+                  {active ? (
+                    <motion.div
+                      layoutId="activeNavUnderline"
+                      className="absolute -bottom-px left-1.5 right-1.5 h-[8px] z-0 text-gold flex items-center"
+                      transition={{ type: "tween", ease: [0.32, 0.72, 0, 1], duration: 0.35 }}
+                    >
+                      <svg viewBox="0 0 100 10" preserveAspectRatio="none" className="w-full h-full" fill="none">
+                        <path d="M 2,2 Q 6,8 12,8 L 88,8 Q 94,8 98,2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                      </svg>
+                    </motion.div>
+                  ) : (
+                    <div className="absolute -bottom-px left-1.5 right-1.5 h-[8px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] z-0 origin-center text-gold/30 flex items-center">
+                      <svg viewBox="0 0 100 10" preserveAspectRatio="none" className="w-full h-full" fill="none">
+                        <path d="M 2,2 Q 6,8 12,8 L 88,8 Q 94,8 98,2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                      </svg>
+                    </div>
+                  )}
                 </Link>
               );
             })}
@@ -262,7 +281,7 @@ export function SiteHeader() {
       {/* ── Mobile menu — full-screen overlay ─────────────────────────────── */}
       {open && (
         <div
-          className="md:hidden fixed inset-0 z-[60] flex flex-col"
+          className="md:hidden fixed inset-0 z-60 flex flex-col"
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
