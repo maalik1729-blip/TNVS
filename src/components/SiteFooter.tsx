@@ -70,13 +70,23 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:underline hover:text-white transition duration-200">
-                {t("விதிமுறைகள் மற்றும் நிபந்தனைகள்", "Rules & Guidelines")}
+              <Link to="/terms-conditions" className="hover:underline hover:text-white transition duration-200">
+                {t("விதிமுறைகள் மற்றும் நிபந்தனைகள்", "Terms & Conditions")}
               </Link>
             </li>
             <li>
-              <Link to="/contact" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/privacy-policy" className="hover:underline hover:text-white transition duration-200">
                 {t("தனியுரிமைக் கொள்கை", "Privacy Policy")}
+              </Link>
+            </li>
+            <li>
+              <Link to="/shipping-policy" className="hover:underline hover:text-white transition duration-200">
+                {t("கப்பல் கொள்கை", "Shipping Policy")}
+              </Link>
+            </li>
+            <li>
+              <Link to="/refund-policy" className="hover:underline hover:text-white transition duration-200">
+                {t("ரத்து மற்றும் பணத்தைத் திரும்பப்பெறுதல்", "Cancellation & Refund")}
               </Link>
             </li>
           </ul>
