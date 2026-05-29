@@ -715,7 +715,10 @@ function Dashboard() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {/* Category 1: Interest-Free Business Loan */}
-            <div className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/30 flex flex-col justify-between min-h-[220px]">
+            <div 
+              onClick={() => openDashboardLoanModal("business")}
+              className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/45 flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+            >
               <div>
                 <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center">
                   <Coins className="w-5 h-5" />
@@ -734,17 +737,17 @@ function Dashboard() {
                 <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full uppercase">
                   {t("0% வட்டி", "0% Interest")}
                 </span>
-                <button
-                  onClick={() => openDashboardLoanModal("business")}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all cursor-pointer"
-                >
+                <div className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all">
                   {t("விண்ணப்பம்", "Request / Apply")} <ArrowRight className="w-3.5 h-3.5 animate-pulse" />
-                </button>
+                </div>
               </div>
             </div>
 
             {/* Category 2: Retail Trader Loan */}
-            <div className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/30 flex flex-col justify-between min-h-[220px]">
+            <div 
+              onClick={() => openDashboardLoanModal("retail")}
+              className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/45 flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+            >
               <div>
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
                   <Store className="w-5 h-5" />
@@ -763,17 +766,17 @@ function Dashboard() {
                 <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase">
                   {t("எளிய ஆவணங்கள்", "Easy Docs")}
                 </span>
-                <button
-                  onClick={() => openDashboardLoanModal("retail")}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all cursor-pointer"
-                >
+                <div className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all">
                   {t("விண்ணப்பம்", "Request / Apply")} <ArrowRight className="w-3.5 h-3.5 animate-pulse" />
-                </button>
+                </div>
               </div>
             </div>
 
             {/* Category 3: Young Entrepreneur Loan */}
-            <div className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/30 flex flex-col justify-between min-h-[220px]">
+            <div 
+              onClick={() => openDashboardLoanModal("young")}
+              className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/45 flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+            >
               <div>
                 <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
                   <Rocket className="w-5 h-5" />
@@ -792,12 +795,9 @@ function Dashboard() {
                 <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full uppercase">
                   {t("மானியம் உண்டு", "Subsidized")}
                 </span>
-                <button
-                  onClick={() => openDashboardLoanModal("young")}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all cursor-pointer"
-                >
+                <div className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all">
                   {t("விண்ணப்பம்", "Request / Apply")} <ArrowRight className="w-3.5 h-3.5 animate-pulse" />
-                </button>
+                </div>
               </div>
             </div>
           </div>
