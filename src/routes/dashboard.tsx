@@ -673,31 +673,38 @@ function Dashboard() {
                         setLiveStreamTitle(language === "ta" ? e.ta : e.t);
                         setIsLiveStreamOpen(true);
                       } : undefined}
-                      className={`p-4 rounded-xl border transition flex flex-col gap-3 text-left group ${
+                      className={`rounded-2xl border transition-all duration-300 flex flex-col gap-3 text-left group ${
                         isLive 
-                          ? "bg-slate-900 text-white border-slate-800 shadow-md animate-pulse-subtle cursor-pointer hover:bg-slate-950 hover:border-red-500/30 hover:shadow-lg hover:shadow-red-950/20 active:scale-[0.99]" 
-                          : "bg-slate-50/50 hover:bg-slate-50 border-slate-150 hover:border-slate-200"
+                          ? "p-5 md:p-6 bg-slate-900 text-white border-red-950/80 shadow-xl shadow-slate-950/40 animate-pulse-subtle cursor-pointer hover:bg-slate-950 hover:border-red-500/40 hover:shadow-2xl hover:shadow-red-950/20 active:scale-[0.99]" 
+                          : "p-4 bg-slate-50/50 hover:bg-slate-50 border-slate-150 hover:border-slate-200"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-4 w-full">
-                        <div className="space-y-0.5">
-                          <div className={`text-[10px] font-black uppercase tracking-wider ${isLive ? "text-red-400 flex items-center gap-1" : "text-slate-400"}`}>
+                        <div className="space-y-1">
+                          <div className={`text-[10px] font-black uppercase tracking-widest ${isLive ? "text-red-400 flex items-center gap-1.5" : "text-slate-400"}`}>
                             {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />}
                             {isLive ? t("நேரடி ஒளிபரப்பு", "LIVE BROADCAST") : t("நிகழ்வு", "ANNOUNCEMENT")}
                           </div>
-                          <h4 className={`text-sm font-bold leading-snug ${isLive ? "text-white font-extrabold" : "text-slate-800"}`}>
+                          <h4 className={`leading-snug font-bold ${isLive ? "text-base font-black text-white font-serif tracking-tight" : "text-sm text-slate-800 font-sans"}`}>
                             {language === "ta" ? e.ta : e.t}
                           </h4>
-                          <p className={`text-xs ${isLive ? "text-slate-400 font-semibold" : "text-slate-500 font-tamil"}`}>
-                            {e.d}
-                          </p>
+                          {isLive ? (
+                            <div className="flex items-center gap-1.5 text-xs text-slate-400 font-sans font-semibold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              <span>{e.d}</span>
+                            </div>
+                          ) : (
+                            <p className="text-xs text-slate-500 font-tamil font-semibold">
+                              {e.d}
+                            </p>
+                          )}
                         </div>
 
                         {isLive && (
                           <div
-                            className="bg-red-600 group-hover:bg-red-500 text-white px-3.5 py-2.5 rounded-[8px] text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shrink-0 shadow-sm transition-all"
+                            className="bg-gradient-to-r from-red-600 to-rose-600 group-hover:from-red-500 group-hover:to-rose-500 text-white px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 shrink-0 shadow-lg shadow-red-950/40 border border-red-500/20 transition-all duration-300"
                           >
-                            <Play className="w-3 h-3 fill-white" />
+                            <Play className="w-3.5 h-3.5 fill-white stroke-none" />
                             <span>{t("நேரடி ஒளிபரப்பு", "Watch Live")}</span>
                           </div>
                         )}
