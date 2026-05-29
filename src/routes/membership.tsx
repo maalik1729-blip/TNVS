@@ -750,6 +750,7 @@ function Membership() {
                                     <label className="text-primary hover:underline cursor-pointer shrink-0 text-[10px] font-bold uppercase tracking-wider bg-white px-2 py-0.5 rounded-md border border-slate-200 shadow-xxs">
                                       Change
                                       <input
+                                        key={`change-${doc.k}-${uploaded ? 'uploaded' : 'empty'}`}
                                         type="file"
                                         accept={doc.accept}
                                         className="hidden"
@@ -773,6 +774,7 @@ function Membership() {
                                           <Upload className="w-3.5 h-3.5 text-slate-400" />
                                           {language === "ta" ? "பதிவேற்று" : "Upload File"}
                                           <input
+                                            key={`upload-selfie-${docs.selfie ? 'uploaded' : 'empty'}`}
                                             type="file"
                                             accept={doc.accept}
                                             className="hidden"
@@ -791,6 +793,7 @@ function Membership() {
                                         <Upload className="w-3.5 h-3.5 text-slate-400" />
                                         {language === "ta" ? "கோப்பைத் தேர்ந்தெடு" : "Choose File or Drag & Drop"}
                                         <input
+                                          key={`upload-${doc.k}-${docs[doc.k] ? 'uploaded' : 'empty'}`}
                                           type="file"
                                           accept={doc.accept}
                                           className="hidden"
