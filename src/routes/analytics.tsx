@@ -500,7 +500,8 @@ function AnalyticsDashboard() {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-slate-100">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-100">
                   <table className="w-full text-left border-collapse" aria-label="District Stats Table">
                     <thead>
                       <tr className="bg-slate-50 border-b border-slate-100">
@@ -526,6 +527,39 @@ function AnalyticsDashboard() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-3">
+                  {sortedDistricts.map((dist, idx) => (
+                    <div key={dist.nameEn} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                            {idx + 1}
+                          </span>
+                          <span className="text-sm font-bold text-slate-800">
+                            {language === "ta" ? dist.nameTa : dist.nameEn}
+                          </span>
+                        </div>
+                        <span className="text-[10px] uppercase font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">
+                          {dist.zone}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-slate-50 rounded-lg p-3">
+                          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{t("வியாபாரிகள்", "Members")}</div>
+                          <div className="text-sm font-bold font-mono text-slate-800 mt-1 tabular-nums">{dist.count.toLocaleString()}</div>
+                        </div>
+                        <div className="bg-indigo-50 rounded-lg p-3">
+                          <div className="text-[10px] uppercase tracking-wider text-indigo-400 font-semibold">{t("கோரிக்கைகள்", "Claims")}</div>
+                          <div className="text-sm font-bold font-mono text-indigo-700 mt-1 tabular-nums">
+                            {dist.claims} <span className="text-[10px] font-normal text-indigo-400">({dist.ratio})</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 

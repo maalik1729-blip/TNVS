@@ -421,10 +421,11 @@ function Dashboard() {
                 <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
                 {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
               </Link>
-              <div className="flex">
+              <div className="flex items-center gap-2">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded-md border border-primary/10">
                   Member ID: {epicId}
                 </div>
+                <StatusPill status="active" label="ACTIVE" />
               </div>
               <h1 className="mt-2.5 font-display text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
                 {t("வணக்கம், செந்தில் குமார் N", "Welcome, Senthil Kumar N")}
@@ -434,17 +435,17 @@ function Dashboard() {
               </p>
             </div>
 
-            <div className="flex gap-2.5 flex-wrap">
+            <div className="flex gap-2.5 flex-wrap items-center">
               <button
                 onClick={handleDownloadIdCard}
-                className="btn-primary py-2.5 px-4 rounded-xl text-xs font-bold shadow-sm cursor-pointer transition hover:scale-[1.02] active:scale-98"
+                className="btn-primary py-3 px-5 rounded-xl text-sm font-bold shadow-sm cursor-pointer transition hover:scale-[1.02] active:scale-98 min-h-[48px]"
               >
                 <Download className="w-4 h-4" aria-hidden="true" />
-                {t("அட்டை பதிவிறக்கம்", "Download ID Card")}
+                {t("சான்றிதழ் பதிவிறக்கம்", "Download Certificate")}
               </button>
               <button
                 onClick={handleLogout}
-                className="btn-danger py-2.5 px-4 rounded-xl text-xs font-bold cursor-pointer transition active:scale-98"
+                className="btn-ghost py-3 px-4 rounded-xl text-sm font-semibold cursor-pointer transition active:scale-98 min-h-[48px]"
               >
                 <LogOut className="w-4 h-4" aria-hidden="true" />
                 {t("வெளியேறு", "Sign Out")}
