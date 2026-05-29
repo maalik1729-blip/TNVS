@@ -551,13 +551,17 @@ function Dashboard() {
                   return (
                     <div
                       key={e.id}
-                      className={`p-4 rounded-xl border transition flex flex-col gap-3 text-left ${
+                      onClick={isLive ? () => {
+                        setLiveStreamTitle(language === "ta" ? e.ta : e.t);
+                        setIsLiveStreamOpen(true);
+                      } : undefined}
+                      className={`p-4 rounded-xl border transition flex flex-col gap-3 text-left group ${
                         isLive 
-                          ? "bg-slate-900 text-white border-slate-800 shadow-md animate-pulse-subtle" 
+                          ? "bg-slate-900 text-white border-slate-800 shadow-md animate-pulse-subtle cursor-pointer hover:bg-slate-950 hover:border-red-500/30 hover:shadow-lg hover:shadow-red-950/20 active:scale-[0.99]" 
                           : "bg-slate-50/50 hover:bg-slate-50 border-slate-150 hover:border-slate-200"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center justify-between gap-4 w-full">
                         <div className="space-y-0.5">
                           <div className={`text-[10px] font-black uppercase tracking-wider ${isLive ? "text-red-400 flex items-center gap-1" : "text-slate-400"}`}>
                             {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />}
@@ -572,16 +576,12 @@ function Dashboard() {
                         </div>
 
                         {isLive && (
-                          <button
-                            onClick={() => {
-                              setLiveStreamTitle(language === "ta" ? e.ta : e.t);
-                              setIsLiveStreamOpen(true);
-                            }}
-                            className="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 cursor-pointer transition active:scale-95 animate-pulse"
+                          <div
+                            className="bg-red-600 group-hover:bg-red-500 text-white px-3.5 py-2.5 rounded-[8px] text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shrink-0 shadow-sm transition-all"
                           >
                             <Play className="w-3 h-3 fill-white" />
                             <span>{t("நேரடி ஒளிபரப்பு", "Watch Live")}</span>
-                          </button>
+                          </div>
                         )}
                       </div>
 
