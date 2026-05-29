@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/hooks/useLanguage";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
 import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
 import signImg from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
@@ -426,10 +427,13 @@ function Membership() {
       <header className="bg-slate-900 text-white border-b border-slate-800 shadow-xs relative overflow-hidden">
         <div className="absolute inset-0 bg-radial-at-t from-primary/30 to-transparent pointer-events-none" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-          <div>
-            <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-350 hover:text-white pt-6 pb-2 mb-2 transition">
-              <ArrowLeft className="w-3.5 h-3.5" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
-            </Link>
+          <div className="flex-1">
+            <Breadcrumb
+              items={[
+                { label: "Services", labelTa: "சேவைகள்", to: "/services" },
+                { label: "Membership", labelTa: "உறுப்பினர் சேர்க்கை" },
+              ]}
+            />
             <div className="flex">
               <div className="inline-flex items-center gap-1.5 bg-primary/25 text-blue-300 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-1.5 border border-primary/30">
                 Apply · இணைய

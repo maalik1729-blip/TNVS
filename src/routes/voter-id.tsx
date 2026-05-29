@@ -6,6 +6,7 @@ import {
   Phone, Share2, User, UserPlus, Upload, Camera, ArrowLeft
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import { toast } from "sonner";
 import { Section, SectionLabel } from "@/components/Section";
 import { VoterIdCard, type Voter } from "@/components/VoterIdCard";
@@ -403,9 +404,12 @@ function VoterIdPage() {
       <section className="border-b border-border bg-secondary/40">
         <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 sm:py-12 w-full">
           <div className="mb-3 sm:mb-4">
-            <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-all">
-              <ArrowLeft className="w-3.5 h-3.5" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
-            </Link>
+            <Breadcrumb
+              items={[
+                { label: "Services", labelTa: "சேவைகள்", to: "/services" },
+                { label: "Member Card", labelTa: "உறுப்பினர் அட்டை" },
+              ]}
+            />
           </div>
           <SectionLabel>தமிழ்நாடு வணிகர்களின் சங்கமம்</SectionLabel>
           <h1 className="mt-3 font-display font-semibold text-ink">

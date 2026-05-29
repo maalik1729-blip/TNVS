@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { getSession, clearSession } from "@/lib/session";
 import { LoginPrompt } from "@/components/LoginPrompt";
 import { useLanguage } from "@/hooks/useLanguage";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import { DemoModeBanner } from "@/components/DemoModeBanner";
 import { ActivityCard } from "@/components/ActivityCard";
 import { StatusPill } from "@/components/StatusPill";
@@ -412,15 +413,15 @@ function Dashboard() {
             <DemoModeBanner />
           </div>
 
+          <Breadcrumb
+            items={[
+              { label: "Services", labelTa: "சேவைகள்", to: "/services" },
+              { label: "Dashboard", labelTa: "டாஷ்போர்டு" },
+            ]}
+          />
+
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <Link
-                to="/services"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all mb-2"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
-                {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
-              </Link>
               <div className="flex items-center gap-2">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded-md border border-primary/10">
                   Member ID: {epicId}
