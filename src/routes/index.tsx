@@ -1,11 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Section, SectionLabel } from "@/components/Section";
 import templeLogo from "@/assets/temple-logo.png";
 import {
   Award, ShieldCheck, Users, IdCard, ArrowRight,
-  CheckCircle, Sparkles, Phone, Coins, Play,
+  CheckCircle, Sparkles, Phone, Coins, Play, Search,
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
@@ -125,6 +125,8 @@ function Home() {
   const { language, t } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handlePlayPause = () => {
     if (!videoRef.current) return;
@@ -132,6 +134,13 @@ function Home() {
       videoRef.current.pause();
     } else {
       videoRef.current.play();
+    }
+  };
+
+  const handleVoterSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate({ to: "/voter-id", search: { q: searchQuery.trim() } });
     }
   };
 
@@ -209,6 +218,33 @@ function Home() {
                 <IdCard className="w-4 h-4" aria-hidden="true" />
                 {t("ஏற்கனவே உறுப்பினரா? என் அட்டை பெறுக →", "Already a member? Get your card →")}
               </Link>
+            </div>
+
+            {/* Voter Search Box - Prominent in Hero */}
+            <div className="mt-6 sm:mt-8">
+              <form onSubmit={handleVoterSearch} className="relative">
+                <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                    <Search className="w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t("பெயர் அல்லது EPIC எண்ணால் தேடவும்...", "Search by name or EPIC number...")}
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-slate-200 bg-white text-sm sm:text-base focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all shadow-sm"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors"
+                  >
+                    {t("தேடு", "Search")}
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500 mt-2 font-tamil">
+                  {t("உறுப்பினர் அட்டையை உடனடியாக உருவாக்க உங்கள் பெயர் அல்லது EPIC எண்ணை உள்ளிடவும்.", "Enter your name or EPIC number to generate your member card instantly.")}
+                </p>
+              </form>
             </div>
 
             {/* Trust signals */}

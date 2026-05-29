@@ -64,8 +64,8 @@ export const Route = createFileRoute("/membership")({
 const STEPS = [
   {
     n: 1,
-    t: "Personal",
-    ta: "தனிநபர்",
+    t: "Personal & Contact",
+    ta: "தனிநபர் & தொடர்பு",
     icon: User,
     desc: "Your name, mobile number, email, and district",
     descTa: "உங்கள் பெயர், கைபேசி, மின்னஞ்சல் மற்றும் மாவட்டம்",
@@ -74,36 +74,26 @@ const STEPS = [
   },
   {
     n: 2,
-    t: "Business",
-    ta: "வணிகம்",
+    t: "Business Details",
+    ta: "வணிக விவரங்கள்",
     icon: Briefcase,
-    desc: "Shop name, type, wing, and address",
-    descTa: "கடை பெயர், வகை, பிரிவு மற்றும் முகவரி",
+    desc: "Shop name, type, wing, address, and years in business",
+    descTa: "கடை பெயர், வகை, பிரிவு, முகவரி மற்றும் வணிக ஆண்டுகள்",
     tip: "Select the wing that best matches your business activity.",
     tipTa: "உங்கள் வணிக நடவடிக்கைக்கு பொருந்தும் பிரிவைத் தேர்ந்தெடுக்கவும்.",
   },
   {
     n: 3,
-    t: "Documents",
-    ta: "ஆவணம்",
+    t: "Documents & Review",
+    ta: "ஆவணங்கள் & சரிபார்",
     icon: FolderOpen,
-    desc: "Aadhaar, shop photo, business proof, passport photo",
-    descTa: "ஆதார், கடை புகைப்படம், வணிக சான்று, பாஸ்போர்ட் புகைப்படம்",
+    desc: "Upload documents, verify details, and set security PIN",
+    descTa: "ஆவணங்களைப் பதிவேற்றவும், விவரங்களை சரிபார்க்கவும், பாதுகாப்பு PIN ஐ அமைக்கவும்",
     tip: "All files must be under 5 MB. JPG, PNG and PDF formats are accepted.",
     tipTa: "அனைத்து கோப்புகளும் 5 MB க்கும் குறைவாக இருக்க வேண்டும். JPG, PNG மற்றும் PDF ஏற்றுக்கொள்ளப்படும்.",
   },
   {
     n: 4,
-    t: "Review",
-    ta: "சரிபார்",
-    icon: ClipboardList,
-    desc: "Verify your details and set a security PIN",
-    descTa: "உங்கள் விவரங்களை சரிபார்க்கவும் மற்றும் பாதுகாப்பு PIN ஐ அமைக்கவும்",
-    tip: "Double-check your details before submitting. PIN is used to protect your digital membership card.",
-    tipTa: "சமர்ப்பிக்கும் முன் உங்கள் விவரங்களை சரிபார்க்கவும். PIN உங்கள் டிஜிட்டல் உறுப்பினர் அட்டையை பாதுகாக்கிறது.",
-  },
-  {
-    n: 5,
     t: "Success",
     ta: "நிறைவு",
     icon: Star,
@@ -246,7 +236,7 @@ function Membership() {
 
   useEffect(() => { localStorage.setItem("tnvs_form_data", JSON.stringify(form)); }, [form]);
   useEffect(() => {
-    if (step < 5) {
+    if (step < 4) {
       localStorage.setItem("tnvs_form_step", step.toString());
     } else {
       localStorage.removeItem("tnvs_form_step");
@@ -282,11 +272,15 @@ function Membership() {
         !docs.selfie && (language === "ta" ? "பாஸ்போர்ட் புகைப்படம்" : "Passport Photo"),
       ].filter(Boolean);
       if (missing.length) { toast.error(`${language === "ta" ? "ஆவணங்களைப் பதிவேற்றவும்: " : "Please upload: "}${missing.join(", ")}`); return false; }
+      if (pin.length !== 4) {
+        toast.error(language === "ta" ? "தயவுசெய்து 4-இலக்க பாதுகாப்பு PIN ஐ உள்ளிடவும்" : "Please create a valid 4-digit security PIN");
+        return false;
+      }
     }
     return true;
   };
 
-  const next = () => { if (validate()) setStep(s => Math.min(5, s + 1)); };
+  const next = () => { if (validate()) setStep(s => Math.min(4, s + 1)); };
   const back = () => setStep(s => Math.max(1, s - 1));
 
   const handlePaySubmit = async () => {
@@ -459,7 +453,7 @@ function Membership() {
       </header>
 
       {/* ── Unified Stepper ── */}
-      {step < 5 && (
+      {step < 4 && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
           <div className="bg-white rounded-2xl border border-slate-200/60 p-4 md:p-5 shadow-xs">
             {/* Desktop Stepper */}
@@ -467,12 +461,12 @@ function Membership() {
               {/* Stepper background track line */}
               <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-0.5 bg-slate-105 z-0" />
               {/* Stepper active track line */}
-              <div 
+              <div
                 className="absolute left-6 top-1/2 -translate-y-1/2 h-0.5 bg-primary transition-all duration-500 z-0"
-                style={{ width: `${((step - 1) / 3) * 88}%` }}
+                style={{ width: `${((step - 1) / 2) * 88}%` }}
               />
-              
-              {STEPS.slice(0, 4).map((s) => {
+
+              {STEPS.slice(0, 3).map((s) => {
                 const Icon = s.icon;
                 const done = step > s.n;
                 const active = step === s.n;
@@ -508,14 +502,14 @@ function Membership() {
             <div className="sm:hidden flex flex-col gap-2">
               <div className="flex items-center justify-between text-xs font-bold text-slate-500">
                 <span className="text-primary font-extrabold uppercase tracking-wide">
-                  Step {step} of 4: {currentStep.t}
+                  Step {step} of 3: {currentStep.t}
                 </span>
                 <span className="font-tamil text-slate-400 font-normal">
                   {currentStep.ta}
                 </span>
               </div>
               <div className="flex gap-1.5 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                {[1, 2, 3, 4].map((i) => (
+                {[1, 2, 3].map((i) => (
                   <div
                     key={i}
                     className={`flex-1 h-full rounded-full transition-all duration-550 ${
@@ -534,7 +528,7 @@ function Membership() {
         {/* Form Card */}
         <div className="bg-white rounded-3xl border border-slate-250/70 shadow-sm overflow-hidden transition-all duration-300">
           {/* Step Header inside card */}
-          {step < 5 && (
+          {step < 4 && (
             <div className="px-6 sm:px-10 pt-8 pb-6 border-b border-slate-100">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex items-center gap-3.5">
@@ -713,9 +707,10 @@ function Membership() {
                   </div>
                 )}
 
-                {/* ─── Step 3: Documents ─── */}
+                {/* ─── Step 3: Documents & Review ─── */}
                 {step === 3 && (
                   <div className="space-y-6">
+                    {/* Documents Upload Section */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       {docsConfig.map(doc => {
                         const DocIcon = doc.icon;
@@ -836,205 +831,201 @@ function Membership() {
                       <Info className="w-4 h-4 text-slate-400 shrink-0" />
                       <span>Max file size: <strong>5 MB</strong> per document. Accepted formats: <strong>JPG, PNG, PDF</strong></span>
                     </div>
-                  </div>
-                )}
 
-                {/* ─── Step 4: Review & Submit ─── */}
-                {step === 4 && (
-                  <div className="space-y-6">
-                    {/* Unified Grid Summary */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                      
-                      {/* Personal Info Summary Card */}
-                      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
-                        <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
-                          <div className="flex items-center gap-2">
-                            <User className="w-4 h-4 text-primary" />
-                            <span className="text-sm font-bold text-slate-800">Personal Details</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setStep(1)}
-                            className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
-                          >
-                            Edit
-                          </button>
-                        </div>
-                        <div className="grid sm:grid-cols-2 gap-3.5">
-                          {[
-                            { label: "Full Name", value: form.name || "—", icon: User },
-                            { label: "Mobile", value: form.mobile || "—", icon: Phone },
-                            { label: "Email", value: form.email || "—", icon: Mail },
-                            { label: "District", value: form.district, icon: MapPin },
-                          ].map(({ label, value, icon: Icon }) => (
-                            <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
-                              <div className="text-sm text-slate-850 font-bold mt-1.5 break-all">{value}</div>
-                            </div>
-                          ))}
-                        </div>
+                    {/* Review Section */}
+                    <div className="border-t border-slate-200 pt-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <ClipboardList className="w-5 h-5 text-primary" />
+                        <h3 className="font-display text-lg font-bold text-slate-900">Review Your Details</h3>
                       </div>
 
-                      {/* Business Info Summary Card */}
-                      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
-                        <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
-                          <div className="flex items-center gap-2">
-                            <Briefcase className="w-4 h-4 text-primary" />
-                            <span className="text-sm font-bold text-slate-800">Business Details</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setStep(2)}
-                            className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
-                          >
-                            Edit
-                          </button>
-                        </div>
-                        <div className="grid sm:grid-cols-2 gap-3.5">
-                          {[
-                            { label: "Shop Name", value: form.shop || "—" },
-                            { label: "Type", value: form.type },
-                            { label: "Wing / Division", value: WINGS.find(w => w.id === form.wing)?.[language === "ta" ? "nameTa" : "nameEn"] || "—" },
-                            { label: "Experience", value: form.years ? `${form.years} Years` : "—" },
-                          ].map(({ label, value }) => (
-                            <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
-                              <div className="text-sm text-slate-850 font-bold mt-1.5 break-all">{value}</div>
+                      {/* Unified Grid Summary */}
+                      <div className="grid md:grid-cols-2 gap-6">
+                        
+                        {/* Personal Info Summary Card */}
+                        <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
+                          <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
+                            <div className="flex items-center gap-2">
+                              <User className="w-4 h-4 text-primary" />
+                              <span className="text-sm font-bold text-slate-800">Personal Details</span>
                             </div>
-                          ))}
-                        </div>
-                        {form.address && (
-                          <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Shop Address</div>
-                            <div className="text-sm text-slate-855 font-bold mt-1.5 leading-relaxed">{form.address}</div>
+                            <button
+                              type="button"
+                              onClick={() => setStep(1)}
+                              className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
+                            >
+                              Edit
+                            </button>
                           </div>
-                        )}
-                      </div>
-
-                      {/* Documents Uploaded Card */}
-                      <div className="md:col-span-2 bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
-                        <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
-                          <div className="flex items-center gap-2">
-                            <FolderOpen className="w-4 h-4 text-primary" />
-                            <span className="text-sm font-bold text-slate-800">Uploaded Documents</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setStep(3)}
-                            className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
-                          >
-                            Edit
-                          </button>
-                        </div>
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                          {docsConfig.map(doc => {
-                            const isUploaded = !!docs[doc.k];
-                            return (
-                              <div
-                                key={doc.k}
-                                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold shadow-xxs transition-colors ${
-                                  isUploaded
-                                    ? "bg-white text-emerald-800 border-emerald-200/60"
-                                    : "bg-red-50/50 text-red-600 border-red-150"
-                                }`}
-                              >
-                                <span className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${isUploaded ? "bg-emerald-100 text-emerald-650" : "bg-red-100 text-red-600"}`}>
-                                  {isUploaded ? "✓" : "✕"}
-                                </span>
-                                <span className="truncate">{doc.l}</span>
+                          <div className="grid sm:grid-cols-2 gap-3.5">
+                            {[
+                              { label: "Full Name", value: form.name || "—", icon: User },
+                              { label: "Mobile", value: form.mobile || "—", icon: Phone },
+                              { label: "Email", value: form.email || "—", icon: Mail },
+                              { label: "District", value: form.district, icon: MapPin },
+                            ].map(({ label, value, icon: Icon }) => (
+                              <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
+                                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
+                                <div className="text-sm text-slate-850 font-bold mt-1.5 break-all">{value}</div>
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Security PIN Section */}
-                    <div className="border-t border-slate-150 pt-6">
-                      <div className="max-w-md">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <div className="p-1 rounded-lg bg-primary/10 text-primary">
-                            <Lock className="w-4 h-4" />
+                            ))}
                           </div>
-                          <label className="text-sm font-extrabold text-slate-900">
-                            {language === "ta" ? "பாதுகாப்பு PIN குறியீட்டை உருவாக்கவும்" : "Create Security PIN"}
-                          </label>
                         </div>
-                        <p className="text-xs text-slate-500 leading-relaxed mb-4 font-tamil">
-                          {language === "ta"
-                            ? "உறுப்பினர் அட்டை மற்றும் தகவல்களைப் பாதுகாக்க 4-இலக்க PIN ஐ உள்ளிடவும்."
-                            : "Set a 4-digit security PIN to protect your digital membership pass."}
-                        </p>
-                        <div className="relative inline-block group">
-                          <input
-                            type="text"
-                            pattern="[0-9]*"
-                            maxLength={4}
-                            value={pin}
-                            onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                            autoComplete="one-time-code"
-                          />
-                          <div className="flex gap-3">
-                            {[0, 1, 2, 3].map(index => {
-                              const char = pin[index] || "";
-                              const isFocused = pin.length === index;
+
+                        {/* Business Info Summary Card */}
+                        <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
+                          <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
+                            <div className="flex items-center gap-2">
+                              <Briefcase className="w-4 h-4 text-primary" />
+                              <span className="text-sm font-bold text-slate-800">Business Details</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setStep(2)}
+                              className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                          </div>
+                          <div className="grid sm:grid-cols-2 gap-3.5">
+                            {[
+                              { label: "Shop Name", value: form.shop || "—" },
+                              { label: "Type", value: form.type },
+                              { label: "Wing / Division", value: WINGS.find(w => w.id === form.wing)?.[language === "ta" ? "nameTa" : "nameEn"] || "—" },
+                              { label: "Experience", value: form.years ? `${form.years} Years` : "—" },
+                            ].map(({ label, value }) => (
+                              <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
+                                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
+                                <div className="text-sm text-slate-850 font-bold mt-1.5 break-all">{value}</div>
+                              </div>
+                            ))}
+                          </div>
+                          {form.address && (
+                            <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Shop Address</div>
+                              <div className="text-sm text-slate-855 font-bold mt-1.5 leading-relaxed">{form.address}</div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Documents Uploaded Card */}
+                        <div className="md:col-span-2 bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
+                          <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
+                            <div className="flex items-center gap-2">
+                              <FolderOpen className="w-4 h-4 text-primary" />
+                              <span className="text-sm font-bold text-slate-800">Uploaded Documents</span>
+                            </div>
+                          </div>
+                          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            {docsConfig.map(doc => {
+                              const isUploaded = !!docs[doc.k];
                               return (
                                 <div
-                                  key={index}
-                                  className={`w-12 h-14 rounded-2xl border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
-                                    isFocused
-                                      ? "border-primary ring-4 ring-primary/15 scale-105 bg-white shadow-md shadow-primary/5"
-                                      : char
-                                      ? "border-emerald-400 bg-emerald-50 text-emerald-850"
-                                      : "border-slate-200 bg-slate-50 text-slate-300"
+                                  key={doc.k}
+                                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold shadow-xxs transition-colors ${
+                                    isUploaded
+                                      ? "bg-white text-emerald-800 border-emerald-200/60"
+                                      : "bg-red-50/50 text-red-600 border-red-150"
                                   }`}
                                 >
-                                  {char ? "•" : ""}
+                                  <span className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${isUploaded ? "bg-emerald-100 text-emerald-650" : "bg-red-100 text-red-600"}`}>
+                                    {isUploaded ? "✓" : "✕"}
+                                  </span>
+                                  <span className="truncate">{doc.l}</span>
                                 </div>
                               );
                             })}
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Premium Checkout fee card */}
-                    <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-md">
-                      <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
-                      <div className="absolute top-0 right-10 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
-                      
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <CreditCard className="w-4 h-4 text-emerald-400" />
-                            <span className="font-extrabold text-sm text-slate-200 tracking-wide uppercase">Annual Member Subscription</span>
+                      {/* Security PIN Section */}
+                      <div className="border-t border-slate-150 pt-6">
+                        <div className="max-w-md">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <div className="p-1 rounded-lg bg-primary/10 text-primary">
+                              <Lock className="w-4 h-4" />
+                            </div>
+                            <label className="text-sm font-extrabold text-slate-900">
+                              {language === "ta" ? "பாதுகாப்பு PIN குறியீட்டை உருவாக்கவும்" : "Create Security PIN"}
+                            </label>
                           </div>
-                          <p className="text-xs text-slate-400">Includes Digital Membership Card & Official Trade Wings access</p>
-                        </div>
-                        <div className="flex items-baseline gap-1 self-start sm:self-center shrink-0">
-                          <span className="text-[10px] text-slate-400 uppercase font-bold">Total:</span>
-                          <span className="font-display text-3xl font-black text-emerald-450 tracking-tight">₹500</span>
-                          <span className="text-xs text-slate-400">/year</span>
+                          <p className="text-xs text-slate-500 leading-relaxed mb-4 font-tamil">
+                            {language === "ta"
+                              ? "உறுப்பினர் அட்டை மற்றும் தகவல்களைப் பாதுகாக்க 4-இலக்க PIN ஐ உள்ளிடவும்."
+                              : "Set a 4-digit security PIN to protect your digital membership pass."}
+                          </p>
+                          <div className="relative inline-block group">
+                            <input
+                              type="text"
+                              pattern="[0-9]*"
+                              maxLength={4}
+                              value={pin}
+                              onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                              autoComplete="one-time-code"
+                            />
+                            <div className="flex gap-3">
+                              {[0, 1, 2, 3].map(index => {
+                                const char = pin[index] || "";
+                                const isFocused = pin.length === index;
+                                return (
+                                  <div
+                                    key={index}
+                                    className={`w-12 h-14 rounded-2xl border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
+                                      isFocused
+                                        ? "border-primary ring-4 ring-primary/15 scale-105 bg-white shadow-md shadow-primary/5"
+                                        : char
+                                        ? "border-emerald-400 bg-emerald-50 text-emerald-850"
+                                        : "border-slate-200 bg-slate-50 text-slate-300"
+                                    }`}
+                                  >
+                                    {char ? "•" : ""}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      
-                      <div className="h-px bg-slate-800/80 my-4" />
-                      
-                      <div className="flex flex-col sm:flex-row justify-between gap-3 text-[11px] text-slate-400 relative z-10">
-                        <span className="flex items-center gap-1.5">
-                          <Shield className="w-3.5 h-3.5 text-emerald-400" /> 256-bit Secure Encryption Checkout
-                        </span>
-                        <span className="bg-slate-800 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-slate-700/50">
-                          Demo Mode: No real payment processed
-                        </span>
+
+                      {/* Premium Checkout fee card */}
+                      <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-md">
+                        <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
+                        <div className="absolute top-0 right-10 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
+                        
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <CreditCard className="w-4 h-4 text-emerald-400" />
+                              <span className="font-extrabold text-sm text-slate-200 tracking-wide uppercase">Annual Member Subscription</span>
+                            </div>
+                            <p className="text-xs text-slate-400">Includes Digital Membership Card & Official Trade Wings access</p>
+                          </div>
+                          <div className="flex items-baseline gap-1 self-start sm:self-center shrink-0">
+                            <span className="text-[10px] text-slate-400 uppercase font-bold">Total:</span>
+                            <span className="font-display text-3xl font-black text-emerald-450 tracking-tight">₹500</span>
+                            <span className="text-xs text-slate-400">/year</span>
+                          </div>
+                        </div>
+                        
+                        <div className="h-px bg-slate-800/80 my-4" />
+                        
+                        <div className="flex flex-col sm:flex-row justify-between gap-3 text-[11px] text-slate-400 relative z-10">
+                          <span className="flex items-center gap-1.5">
+                            <Shield className="w-3.5 h-3.5 text-emerald-400" /> 256-bit Secure Encryption Checkout
+                          </span>
+                          <span className="bg-slate-800 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-slate-700/50">
+                            Demo Mode: No real payment processed
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* ─── Step 5: Success ─── */}
-                {step === 5 && (
+                {/* ─── Step 4: Success ─── */}
+                {step === 4 && (
                   <div className="py-6 flex flex-col items-center animate-fadeIn">
                     {/* Success badge */}
                     <div className="text-center max-w-md mx-auto mb-8">

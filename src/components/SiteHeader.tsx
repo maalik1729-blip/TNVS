@@ -8,10 +8,10 @@ import { motion } from "framer-motion";
 const NAV = [
   { to: "/",          label: "முகப்பு",     en: "Home" },
   { to: "/services",  label: "சேவைகள்",     en: "Services" },
-  { to: "/wings",     label: "பிரிவுகள்",   en: "Divisions" },
+  { to: "/wings",     label: "அலகுகள்",   en: "Wings" },
   { to: "/membership",label: "இணைவு",       en: "Join" },
   { to: "/analytics", label: "விவரங்கள்",   en: "Analytics" },
-  { to: "/assistant", label: "உதவி மையம்", en: "Support" },
+  { to: "/assistant", label: "ஆதரவு", en: "Support" },
 ] as const;
 
 // ─── How many px the user must scroll before the hide logic activates ─────────
