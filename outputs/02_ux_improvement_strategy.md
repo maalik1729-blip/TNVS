@@ -1,149 +1,220 @@
-# 02 — UX Improvement Strategy · TNVS
+# 02 — UX Improvement Strategy · Tamil Nadu Vanigargalin Sangamam (TNVS)
+
+> **Role:** Senior Product Designer  
+> **Input:** `outputs/01_ui_audit.md`  
+> **Focus:** UX logic, user flow, and interaction improvements — not visual redesign  
+> **Primary User:** Tamil-speaking small trader, first-time digital government portal user, Android mobile
 
 ---
 
 ## UX Strategy Overview
 
-The audit revealed that TNVS's core UX flows are directionally correct but broken in execution. The primary improvement strategy is: **fix what's broken first, then elevate consistency, then enhance delight**. The biggest user trust damage comes from the 3 critical bugs (broken video, dead links, English-only About page) — these must be resolved before any visual enhancement.
+The TNVS portal's primary conversion funnel is: **Home → Membership Application → Certificate Download**. Every other page (Dashboard, Wings, Assistant, Voter ID) is a retention and service flow for existing members. The audit reveals that this funnel is blocked at multiple points by trust failures (broken video, dead links, demo data) and cognitive barriers (5-level zone navigation, equal-weight service cards, bilingual inconsistency).
 
-The portal's #1 job is converting a first-time trader visitor into a registered member. Every UX decision should be evaluated against: *"Does this help a Tamil-speaking shopkeeper in Madurai complete their membership application?"*
-
----
-
-## Membership Form Flow Improvements
-
-**Current state:** 5 steps (Personal → Business → Documents → Review → Success). Steps are logically ordered. FloatingInput is used consistently.
-
-**Improvements:**
-1. **Show a progress percentage** alongside the step indicator — "Step 2 of 5 · 40% complete" reduces anxiety about length.
-2. **Save progress to localStorage** — if the user closes the browser mid-form, restore their progress on return. This single change reduces drop-off by an estimated 30–40%.
-3. **Step 3 (Documents) needs upload guidance** — add file size limits, accepted formats, and example images before the upload zone. Tamil traders unfamiliar with file uploads need visual guidance.
-4. **Step 4 (Review) must summarize everything** — show a read-only summary of all entered data before payment. Currently traders cannot review what they submitted.
-5. **Step 5 (Success) should offer immediate actions** — "Download Certificate", "Get Membership Card", "Share on WhatsApp" — guide them to the next natural action instead of leaving them on a success screen with nothing to do.
+**Strategy Philosophy:**
+- Ruthlessly prioritize the **membership conversion funnel** — every decision must ask "does this help a trader fill the form and pay ₹500?"
+- **Tamil-first, not Tamil-also** — Tamil should be the default, not the toggle. The app should feel native to Tamil speakers.
+- **Reduce the number of decisions a user must make** to reach their goal
+- **Visible trust signals at every step** — this is not a commercial app; it's a government-adjacent association portal where official credibility is the product
 
 ---
 
-## Wings/Divisions Discovery Improvements
+## Workflow Simplifications
 
-**Current state:** A large page with a searchable list of 50+ wings and a 234-row constituency table.
+### WF-1: Collapse the Broken Video Section Into a Trust Statement Block
+**Current:** "Watch Our Story" section with a broken video player occupies ~400px of vertical space on the home page.  
+**Improvement:** Replace with a **3-stat trust block** — "12+ years · 1.24L members · ₹8.4Cr disbursed" — styled as a horizontal band between the hero and the steps section.  
+**Why:** The video was meant to build trust. The trust data achieves this better than a broken video. Removes the biggest visual disruption on the home page.  
+**User Impact:** Every visitor gets a functional, trust-building section instead of a broken media player.  
+**Business Impact:** Eliminates the strongest visual reason for a first-time visitor to leave.
 
-**Improvements:**
-1. **Add a district filter at the top** — "Show wings in my district" — most traders only care about their district.
-2. **Collapse the 234-row zone table by default** — show only the user's searched district, expandable for others.
-3. **Add "How to find my wing" guidance** — a one-line tooltip: "Your wing is based on your business type and district."
-4. **Wing cards should show member count and contact** — currently they are text-only. A phone number or WhatsApp link per wing increases trust.
+### WF-2: Streamline the Voter ID "Not Found" State into a Membership CTA
+**Current:** When an EPIC number is not found, a generic "no member found" message is displayed with no further action.  
+**Improvement:** Replace with: *"No record found for this ID. If you haven't registered yet, apply in 5 minutes →"* with a direct link to `/membership`.  
+**Why:** The user who searches for an EPIC and gets nothing is exactly the user who needs to register. This is the highest-intent moment to convert them.  
+**User Impact:** Users who "dead-end" at Voter ID are redirected into the membership funnel.  
+**Business Impact:** Directly increases membership application conversions.
 
----
+### WF-3: Pre-fill Membership Form from Voter ID Search
+**Current:** Voter ID page (`/voter-id`) already passes search params to `/membership` (`name`, `epic`, `district`, `mobile`). But this cross-page link is not prominently surfaced on the Voter ID page.  
+**Improvement:** On the Voter ID "found" card, add a prominent CTA: *"Want to renew or update? → Pre-fill your registration form"* that passes the found data.  
+**Why:** A user who has found their card has confirmed their identity. Offering to pre-fill the form removes the biggest friction point in Step 1.
 
-## Voter ID Card Flow Improvements
-
-**Current state:** Search by name/EPIC → card appears → download/print.
-
-**Improvements:**
-1. **Add "Don't have an EPIC yet?" path** — link directly to `/membership` with explanation. Currently users who haven't joined get a dead-end search result.
-2. **Show a loading skeleton** during card generation — the current blank state during lookup is confusing.
-3. **Card download button must be prominent** — the download CTA should be the most visible element after the card renders, not secondary.
-4. **Add share-to-WhatsApp** — "Share my card" is a common use case for traders proving membership to banks/authorities.
-
----
-
-## Dashboard Improvements
-
-**Current state:** Member area showing EPIC ID, certificate download, activity feed, renewal.
-
-**Improvements:**
-1. **Show membership status at the very top** — "Active · Expires Dec 2025" with a clear renew CTA if within 60 days of expiry.
-2. **Group actions by urgency** — Renewal due → Welfare available → Download certificate. Not all equal weight.
-3. **Activity feed should explain what each activity means** — "Application Received — May 12" is good; "What happens next?" link makes it great.
-4. **Add a "First time here?" onboarding checklist** for new members — 3 tasks: Download certificate, Get membership card, Apply for welfare.
+### WF-4: Wings Zone Explorer — Replace 5-Step Blind Navigation With Guided Orientation
+**Current:** Zones tab shows a grid of zones with no explanation of what selecting a zone leads to.  
+**Improvement:** Add a persistent panel at the top of the Zones tab that shows: *"Use this to find your wing's district president, secretary, and treasurer in 5 steps: Zone → District → Department → Wing → Officers"* with a visual step indicator.  
+**Why:** Non-technical users abandon multi-step navigations when they don't know the depth. One line of orientation text dramatically improves completion rate.  
+**User Impact:** District traders can find their local officer contact without abandoning the flow.
 
 ---
 
 ## Navigation Improvements
 
-**Current state:** 5 nav items (Home, Services, Divisions, Join, Support). Language toggle exists but placement unclear.
+### NAV-1: Fix All Footer Links
+**Current:** Footer has dead `#hash` links, a "Member Dashboard" link that drops unauthenticated users on a login prompt, and missing links to actual privacy/terms pages.  
+**Improvement:**  
+- `#about` → `/about`  
+- `#terms` → `/terms-conditions`  
+- `#privacy` → `/privacy-policy`  
+- Member Dashboard → `/dashboard` (with a tooltip: "Login required")  
+- Add a clear footer section: "Quick Links · Legal · Contact"  
+**Why:** The footer is the last resort navigation for users who scroll past all content. Dead links here are an official credibility failure.
 
-**Improvements:**
-1. **Make language toggle always visible** — pin it to the top-right of the header with a clear "EN / தமிழ்" label, not just an icon.
-2. **Add "My Dashboard" to nav for logged-in users** — currently there's no nav item pointing to dashboard.
-3. **"Join" CTA in nav should be visually distinct** — use a filled button style so it stands out as the primary action.
-4. **Mobile menu should show language toggle first** — before nav links, the language selector should appear since it affects comprehension of all nav items.
+### NAV-2: Add a "Start Here" Breadcrumb to Wings Page
+**Current:** Wings page has no back navigation to Home — only a "Back to Services" link.  
+**Improvement:** Add breadcrumb: `Home → Services → Wings & Divisions` with clickable nodes.  
+**Why:** Users navigating to Wings via direct URL or search have no context of where they are in the site.
+
+### NAV-3: Dashboard — Reduce 4 Tabs to 2 Primary + 1 Overflow
+**Current:** Dashboard has 4 tabs: Overview, Welfare & Loans, Recruiter Hub, Tools & Apps. On mobile, this requires horizontal scroll and the Tamil subtitles at `text-[8px]` are illegible.  
+**Improvement:** Consolidate to: **Overview** | **My Services** (combines Welfare + Tools) | **Recruiter** (shown only to opted-in coordinators). Non-coordinators see 2 tabs.  
+**Why:** Showing 4 tabs to a user who hasn't opted into the Recruiter program adds noise. Conditional rendering reduces clutter.  
+**User Impact:** The most common users (non-coordinators) see a simpler, less intimidating dashboard.
 
 ---
 
-## Bilingual UX Improvements
+## Dashboard Improvements
 
-1. **Persist language to `localStorage`** — language selection must survive page refreshes and navigation.
-2. **All static strings must go through `t()`** — About page, About page timeline, Contact page headers, footer mixed strings.
-3. **Add `lang="ta"` attribute on Tamil text blocks** — assists screen readers and enables proper Tamil hyphenation.
-4. **SectionLabel should use `t()` not hardcoded bilingual strings** like `"About · எங்களைப் பற்றி"`.
-5. **Tamil FAQ answers need larger font** — Tamil script at `text-xs` (12px) is too small for users 45+. Minimum `text-sm` (14px) for Tamil body text.
+### DASH-1: Show Membership Status Above the Fold on Mobile
+**Current:** On mobile, the dark membership card is below the DemoModeBanner and page header, requiring scroll before the user sees their status.  
+**Improvement:** On mobile (`< md`), replace the page header with a compact membership status bar: `[Member ID] · Active · Expires Dec 2026 · [Renew]`. This makes the single most important piece of information immediately visible.  
+**Why:** The dashboard's job is to answer one question: "Am I still a member?" Make that answer visible without scrolling.
+
+### DASH-2: Contextual Loan Application Entry — Don't Hide in Tab 2
+**Current:** Interest-free loan applications are in Tab 2 (Welfare & Loans), sub-section "Subsidized Loans." A trader looking for loan information must find Tab 2, scroll to the loan categories, and click a card to open a modal.  
+**Improvement:** Add a "Loan eligibility check" quick action card on the Overview tab (alongside "Download Certificate" and "Card Renewal") that deep-links to the loan section.  
+**Why:** Loan access is one of the top 3 membership benefits. It should be discoverable from the primary landing state.
+
+### DASH-3: Activity Feed — Show Tamil Translations in Activity Cards
+**Current:** `ACTIVITIES` array hardcodes English activity descriptions: `"Membership Renewal"`, `"Certificate Download"`, etc. The `ActivityCard` component doesn't use `t()`.  
+**Improvement:** Add Tamil equivalents to the ACTIVITIES array and pass `language` to `ActivityCard`.  
+**Why:** A Tamil-speaking member who switches to Tamil sees English activity logs — breaking the bilingual experience at the personal account level.
 
 ---
 
-## Onboarding & First-Visit Flow
+## Form Improvements
 
-**Current visitor journey:** Land → See hero → Scroll → Maybe click "Apply for Membership"
-**Improved journey:** Land → Immediately see trust badge + stats → One clear CTA → Understand value in 5 seconds → Click
+### FORM-1: Membership Step 3 — Document Upload Needs Inline Guidance
+**Current:** Each upload zone shows the document label and Tamil label, but no guidance on accepted formats, max file size, or what constitutes acceptable ID proof.  
+**Improvement:** Add a small `<span>` below each upload zone: `JPG · PNG · PDF · Max 5MB`. For Aadhaar specifically: *"Front and back scan or clear photo is acceptable."*  
+**Why:** Traders unfamiliar with digital document uploads abandon at this step when they're uncertain what is acceptable.
 
-1. **Remove the broken video section** — it occupies prime scroll real estate and breaks trust.
-2. **Move stats above the fold on mobile** — stats (1.24L members, 38 districts) are powerful trust signals; they're buried below the fold.
-3. **The "How It Works" section needs a CTA at the bottom** — after seeing the 4 steps, the natural question is "okay, how do I start?" — a "Start Application" button directly after HorizontalSteps would convert well.
-4. **Add a sticky mobile CTA bar** — a fixed bottom bar on mobile: "Apply Now · ₹500/year" visible at all times on the home page.
+### FORM-2: Contact Form — Replace Raw Inputs With FloatingInput
+**Current:** `contact.tsx` uses `const inp = "..."` hardcoded CSS string for raw `<input>` elements.  
+**Improvement:** Replace all inputs with `FloatingInput`, `FloatingTextarea`, and use `FieldError` for validation errors. Add inline character count on the message field.  
+**Why:** The contact form is the support channel for confused or frustrated traders. A broken-looking form undermines trust at the moment users need help most.
+
+### FORM-3: Membership Form — Show Progress Percentage
+**Current:** Mobile stepper shows "Step 2 of 4" text but no visual percentage.  
+**Improvement:** Add `{Math.round((step / 4) * 100)}% Complete` next to the progress bar on mobile.  
+**Why:** Percentages give low-attention users a clearer sense of completion proximity, reducing abandonment near the end.
 
 ---
 
 ## CTA Improvements
 
-1. **Primary CTA "Apply for Membership" must be above the fold on mobile** — currently at line ~182 of index.tsx, which may be pushed down on 360px screens.
-2. **Secondary CTA "Already a member? Get your card →"** is well placed but undersized. Increase to `text-sm` minimum.
-3. **Services page service items need individual CTAs** — current cards link to modal but the arrow direction is not obvious.
-4. **Footer CTA is missing** — the footer has no CTA. Add a simple "Ready to join? Apply now →" link before the copyright bar.
+### CTA-1: Establish One Dominant Primary CTA on Each Page
+**Current:** Home page has 3 separate membership CTAs: hero button, mid-page CTA after steps, bottom CTA section. All styled identically (`btn-primary`).  
+**Improvement:** The mid-page CTA after HorizontalSteps is the most effective placement (users have just read how it works). Make this the **visually dominant** CTA. Reduce the bottom section CTA to a secondary "text-link" style.  
+**Why:** Multiple identical CTAs cause decision paralysis. One dominant CTA with clear intent performs better.
+
+### CTA-2: Voter ID Page — Add "Apply Now" CTA to Empty State
+**Current:** Not-found state shows a generic message.  
+**Improvement:** Add `→ Apply for membership in 5 minutes` with `btn-primary` styling below the not-found message.  
+**Why:** The highest-intent conversion moment is when a user searches for their ID and confirms they don't have one yet.
+
+### CTA-3: Services Page — Visually Elevate Membership Card
+**Current:** Membership card is one of 12 equal-weight cards.  
+**Improvement:** Give Membership card a `featured` variant: larger, with a "START HERE" badge, a distinct background color, and a `2-column span` on desktop.  
+**Why:** The services page's #1 job is to funnel new users to the membership form. Equal weighting sabotages this goal.
 
 ---
 
-## Trust Signal Improvements
+## User Psychology Improvements
 
-1. **Replace broken video with a static testimonial quote block** — two large quotes from real members with photos and districts.
-2. **Fix dead footer links** — Privacy Policy, Terms, Member Benefits must link to real pages.
-3. **Remove "Demo Profile" text** from Assistant page — replace with "Sample profile (TNVS members only)" or show a proper empty state.
-4. **Replace `1800-XXX-XXXX` placeholder** with real contact number.
-5. **Add "Last updated" timestamp** to certificate — traders use certificates to prove recency to banks.
+### PSY-1: Show Completion Counters as Social Proof
+**Current:** Stats block shows "1,24,560+ Registered Members" but this is shown as a static number in a small grid cell.  
+**Improvement:** Place an animated counter banner near the membership CTA: *"Join 1,24,560+ traders who are already members."*  
+**Why:** Social proof at the decision point reduces anxiety about joining an unknown organization.
+
+### PSY-2: Add "What Happens After I Apply?" Reassurance Section
+**Current:** Home page shows HOW IT WORKS (the 4 application steps) but not what happens AFTER (instant digital certificate, EPIC card, what it looks like).  
+**Improvement:** After HOW IT WORKS, add a small "What you'll get" mockup showing the digital certificate and EPIC card side by side.  
+**Why:** Non-technical users need to visualize the outcome before committing. The `MockupCard` component already exists for this purpose.
+
+### PSY-3: Highlight Annual Fee Prominently — Remove Sticker Shock
+**Current:** ₹500/year fee appears in multiple places but is inconsistently styled — sometimes as body text, sometimes as a CTA label.  
+**Improvement:** Show ₹500/year in a dedicated "pricing clarity" badge near the membership CTA: *"₹500/year · Less than ₹1.50 per day · Cancel anytime."*  
+**Why:** Traders who are uncertain about cost will not click a CTA that doesn't show the price. Transparency increases conversion.
+
+---
+
+## Information Hierarchy Improvements
+
+### IH-1: About Page — Add Mission, Timeline, Leadership in Tamil
+**Current:** Entire About page in English.  
+**Improvement:** Full bilingual parity: `useLanguage()` + `t()` on every string. Add founder photo with Tamil name and role.  
+**Why:** Tamil traders read About pages to verify who is behind the organization. English-only content signals the organization doesn't prioritize them.
+
+### IH-2: Footer — Reorganize Into 3 Clear Columns
+**Current:** Footer has 3 nav columns labeled "Services", "Association", "Office" with inconsistent link sets.  
+**Improvement:**  
+- Column 1: **Membership** — Apply, Renew, Get My Card, Dashboard  
+- Column 2: **Association** — About, Wings, Analytics, Assistant  
+- Column 3: **Legal & Contact** — Privacy Policy, Terms, Contact Us, Phone  
+**Why:** Users who scroll to the footer are either looking for secondary information or a way out. Clear column labels guide them to the right link faster.
 
 ---
 
 ## Mobile UX Improvements
 
-1. **Fix `HorizontalSteps` fixed card heights** — use `min-h` to prevent Tamil text clipping.
-2. **Services modals need `max-h` + internal scroll** — modal body must not exceed viewport height on mobile.
-3. **Contact form grid `sm:grid-cols-2`** renders as two columns on 640px — on 360–600px it's single column which is fine, but the threshold should be `md:` not `sm:`.
-4. **Hero emblem image** (`max-w-[260px]`) stacks below text on mobile and takes up half the viewport — reduce to `max-w-[180px]` on mobile.
+### MOB-1: Dashboard Tabs — Stack Labels, Remove Tamil Subtitles at `text-[8px]`
+**Current:** Dashboard tab buttons show English label + Tamil subtitle at `text-[8px]`.  
+**Improvement:** On mobile, show only the Tamil label when language is Tamil, English label when English. Remove the bilingual stacking on small screens.  
+**Why:** 8px text is physically unreadable on any phone. Forcing a language choice renders the visible label legible.
+
+### MOB-2: Services Modals — Add `max-h-[85vh]` + `overflow-y-auto`
+**Current:** Service detail modals have no max-height. On short-viewport mobile phones (iPhone SE at 568px), modals extend off-screen.  
+**Improvement:** Add `max-h-[85dvh] overflow-y-auto` to all modal body containers.  
+**Why:** iPhone SE and similar compact phones are common among older traders. Off-screen content is functionally invisible.
+
+### MOB-3: Sticky Mobile CTA — Hide on Non-Home Pages
+**Current:** The sticky bottom CTA (`fixed bottom-0`) on the home page may overlap the Membership form's "Next Step" button when navigating to `/membership`.  
+**Improvement:** Only render the sticky CTA on the home page (`/`). Use `useMatch` or check route to conditionally render.  
+**Why:** A sticky "Join" button appearing on top of the membership form's own navigation buttons creates double-button confusion.
 
 ---
 
 ## Accessibility Enhancements
 
-1. **Add `lang="ta"` on Tamil text containers** — `<p lang="ta">` so screen readers use Tamil TTS engine.
-2. **FAQ accordion answers** need `lang="ta"` on Tamil text.
-3. **Language toggle button** needs `aria-label="Switch to Tamil"` / `"Switch to English"`.
-4. **Minimum tap target 44×44px** for all interactive elements — audit icon buttons.
-5. **Focus ring visibility** — ensure `focus-visible:ring` is applied on all interactive elements.
+### A11Y-1: Add `lang="ta"` to All Tamil Text Blocks
+**Priority:** All Tamil content in FAQ (`index.tsx`), Dashboard activity cards, Dashboard events, and Membership step descriptions.  
+**Why:** Screen readers use `lang` to select the correct TTS voice. Without `lang="ta"`, Tamil text is read aloud in English phonics — completely unintelligible.
+
+### A11Y-2: Minimum Text Size Enforcement
+**Enforce:** Replace all `text-[8px]`, `text-[9px]`, `text-[10px]` with `text-xs` (12px) minimum. For Tamil body text, enforce `text-sm` (14px) minimum.  
+**Why:** Tamil script requires larger point sizes for legibility than Latin. 10px Tamil text is inaccessible to users with normal vision on small screens.
+
+### A11Y-3: Add `aria-label` to Icon-Only Interactive Elements
+**Elements:** Language toggle, mobile menu button, document upload icon buttons, welfare form step navigation.  
+**Why:** Icon-only buttons are invisible to screen reader users without `aria-label`.
 
 ---
 
 ## Recommended UX Priorities
 
-| Priority | Change | Impact |
-|----------|--------|--------|
-| P0 | Remove broken video embed | Trust |
-| P0 | Fix dead footer links | Trust + Legal |
-| P0 | Add Tamil to About page | Bilingual parity |
-| P1 | Fix contact form → FloatingInput | Consistency |
-| P1 | Fix ScrollReveal delay/stagger | Visual flow |
-| P1 | Persist language to localStorage | Bilingual UX |
-| P1 | Add sticky mobile CTA on home | Conversion |
-| P2 | Fix HorizontalSteps min-h | Mobile text |
-| P2 | Remove Demo Profile placeholder | Trust |
-| P2 | Add lang="ta" attributes | Accessibility |
-| P3 | Add "How It Works" bottom CTA | Conversion |
-| P3 | Add progress % to membership form | Form UX |
+| Priority | Task | Impact | Effort |
+|----------|------|--------|--------|
+| P0 | Fix 4 critical bugs (video, links, About Tamil, demo data) | Trust restoration | 3–4 hrs total |
+| P0 | Replace Contact form inputs with FloatingInput | Consistency | 1 hr |
+| P1 | Voter ID not-found → Membership CTA | Conversion | 30 min |
+| P1 | Services page — feature Membership card | Conversion | 30 min |
+| P1 | Dashboard tab simplification (hide Recruiter from non-coordinators) | Cognitive load | 45 min |
+| P1 | ScrollReveal delay/duration fix | Animation quality | 30 min |
+| P1 | HorizontalSteps min-h fix | Tamil readability | 15 min |
+| P2 | Wings zone explorer orientation panel | Discoverability | 1 hr |
+| P2 | All `text-[8/9/10px]` → `text-xs` minimum | Accessibility | 45 min |
+| P2 | `lang="ta"` on all Tamil blocks | Screen reader accessibility | 30 min |
+| P2 | Dashboard mobile membership status bar | Mobile UX | 45 min |
+| P3 | "What you'll get" mockup section on home | Conversion psychology | 1.5 hrs |
+| P3 | Footer restructure (3 clear columns) | Navigation | 30 min |

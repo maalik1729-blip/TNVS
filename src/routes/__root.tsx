@@ -11,6 +11,7 @@ import {
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { BottomNavigation } from "@/components/BottomNavigation";
 import { Toaster } from "sonner";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { ThemeProvider } from "@/hooks/useTheme";
@@ -19,8 +20,8 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-display font-bold text-primary">404</h1>
-        <h2 className="mt-4 text-xl font-semibold">பக்கம் காணப்படவில்லை</h2>
+        <h2 className="text-7xl font-display font-bold text-primary">404</h2>
+        <h3 className="mt-4 text-xl font-semibold">பக்கம் காணப்படவில்லை</h3>
         <p className="mt-2 text-sm text-muted-foreground">The page you're looking for doesn't exist.</p>
         <Link to="/" className="mt-6 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
           முகப்பு / Go home
@@ -36,7 +37,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold">Something went wrong</h1>
+        <h2 className="text-xl font-semibold">Something went wrong</h2>
         <p className="mt-2 text-sm text-muted-foreground">Try refreshing or head back home.</p>
         <div className="mt-6 flex justify-center gap-2">
           <button onClick={() => { router.invalidate(); reset(); }} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">Try again</button>
@@ -57,6 +58,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#1e3a8a" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png?v=2", type: "image/png" },
       { rel: "apple-touch-icon", href: "/favicon.png?v=2" },
@@ -127,8 +131,9 @@ function RootInner() {
           nav row:      ~52px
         Total:          ~87px desktop / ~83px mobile
         We use pt-[83px] sm:pt-[87px] with a safe fallback.
+        Bottom nav adds 60px on mobile, so we add pb-[60px] for mobile.
       */}
-      <div className="min-h-screen flex flex-col pt-[83px] sm:pt-[87px]">
+      <div className="min-h-screen flex flex-col pt-[83px] sm:pt-[87px] pb-[60px] xl:pb-0">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium">
           Skip to main content
         </a>
@@ -136,6 +141,7 @@ function RootInner() {
         <main id="main-content" className="flex-1"><Outlet /></main>
         <SiteFooter />
       </div>
+      <BottomNavigation />
       <Toaster position="bottom-right" richColors closeButton />
     </>
   );

@@ -64,11 +64,13 @@ function PhotoBox({ photoUrl, size = 90 }: { photoUrl?: string; size?: number })
       flexShrink: 0,
     }}>
       {photoUrl ? (
-        <img src={photoUrl} alt="Photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={photoUrl} alt="Photo" width={size} height={size * 1.2} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       ) : (
         <img
           src={rightLogo}
           alt="TNVS Logo"
+          width={size * 0.75}
+          height={size * 0.75}
           style={{
             width: size * 0.75,
             height: size * 0.75,
@@ -141,7 +143,7 @@ function GovFront({ voter }: { voter: Voter }) {
           display: "flex", alignItems: "center", justifyContent: "center",
           overflow: "hidden", flexShrink: 0,
         }}>
-          <img src={headerLogo} alt="Logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img src={headerLogo} alt="Logo" width={36} height={36} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
 
         {/* Centre text */}
@@ -158,7 +160,7 @@ function GovFront({ voter }: { voter: Voter }) {
         </div>
 
         {/* Right logo */}
-        <img src={rightLogo} alt="Emblem"
+        <img src={rightLogo} alt="Emblem" width={38} height={38}
           style={{ width: 38, height: 38, objectFit: "contain", borderRadius: "50%", flexShrink: 0 }} />
       </div>
 
@@ -329,7 +331,7 @@ function GovBack({ voter }: { voter: Voter }) {
 
         {/* Right: Logo + QR + Signature */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "space-between" }}>
-          <img src={rightLogo} alt="Logo" style={{ width: 42, height: 42, objectFit: "contain", borderRadius: "50%" }} />
+          <img src={rightLogo} alt="Logo" width={42} height={42} style={{ width: 42, height: 42, objectFit: "contain", borderRadius: "50%" }} />
           <div style={{ textAlign: "right" }}>
             <img src={qrUrl} alt="QR" width="64" height="64"
               style={{ borderRadius: 4, border: `1px solid #dce3f0`, display: "block" }} />
@@ -349,7 +351,7 @@ function GovBack({ voter }: { voter: Voter }) {
           If found, please return to: No 5/79, Cinerama Melumanam Kovil St, Saidapet, Chennai-600015
         </div>
         <div style={{ textAlign: "right" }}>
-          <img src={ownerSign} alt="Sign" style={{ height: 20, objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.8, display: "block" }} />
+          <img src={ownerSign} alt="Sign" height={20} style={{ height: 20, objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.8, display: "block" }} />
           <div style={{ fontSize: 6.5, color: GOLD_L, fontWeight: 700 }}>SENTHIL KUMAR N</div>
           <div style={{ fontSize: 6, color: "rgba(255,255,255,0.55)" }}>State President</div>
         </div>

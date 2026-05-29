@@ -69,6 +69,7 @@ function Dashboard() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [epicId, setEpicId] = useState<string | null>(() => getSession());
+  const [dashboardTab, setDashboardTab] = useState<"overview" | "welfare" | "recruiter" | "tools">("overview");
 
   // Subsidized Loan Gated States
   const [showLoanCategories, setShowLoanCategories] = useState(true);
@@ -392,12 +393,19 @@ function Dashboard() {
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
+  const InfoCellDark = ({ label, value }: { label: string; value: string }) => (
+    <div className="bg-white/5 p-3 rounded-2xl border border-white/10 text-left">
+      <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">{label}</div>
+      <div className="text-xs font-bold text-slate-100 mt-1.5 leading-none">{value}</div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden bg-slate-50/50 pb-12">
 
       {/* Page Header */}
       <section className="border-b border-slate-200/60 bg-white">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-8 md:py-10 w-full">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-8 w-full">
 
           {/* Demo Mode Banner — full width, top of page */}
           <div className="mb-5">
@@ -413,13 +421,15 @@ function Dashboard() {
                 <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
                 {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
               </Link>
-              <div className="text-xs font-semibold uppercase tracking-widest text-primary">
-                Member ID: {epicId}
+              <div className="flex">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded-md border border-primary/10">
+                  Member ID: {epicId}
+                </div>
               </div>
-              <h1 className="mt-1 font-display text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
+              <h1 className="mt-2.5 font-display text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
                 {t("வணக்கம், செந்தில் குமார் N", "Welcome, Senthil Kumar N")}
               </h1>
-              <p className="font-tamil text-xs md:text-sm text-slate-500 mt-0.5">
+              <p className="font-tamil text-xs md:text-sm text-slate-550 mt-0.5">
                 {t("உங்கள் உறுப்பினர் கணக்கு செயலில் உள்ளது.", "Your membership account is active.")}
               </p>
             </div>
@@ -427,14 +437,14 @@ function Dashboard() {
             <div className="flex gap-2.5 flex-wrap">
               <button
                 onClick={handleDownloadIdCard}
-                className="btn-primary"
+                className="btn-primary py-2.5 px-4 rounded-xl text-xs font-bold shadow-sm cursor-pointer transition hover:scale-[1.02] active:scale-98"
               >
                 <Download className="w-4 h-4" aria-hidden="true" />
                 {t("அட்டை பதிவிறக்கம்", "Download ID Card")}
               </button>
               <button
                 onClick={handleLogout}
-                className="btn-danger"
+                className="btn-danger py-2.5 px-4 rounded-xl text-xs font-bold cursor-pointer transition active:scale-98"
               >
                 <LogOut className="w-4 h-4" aria-hidden="true" />
                 {t("வெளியேறு", "Sign Out")}
@@ -444,1539 +454,1364 @@ function Dashboard() {
         </div>
       </section>
 
-      <Section className="py-4">
-        {/* Full-size stationary Dribbble-style Premium Hero Promo Banner */}
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-navy border border-blue-900/50 shadow-2xl flex flex-col justify-center max-w-7xl mx-auto p-5 sm:p-8 md:p-12 min-h-[260px] sm:min-h-[300px] select-none text-left bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-blue-950 via-navy to-slate-950">
-          
-          {/* Tagline Row */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-[2px] bg-amber-500 rounded-full"></div>
-            <span className="bg-blue-600/30 text-blue-400 border border-blue-500/20 text-[10px] md:text-xs font-black uppercase tracking-widest px-3 py-1 rounded-[4px] font-sans">
-              {t("உறுப்பினர் சிறப்பு சலுகை", "MEMBER SPECIAL OFFER")}
-            </span>
-          </div>
-
-          {/* Large Serif Headline with Highlighted Loan Keywords */}
-          <h1 className="mt-5 font-serif text-2xl md:text-4.5xl font-extrabold text-white leading-tight max-w-3xl">
-            {language === "ta" ? (
-              <>
-                வட்டியில்லா <span className="text-amber-400 drop-shadow-[0_2px_10px_rgba(251,191,36,0.3)] select-all">கடன்</span> பெற்று உங்கள் தொழிலை வளர்க்கவும்.
-              </>
-            ) : (
-              <>
-                Grow your business with 0% <span className="text-amber-400 drop-shadow-[0_2px_10px_rgba(251,191,36,0.3)] select-all">Interest Loans</span>.
-              </>
-            )}
-          </h1>
-
-          {/* Features Row */}
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs md:text-sm text-slate-300 font-tamil font-semibold">
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-              {t("வட்டியில்லா கடன்", "No Interest (0% Vatti)")}
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-              {t("மிகவும் எளிய ஆவணங்கள்", "Only Simple Documents Needed")}
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-              {t("வங்கி கிளைகளில் உடனடி அனுமதி", "Quick Approval at Your Branch")}
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-              {t("₹25 லட்சம் வரை பெறலாம்", "Get up to ₹25 Lakhs")}
-            </span>
-          </div>
-
-          {/* CTA Action Button */}
-          <div className="mt-8">
-            <button
-              onClick={() => {
-                const section = document.getElementById("loan-categories-section");
-                if (section) {
-                  section.scrollIntoView({ behavior: "smooth" });
-                  toast.success(t("கீழே உள்ள கடன் பிரிவைத் தேர்ந்தெடுத்து விண்ணப்பிக்கவும்!", "Select a loan category below to apply!"));
-                }
-              }}
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-[8px] text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 active:scale-[0.97] transition-all border border-blue-500/20 cursor-pointer"
-            >
-              <span>{t("கடனுக்கு விண்ணப்பிக்க →", "Apply for Loan Now →")}</span>
-            </button>
-          </div>
-
-          {/* Subtle Decorative Geometric Glowing Circles */}
-          <div className="absolute -top-12 -right-12 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute -bottom-16 -left-16 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
-        </div>
-      </Section>
-
-      <Section className="py-6 sm:py-10">
-        <div className="grid lg:grid-cols-12 gap-5 sm:gap-6">
-
-          {/* LEFT COLUMN — Member Card + Quick Actions */}
-          <div className="lg:col-span-5 space-y-6">
-
-            {/* Member Card */}
-            <div className="card-base card-accent-left p-5 md:p-6 relative overflow-hidden">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    {t("உறுப்பினர் அடையாள எண்", "Membership ID")}
-                  </div>
-                  <div className="font-mono text-xl font-bold text-primary mt-1 tracking-wider">
-                    {epicId}
-                  </div>
-                </div>
-                <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-100 p-1 bg-slate-50 shadow-xs">
-                  <img src={orgLogo} alt="TNVS" className="w-full h-full object-contain" />
-                </div>
-              </div>
-
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <InfoCell label="Member Name"        value="Senthil Kumar N" />
-                <InfoCell label="District"           value="Chennai" />
-                <InfoCell label="Zone"               value="Chennai Zone" />
-                <InfoCell label="Assembly"           value="Mylapore" />
-                <InfoCell label="Registered Mobile"  value="+91 944 20 •• 44" />
-                <InfoCell label="Member Class"       value="A+ Patron" />
-              </div>
-
-              <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-                <div className="text-xs text-slate-500">
-                  {t("வரை செல்லும்", "Valid till")}{" "}
-                  <span className="text-slate-800 font-bold">04 Dec 2026</span>
-                </div>
-                <StatusPill status="active" label="ACTIVE" />
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => toast.info("Your primary certificate has been automatically queued for download.")}
-                className="card-base card-interactive p-4 text-left group min-h-[80px] cursor-pointer"
-              >
-                <FileText className="w-5 h-5 text-primary group-hover:scale-110 transition" aria-hidden="true" />
-                <div className="text-sm font-semibold mt-2 text-slate-800">
-                  {t("சான்றிதழ்", "Certificate")}
-                </div>
-                <div className="text-xs text-slate-400 mt-0.5">{t("PDF பதிவிறக்கம்", "Download PDF")}</div>
-              </button>
-
-              <button
-                onClick={() => toast.info("Renewal window opens October 2026. Current membership valid till Dec 2026.")}
-                className="card-base card-interactive p-4 text-left group min-h-[80px] cursor-pointer"
-              >
-                <CreditCard className="w-5 h-5 text-primary group-hover:scale-110 transition" aria-hidden="true" />
-                <div className="text-sm font-semibold mt-2 text-slate-800">
-                  {t("புதுப்பித்தல்", "Card Renewal")}
-                </div>
-                <div className="text-xs text-slate-400 mt-0.5">{t("ஆண்டுக் கட்டணம் ₹500", "Annual fee ₹500")}</div>
-              </button>
-            </div>
-
-            {/* App Download */}
-            <div className="card-base p-5 md:p-6 space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
-                <div className="w-8 h-8 rounded-xl bg-slate-100 text-primary flex items-center justify-center">
-                  <Smartphone className="w-4 h-4" aria-hidden="true" />
-                </div>
-                <h3 className="font-display font-bold text-sm text-slate-800">
-                  {t("எங்கள் ஆப்பை பதிவிறக்கவும்", "Download Our App")}
-                </h3>
-              </div>
-              <p className="text-xs text-slate-500 leading-relaxed font-tamil">
-                {t(
-                  "சிறந்த அனுபவத்திற்கு Google Play Store இல் இருந்து அதிகாரப்பூர்வ வணிகன் AI ஆப்பை பதிவிறக்கவும்.",
-                  "For the best experience, download the official Vanigan AI app from the Google Play Store."
-                )}
-              </p>
-              <a
-                href="https://play.google.com/store/apps/details?id=com.thirumoolar.vanigan"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-[10px] text-sm font-semibold flex items-center justify-center gap-2 transition active:scale-[0.98] min-h-[48px]"
-              >
-                <Play className="w-4 h-4 fill-white" aria-hidden="true" />
-                <span className="font-tamil">{t("Play Store இல் பதிவிறக்கம்", "Download on Play Store")}</span>
-              </a>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN — Meetings, Welfare, GST, Activity, Coordinator */}
-          <div className="lg:col-span-7 space-y-6">
-
-            {/* Notices */}
-            {/* Interactive Meetings & Events Section */}
-            <div className="card-base p-5 md:p-6 space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <h2 className="font-display text-base font-bold text-slate-800 flex items-center gap-1.5">
-                  <Bell className="w-4 h-4 text-gold animate-bounce" aria-hidden="true" />
-                  {t("கூட்டங்கள் & நிகழ்வுகள்", "Meetings & Announcements")}
-                </h2>
-                <span className="text-[10px] font-bold bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded uppercase">
-                  {EVENTS.filter(e => e.status === "live").length > 0 ? "LIVE MEETING ACTIVE" : "UPCOMING"}
-                </span>
-              </div>
-              <div className="space-y-3.5">
-                {EVENTS.map((e) => {
-                  const isLive = e.status === "live";
-                  const isUpcoming = e.status === "upcoming";
-                  const isRsvped = rsvpStates[e.id] === "attending";
-                  const count = attendeeCounts[e.id];
-
-                  return (
-                    <div
-                      key={e.id}
-                      onClick={
-                        isLive 
-                          ? () => {
-                              setLiveStreamTitle(language === "ta" ? e.ta : e.t);
-                              setIsLiveStreamOpen(true);
-                            }
-                          : e.id === "scholarship-2026"
-                          ? () => {
-                              setWelfarePortalTab("apply");
-                              setWelfareSchemeType("scholarship");
-                              setWelfareFormStep(1);
-                              const element = document.getElementById("welfare-portal-section");
-                              if (element) {
-                                element.scrollIntoView({ behavior: "smooth" });
-                              }
-                              toast.success(
-                                language === "ta"
-                                  ? "உதவித்தொகை விண்ணப்பப் படிவம் திறக்கப்பட்டது! 🎓"
-                                  : "Educational Scholarship Form opened below! 🎓"
-                              );
-                            }
-                          : undefined
-                      }
-                      className={`rounded-2xl border transition-all duration-300 flex flex-col gap-3 text-left group ${
-                        isLive 
-                          ? "p-5 md:p-6 bg-slate-900 text-white border-red-950/80 shadow-xl shadow-slate-950/40 animate-pulse-subtle cursor-pointer hover:bg-slate-950 hover:border-red-500/40 hover:shadow-2xl hover:shadow-red-950/20 active:scale-[0.99]" 
-                          : e.id === "scholarship-2026"
-                          ? "p-4 bg-slate-50/50 hover:bg-amber-500/5 border-slate-150 hover:border-amber-500/30 cursor-pointer active:scale-[0.99]"
-                          : "p-4 bg-slate-50/50 hover:bg-slate-50 border-slate-150 hover:border-slate-200"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-4 w-full">
-                        <div className="space-y-1">
-                          <div className={`text-[10px] font-black uppercase tracking-widest ${isLive ? "text-red-400 flex items-center gap-1.5" : "text-slate-400"}`}>
-                            {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />}
-                            {isLive ? t("நேரடி ஒளிபரப்பு", "LIVE BROADCAST") : e.id === "scholarship-2026" ? t("உதவித்தொகை", "WELFARE SCHEME") : t("நிகழ்வு", "ANNOUNCEMENT")}
-                          </div>
-                          <h4 className={`leading-snug font-bold ${isLive ? "text-base font-black text-white font-serif tracking-tight" : "text-sm text-slate-800 font-sans"}`}>
-                            {language === "ta" ? e.ta : e.t}
-                          </h4>
-                          {isLive ? (
-                            <div className="flex items-center gap-1.5 text-xs text-slate-400 font-sans font-semibold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                              <span>{e.d}</span>
-                            </div>
-                          ) : (
-                            <p className="text-xs text-slate-500 font-tamil font-semibold">
-                              {e.d}
-                            </p>
-                          )}
-                        </div>
-
-                        {isLive && (
-                          <div
-                            className="bg-gradient-to-r from-red-600 to-rose-600 group-hover:from-red-500 group-hover:to-rose-500 text-white px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 shrink-0 shadow-lg shadow-red-950/40 border border-red-500/20 transition-all duration-300"
-                          >
-                            <Play className="w-3.5 h-3.5 fill-white stroke-none" />
-                            <span>{t("நேரடி ஒளிபரப்பு", "Watch Live")}</span>
-                          </div>
-                        )}
-
-                        {e.id === "scholarship-2026" && (
-                          <div
-                            className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 shadow-sm transition active:scale-95 cursor-pointer"
-                          >
-                            <span>{t("விண்ணப்பிக்க", "Apply Online")}</span>
-                            <ArrowRight className="w-3 h-3" />
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Attendee Counters & RSVP Panel for upcoming events */}
-                      {isUpcoming && (
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200/60 mt-0.5">
-                          <div className="text-[10px] text-slate-400 font-tamil">
-                            {count > 0 ? (
-                              <span>✓ <strong className="text-slate-700 font-bold">{count}</strong> {t("வணிகர்கள் பங்கேற்கிறார்கள்", "traders attending")}</span>
-                            ) : (
-                              t("முன்பதிவு செய்ய விருப்பம்", "RSVP open to all members")
-                            )}
-                          </div>
-
-                          <div className="flex gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => handleToggleRsvp(e.id, "attending")}
-                              className={`px-3 py-1 rounded text-[10px] font-extrabold transition cursor-pointer border ${
-                                isRsvped 
-                                  ? "bg-emerald-600 border-emerald-600 text-white" 
-                                  : "bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
-                              }`}
-                            >
-                              {isRsvped ? t("✓ நான் வருகிறேன்", "✓ Going") : t("நான் வருகிறேன்", "Going")}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setRsvpStates(prev => ({ ...prev, [e.id]: "none" }));
-                                setAttendeeCounts(prev => {
-                                  const current = rsvpStates[e.id];
-                                  const base = prev[e.id];
-                                  return { ...prev, [e.id]: current === "attending" ? base - 1 : base };
-                                });
-                                toast.info(t("பதில் ரத்து செய்யப்பட்டது.", "RSVP canceled."));
-                              }}
-                              className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-400 hover:text-slate-600 px-2 py-1 rounded text-[10px] transition cursor-pointer"
-                            >
-                              {t("வரவில்லை", "Decline")}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Welfare Coverage Banner */}
-            <div className="bg-primary text-white rounded-[12px] p-5 md:p-6 border border-primary/20 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/8 rounded-full translate-x-1/3 -translate-y-1/3" aria-hidden="true" />
-              <div className="relative flex items-start gap-4">
-                <ShieldCheck className="w-6 h-6 text-gold shrink-0 mt-0.5" aria-hidden="true" />
-                <div className="space-y-1">
-                  <h3 className="font-display font-bold text-base text-slate-50">
-                    {t("நலன் பாதுகாப்பு செயலில் உள்ளது", "Welfare Coverage Active")}
-                  </h3>
-                  <p className="text-xs text-primary-foreground/80 leading-relaxed">
-                    {t(
-                      "நீங்களும் உங்கள் பதிவுசெய்யப்பட்ட குடும்பமும் ₹2 லட்சம் குழு சுகாதார காப்பீட்டுத் திட்டத்தின் கீழ் ஏப்ரல் 2027 வரை முழுமையாக பாதுகாக்கப்படுகிறீர்கள்.",
-                      "You and your registered trade family are fully covered under the association's ₹2 Lakh group health insurance scheme until April 2027."
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Welfare Scheme Application & Tracking Portal */}
-            <div id="welfare-portal-section" className="card-base p-5 md:p-6 space-y-5 text-left border-l-4 border-l-emerald-600">
-              {/* Card Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <HeartPulse className="w-5 h-5 text-emerald-600 animate-pulse" />
-                  <h3 className="font-display font-bold text-sm text-slate-800">
-                    {t("நலத்திட்டங்கள் & நிதியுதவி மையம்", "Member Welfare & Credit Portal")}
-                  </h3>
-                </div>
-                <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                  ONLINE PORTAL
-                </span>
-              </div>
-
-              {/* Portal Tabs Selector */}
-              <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50">
+      {/* ── Dashboard Navigation Tabs Stepper ── */}
+      <section className="border-b border-slate-200/50 sticky top-0 z-40 shadow-xs backdrop-blur-md bg-white/90 py-2.5">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6">
+          <div className="flex bg-slate-105 p-1.5 rounded-2xl border border-slate-200/50 w-full sm:w-auto overflow-x-auto scrollbar-none">
+            {[
+              { id: "overview", label: "Overview", labelTa: "முன்னோட்டம்", icon: Store },
+              { id: "welfare", label: "Welfare & Loans", labelTa: "நலன் & கடன்கள்", icon: HeartPulse },
+              { id: "recruiter", label: "Recruiter Hub", labelTa: "ஒருங்கிணைப்பாளர்", icon: Users },
+              { id: "tools", label: "Tools & Apps", labelTa: "டிஜிட்டல் சேவைகள்", icon: Smartphone }
+            ].map((tab) => {
+              const TabIcon = tab.icon;
+              const active = dashboardTab === tab.id;
+              return (
                 <button
+                  key={tab.id}
                   type="button"
                   onClick={() => {
-                    setWelfarePortalTab("apply");
-                    // Reset step when switching back to apply
-                    if (welfareFormStep === 3) setWelfareFormStep(1);
+                    setDashboardTab(tab.id as any);
+                    toast.info(language === "ta" ? `${tab.labelTa} பிரிவு திறக்கப்பட்டது` : `${tab.label} section loaded`);
                   }}
-                  className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
-                    welfarePortalTab === "apply" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
+                  className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-bold transition-all relative cursor-pointer min-h-[40px] whitespace-nowrap ${
+                    active ? "bg-white text-primary shadow-xs border border-slate-200/30 font-extrabold" : "text-slate-500 hover:text-slate-850"
                   }`}
                 >
-                  {t("விண்ணப்பிக்கும் தளம்", "Apply for Welfare")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setWelfarePortalTab("track")}
-                  className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
-                    welfarePortalTab === "track" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
-                  }`}
-                >
-                  {t("விண்ணப்ப டிராக்கிங்", "Track Applications")}
-                  {welfareClaims.filter(c => c.status === "pending").length > 0 && (
-                    <span className="ml-1.5 px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[8px] font-bold">
-                      {welfareClaims.filter(c => c.status === "pending").length}
-                    </span>
-                  )}
-                </button>
-              </div>
-
-              {/* TAB 1: APPLY FOR SCHEMES */}
-              {welfarePortalTab === "apply" && (
-                <div className="space-y-4 pt-1 animate-fade-in">
-                  
-                  {/* Step 1: Select Scheme & Input Details */}
-                  {welfareFormStep === 1 && (
-                    <div className="space-y-4">
-                      {/* Scheme Cards Selection */}
-                      {!welfareSchemeType ? (
-                        <div className="space-y-3">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">Select a Welfare Scheme</span>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            {/* Health cover card option */}
-                            <div 
-                              onClick={() => {
-                                setWelfareSchemeType("health");
-                                setWelfareFormInputs(prev => ({ ...prev, aadhaar: "", nomineeName: "" }));
-                              }}
-                              className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
-                            >
-                              <div>
-                                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                                  <HeartPulse className="w-5 h-5" />
-                                </div>
-                                <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">₹2 Lakh Group Insurance</h4>
-                                <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
-                                  Family health cover including cashless hospitalizations.
-                                </p>
-                              </div>
-                              <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider mt-3 font-sans group-hover:translate-x-1 transition flex items-center gap-0.5">
-                                Select Scheme →
-                              </span>
-                            </div>
-
-                            {/* Loan card option */}
-                            <div 
-                              onClick={() => {
-                                setWelfareSchemeType("loan");
-                                setWelfareFormInputs(prev => ({ ...prev, amount: "100000", reason: "" }));
-                              }}
-                              className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-blue-50/20 hover:border-blue-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
-                            >
-                              <div>
-                                <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                                  <Coins className="w-5 h-5" />
-                                </div>
-                                <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">0% Interest Credit Support</h4>
-                                <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
-                                  Working capital loans up to ₹2 Lakhs with easy tenures.
-                                </p>
-                              </div>
-                              <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider mt-3 font-sans group-hover:translate-x-1 transition flex items-center gap-0.5">
-                                Select Scheme →
-                              </span>
-                            </div>
-
-                            {/* Scholarship card option */}
-                            <div 
-                              onClick={() => {
-                                setWelfareSchemeType("scholarship");
-                                setWelfareFormInputs(prev => ({ 
-                                  ...prev, 
-                                  studentName: "", 
-                                  studentClass: "Class 12", 
-                                  instituteName: "", 
-                                  gpa: "" 
-                                }));
-                              }}
-                              className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-amber-50/20 hover:border-amber-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
-                            >
-                              <div>
-                                <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                                  <Award className="w-5 h-5" />
-                                </div>
-                                <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">Educational Scholarship</h4>
-                                <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
-                                  Financial aid for children of registered traders based on merit.
-                                </p>
-                              </div>
-                              <span className="text-[10px] font-black text-amber-600 uppercase tracking-wider mt-3 font-sans group-hover:translate-x-1 transition flex items-center gap-0.5">
-                                Select Scheme →
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        /* Scheme Form Details */
-                        <div className="space-y-4">
-                          {/* Back to scheme select button */}
-                          <button
-                            type="button"
-                            onClick={() => setWelfareSchemeType(null)}
-                            className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-slate-800 transition cursor-pointer"
-                          >
-                            ← Change Scheme Selection
-                          </button>
-
-                          <div className="bg-slate-50 border border-slate-150 rounded-xl p-3.5 flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                              welfareSchemeType === "health" 
-                                ? "bg-emerald-50 text-emerald-600" 
-                                : welfareSchemeType === "scholarship"
-                                ? "bg-amber-50 text-amber-600"
-                                : "bg-blue-50 text-blue-600"
-                            }`}>
-                              {welfareSchemeType === "health" ? (
-                                <HeartPulse className="w-4 h-4" />
-                              ) : welfareSchemeType === "scholarship" ? (
-                                <Award className="w-4 h-4" />
-                              ) : (
-                                <Coins className="w-4 h-4" />
-                              )}
-                            </div>
-                            <div className="space-y-0.5">
-                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block font-sans">Active Application</span>
-                              <h4 className="text-xs font-extrabold text-slate-800 font-tamil leading-none">
-                                {welfareSchemeType === "health" 
-                                  ? t("சுகாதார காப்பீடு (₹2 லட்சம்)", "Group Health Cover (₹2 Lakh)") 
-                                  : welfareSchemeType === "scholarship"
-                                  ? t("கல்வி உதவித்தொகைத் திட்டம்", "Educational Scholarship")
-                                  : t("வட்டியில்லா நிதியுதவிக் கடன்", "Interest-Free Credit Support")}
-                              </h4>
-                            </div>
-                          </div>
-
-                          {/* Dynamic Inputs Form */}
-                          <div className="space-y-3 font-sans">
-                            <div className="grid grid-cols-2 gap-2 text-xxs font-mono">
-                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Trader Name</label>
-                                <input
-                                  type="text"
-                                  disabled
-                                  value={welfareFormInputs.proprietorName}
-                                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-500 cursor-not-allowed focus:outline-none"
-                                />
-                              </div>
-                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Shop Name</label>
-                                <input
-                                  type="text"
-                                  disabled
-                                  value={welfareFormInputs.shopName}
-                                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-500 cursor-not-allowed focus:outline-none"
-                                />
-                              </div>
-                            </div>
-
-                            {welfareSchemeType === "health" ? (
-                              /* HEALTH COVER SPECIAL INPUTS */
-                              <div className="space-y-3">
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Aadhaar Card Number *</label>
-                                  <input
-                                    type="text"
-                                    maxLength={12}
-                                    placeholder="Enter 12-digit Aadhaar Number"
-                                    value={welfareFormInputs.aadhaar}
-                                    onChange={e => setWelfareFormInputs({ ...welfareFormInputs, aadhaar: e.target.value.replace(/\D/g, '') })}
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600/30"
-                                  />
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nominee Name *</label>
-                                    <input
-                                      type="text"
-                                      placeholder="Nominee Full Name"
-                                      value={welfareFormInputs.nomineeName}
-                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, nomineeName: e.target.value })}
-                                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600"
-                                    />
-                                  </div>
-                                  <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nominee Relationship *</label>
-                                    <select
-                                      value={welfareFormInputs.nomineeRelation}
-                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, nomineeRelation: e.target.value })}
-                                      className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 cursor-pointer"
-                                    >
-                                      <option value="Wife">Wife</option>
-                                      <option value="Husband">Husband</option>
-                                      <option value="Son">Son</option>
-                                      <option value="Daughter">Daughter</option>
-                                      <option value="Mother">Mother</option>
-                                      <option value="Father">Father</option>
-                                    </select>
-                                  </div>
-                                </div>
-                              </div>
-                            ) : welfareSchemeType === "scholarship" ? (
-                              /* SCHOLARSHIP SPECIAL INPUTS */
-                              <div className="space-y-3 animate-fade-in">
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Student Name *</label>
-                                  <input
-                                    type="text"
-                                    placeholder="Enter student's full name"
-                                    value={welfareFormInputs.studentName}
-                                    onChange={e => setWelfareFormInputs({ ...welfareFormInputs, studentName: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30"
-                                  />
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Class / Course *</label>
-                                    <select
-                                      value={welfareFormInputs.studentClass}
-                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, studentClass: e.target.value })}
-                                      className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs text-slate-800 focus:outline-none focus:border-amber-600 cursor-pointer"
-                                    >
-                                      <option value="Class 10">Class 10</option>
-                                      <option value="Class 12">Class 12</option>
-                                      <option value="UG">Undergraduate (UG)</option>
-                                      <option value="PG">Postgraduate (PG)</option>
-                                    </select>
-                                  </div>
-                                  <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Previous Year Marks / GPA *</label>
-                                    <input
-                                      type="text"
-                                      placeholder="Percentage e.g. 85% or GPA 9.0"
-                                      value={welfareFormInputs.gpa}
-                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, gpa: e.target.value })}
-                                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">School / College Name *</label>
-                                  <input
-                                    type="text"
-                                    placeholder="Full name of educational institution"
-                                    value={welfareFormInputs.instituteName}
-                                    onChange={e => setWelfareFormInputs({ ...welfareFormInputs, instituteName: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600/30"
-                                  />
-                                </div>
-                              </div>
-                            ) : (
-                              /* LOAN SUPPORT SPECIAL INPUTS */
-                              <div className="space-y-3">
-                                <div className="grid grid-cols-2 gap-2 font-sans">
-                                  <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-sans">Required Amount *</label>
-                                    <select
-                                      value={welfareFormInputs.amount}
-                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, amount: e.target.value })}
-                                      className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-600 cursor-pointer font-bold font-mono"
-                                    >
-                                      <option value="50000">₹50,000</option>
-                                      <option value="100000">₹1,00,000</option>
-                                      <option value="150000">₹1,50,000</option>
-                                      <option value="200000">₹2,00,000</option>
-                                    </select>
-                                  </div>
-                                  <div className="space-y-1 font-sans">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-sans">Repayment Tenure *</label>
-                                    <select
-                                      value={welfareFormInputs.tenure}
-                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, tenure: e.target.value })}
-                                      className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-600 cursor-pointer font-bold font-mono"
-                                    >
-                                      <option value="12">12 Months (0% Vatti)</option>
-                                      <option value="18">18 Months (0% Vatti)</option>
-                                      <option value="24">24 Months (0% Vatti)</option>
-                                    </select>
-                                  </div>
-                                </div>
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Purpose of Funds *</label>
-                                  <textarea
-                                    rows={2}
-                                    placeholder="Briefly explain how you plan to use this capital (e.g. purchasing stock, shop expansion)..."
-                                    value={welfareFormInputs.reason}
-                                    onChange={e => setWelfareFormInputs({ ...welfareFormInputs, reason: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-600"
-                                  />
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Submit Button to Step 2 */}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                // Validation
-                                if (welfareSchemeType === "health") {
-                                  if (!welfareFormInputs.aadhaar || welfareFormInputs.aadhaar.length !== 12) {
-                                    toast.error(t("சரியான 12-இலக்க ஆதார் எண்ணை உள்ளிடவும்.", "Please enter a valid 12-digit Aadhaar number."));
-                                    return;
-                                  }
-                                  if (!welfareFormInputs.nomineeName.trim()) {
-                                    toast.error(t("வாரிசுதாரர் பெயரை உள்ளிடவும்.", "Please enter Nominee Name."));
-                                    return;
-                                  }
-                                } else if (welfareSchemeType === "scholarship") {
-                                  if (!welfareFormInputs.studentName.trim()) {
-                                    toast.error(t("மாணவர் பெயரை உள்ளிடவும்.", "Please enter Student Name."));
-                                    return;
-                                  }
-                                  if (!welfareFormInputs.gpa.trim()) {
-                                    toast.error(t("மதிப்பெண்கள் அல்லது ஜிபிஏ உள்ளிடவும்.", "Please enter marks or GPA."));
-                                    return;
-                                  }
-                                  if (!welfareFormInputs.instituteName.trim()) {
-                                    toast.error(t("பள்ளி அல்லது கல்லூரி பெயரை உள்ளிடவும்.", "Please enter School/College Name."));
-                                    return;
-                                  }
-                                } else {
-                                  if (!welfareFormInputs.reason.trim()) {
-                                    toast.error(t("கடன் உபயோகக் காரணத்தை உள்ளிடவும்.", "Please specify the purpose of funds."));
-                                    return;
-                                  }
-                                }
-                                setWelfareFormStep(2);
-                                // Trigger Simulated file upload immediately for a gorgeous dynamic feel
-                                setTimeout(() => startSimulatedWelfareUpload(), 100);
-                              }}
-                              className={`w-full text-white py-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-md min-h-[44px] ${
-                                welfareSchemeType === "health" 
-                                  ? "bg-emerald-600 hover:bg-emerald-500" 
-                                  : welfareSchemeType === "scholarship"
-                                  ? "bg-amber-600 hover:bg-amber-500"
-                                  : "bg-blue-600 hover:bg-blue-500"
-                              }`}
-                            >
-                              <span>Next: Upload Documents</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Step 2: Document Upload Simulation */}
-                  {welfareFormStep === 2 && (
-                    <div className="space-y-4 pt-1 animate-fade-in font-sans">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">Step 2: Document Verification</span>
-                      
-                      {/* Upload Box Dropzone Area */}
-                      <div className="p-5 border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-xl text-center space-y-2 relative overflow-hidden">
-                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
-                          <FileText className="w-5 h-5 animate-pulse" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-xs font-bold text-slate-700">Verification Engine Initialized</p>
-                          <p className="text-[10px] text-slate-400">Uploading required documents for automatic OCR parsing</p>
-                        </div>
-                      </div>
-
-                      {/* File Upload Progress List */}
-                      <div className="space-y-2">
-                        {welfareUploads.map((file, idx) => (
-                          <div key={file.name} className="bg-slate-50 border border-slate-150 rounded-xl p-3 flex flex-col gap-2 transition-all">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <FileText className="w-4 h-4 text-emerald-600" />
-                                <div className="text-xs text-left">
-                                  <p className="font-bold text-slate-800 truncate max-w-[180px]">{file.name}</p>
-                                  <p className="text-[9px] text-slate-400">{file.size}</p>
-                                </div>
-                              </div>
-                              <span className="text-[10px] font-mono font-bold text-emerald-700">
-                                {file.progress}%
-                              </span>
-                            </div>
-                            
-                            {/* Animated Progress Bar */}
-                            <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                              <div 
-                                className="bg-emerald-600 h-full transition-all duration-150" 
-                                style={{ width: `${file.progress}%` }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Submit form button */}
-                      <form onSubmit={handleWelfarePortalSubmit}>
-                        <button
-                          type="submit"
-                          disabled={isWelfareUploading}
-                          className={`w-full py-3 rounded-lg text-xs font-bold text-white transition flex items-center justify-center gap-1.5 cursor-pointer shadow-md min-h-[44px] ${isWelfareUploading ? "bg-slate-300 cursor-not-allowed text-slate-500 shadow-none" : "bg-emerald-600 hover:bg-emerald-500"}`}
-                        >
-                          {isWelfareUploading ? (
-                            <>
-                              <span className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin shrink-0" />
-                              <span>Uploading Documents ({Math.min(...welfareUploads.map(f => f.progress)) || 0}%)</span>
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle2 className="w-4 h-4 shrink-0" />
-                              <span>Submit Application to Board</span>
-                            </>
-                          )}
-                        </button>
-                      </form>
-                    </div>
-                  )}
-
-                  {/* Step 3: Success Screen */}
-                  {welfareFormStep === 3 && (
-                    <div className="text-center py-6 space-y-4 animate-fade-in font-sans">
-                      <div className="w-14 h-14 bg-emerald-50 border border-emerald-200 rounded-full flex items-center justify-center mx-auto text-emerald-600 shadow-xs animate-bounce">
-                        <CheckCircle2 className="w-8 h-8" />
-                      </div>
-                      <div className="space-y-1">
-                        <h4 className="font-display font-bold text-slate-800 text-sm">Application Filed Successfully!</h4>
-                        <p className="text-[10px] text-slate-400 font-tamil">
-                          விண்ணப்பம் வெற்றிகரமாக பதிவு செய்யப்பட்டுள்ளது.
-                        </p>
-                      </div>
-                      <div className="bg-slate-50 border border-slate-150 rounded-xl p-4 text-left text-xxs font-mono text-slate-700 max-w-[280px] mx-auto space-y-1.5">
-                        <div><strong className="text-slate-400 uppercase tracking-widest font-sans text-[8px] block">Application ID</strong> <span className="font-black text-slate-800 text-xs">{welfareClaims[0]?.id}</span></div>
-                        <div><strong className="text-slate-400 uppercase tracking-widest font-sans text-[8px] block">Welfare Scheme</strong> <span className="text-slate-700">{welfareClaims[0]?.title}</span></div>
-                        <div><strong className="text-slate-400 uppercase tracking-widest font-sans text-[8px] block">Filing Timestamp</strong> <span className="text-slate-700">{new Date().toLocaleString("en-GB")}</span></div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setWelfarePortalTab("track");
-                          setWelfareFormStep(1);
-                          setWelfareSchemeType(null);
-                        }}
-                        className="btn-primary py-2 px-4 text-xs tracking-wider"
-                      >
-                        Track Status Pipeline →
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* TAB 2: TRACK APPLICATIONS */}
-              {welfarePortalTab === "track" && (
-                <div className="space-y-4 pt-1 animate-fade-in">
-                  <div className="space-y-3">
-                    {welfareClaims.map((claim) => {
-                      const isPending = claim.status === "pending";
-                      const isApproved = claim.status === "approved";
-                      
-                      return (
-                        <div key={claim.id} className="border border-slate-200 rounded-xl p-3.5 bg-slate-50/20 hover:bg-slate-50 transition text-left flex flex-col gap-3 font-sans">
-                          {/* Top row */}
-                          <div className="flex justify-between items-start gap-2">
-                            <div className="space-y-0.5">
-                              <span className="text-[8px] font-mono text-slate-400 block font-bold">{claim.id} · {claim.date}</span>
-                              <h4 className="text-xs font-bold text-slate-800 leading-tight">{claim.title}</h4>
-                              <p className="text-[10px] text-slate-400 font-tamil mt-0.5">{claim.description}</p>
-                            </div>
-                            <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full border shrink-0 ${
-                              isApproved 
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-150" 
-                                : "bg-amber-50 text-amber-700 border-amber-150 animate-pulse"
-                            }`}>
-                              {claim.status}
-                            </span>
-                          </div>
-
-                          {/* Expansion Status Pipeline Tracker */}
-                          <div className="pt-3 border-t border-slate-100 mt-1">
-                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest block mb-3 font-sans">Application Status Pipeline</span>
-                            
-                            <div className="space-y-3 font-sans pl-1">
-                              {/* STAGE 1: SUBMITTED */}
-                              <div className="flex gap-2.5 items-start">
-                                <div className="flex flex-col items-center shrink-0">
-                                  <div className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[9px] font-bold">✓</div>
-                                  <div className="w-[1.5px] h-4 bg-emerald-600" />
-                                </div>
-                                <div className="text-xxs text-left -mt-0.5">
-                                  <p className="font-bold text-slate-700">Application Submitted</p>
-                                  <p className="text-slate-400">Signed with member EPIC ID. Shop verification queued.</p>
-                                </div>
-                              </div>
-
-                              {/* STAGE 2: DOCUMENT AUDIT */}
-                              <div className="flex gap-2.5 items-start">
-                                <div className="flex flex-col items-center shrink-0">
-                                  <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                                    claim.step >= 2 
-                                      ? "bg-emerald-600 text-white" 
-                                      : "bg-slate-200 text-slate-400"
-                                  }`}>
-                                    {claim.step > 2 ? "✓" : "2"}
-                                  </div>
-                                  <div className={`w-[1.5px] h-4 ${claim.step >= 3 ? "bg-emerald-600" : "bg-slate-200"}`} />
-                                </div>
-                                <div className="text-xxs text-left -mt-0.5">
-                                  <p className={`font-bold ${claim.step >= 2 ? "text-slate-700" : "text-slate-400"}`}>
-                                    Auditor Verification
-                                    {claim.step === 2 && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 inline-block animate-ping" />}
-                                  </p>
-                                  <p className="text-slate-400">
-                                    {claim.step >= 2 
-                                      ? "Chennai Regional Auditor verifying uploaded licenses & tax files." 
-                                      : "Pending auditor assignment."}
-                                  </p>
-                                </div>
-                              </div>
-
-                              {/* STAGE 3: EXECUTIVE BOARD APPROVAL */}
-                              <div className="flex gap-2.5 items-start">
-                                <div className="flex flex-col items-center shrink-0">
-                                  <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                                    claim.step >= 3 
-                                      ? "bg-emerald-600 text-white" 
-                                      : "bg-slate-200 text-slate-400"
-                                  }`}>
-                                    {claim.step > 3 ? "✓" : "3"}
-                                  </div>
-                                  <div className={`w-[1.5px] h-4 ${claim.step >= 4 ? "bg-emerald-600" : "bg-slate-200"}`} />
-                                </div>
-                                <div className="text-xxs text-left -mt-0.5">
-                                  <p className={`font-bold ${claim.step >= 3 ? "text-slate-700" : "text-slate-400"}`}>
-                                    TNVS Board Executive Review
-                                    {claim.step === 3 && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 inline-block animate-ping" />}
-                                  </p>
-                                  <p className="text-slate-400">
-                                    {claim.step >= 3 
-                                      ? "Approved by state executive committee. Allocation queued." 
-                                      : "Awaiting board verification approval."}
-                                  </p>
-                                </div>
-                              </div>
-
-                              {/* STAGE 4: DISBURSEMENT / ENROLLMENT ACTIVE */}
-                              <div className="flex gap-2.5 items-start">
-                                <div className="flex flex-col items-center shrink-0">
-                                  <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                                    claim.step >= 4 
-                                      ? "bg-emerald-600 text-white" 
-                                      : "bg-slate-200 text-slate-400"
-                                  }`}>
-                                    4
-                                  </div>
-                                </div>
-                                <div className="text-xxs text-left -mt-0.5">
-                                  <p className={`font-bold ${claim.step >= 4 ? "text-slate-700" : "text-slate-400"}`}>
-                                    {claim.type === "health" 
-                                      ? "Coverage Card Dispatched" 
-                                      : claim.type === "scholarship"
-                                      ? "Scholarship Disbursed"
-                                      : "Credit Disbursed"}
-                                  </p>
-                                  <p className="text-slate-400">
-                                    {claim.step >= 4 
-                                      ? (claim.type === "health" 
-                                          ? "Group Policy Card sent to shop address." 
-                                          : claim.type === "scholarship"
-                                          ? "Scholarship amount transferred via Direct Benefit Transfer (DBT)."
-                                          : "Credit funds transferred to primary bank account.")
-                                      : (claim.type === "health" 
-                                          ? "Awaiting Policy Card dispatch." 
-                                          : claim.type === "scholarship"
-                                          ? "Awaiting direct scholarship disbursement."
-                                          : "Awaiting final credit transfer.")}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <TabIcon className={`w-4 h-4 ${active ? "text-primary animate-pulse" : "text-slate-400"}`} />
+                  <div className="flex flex-col items-start leading-none text-left">
+                    <span className="text-[10px] font-bold tracking-wide">{tab.label}</span>
+                    <span className="font-tamil text-[8px] opacity-75 mt-0.5">{tab.labelTa}</span>
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* Digital GST & Finance Hub */}
-            <div className="card-base p-5 md:p-6 space-y-5">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <Coins className="w-5 h-5 text-primary animate-bounce" />
-                  <h3 className="font-display font-bold text-sm text-slate-800">
-                    {t("டிஜிட்டல் ஜிஎஸ்டி & நிதி மையம்", "Digital GST & Finance Hub")}
-                  </h3>
-                </div>
-                <span className="text-[9px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider">
-                  FREE SERVICE
-                </span>
-              </div>
-
-              {/* Sub-Tabs Selector */}
-              <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50">
-                <button
-                  type="button"
-                  onClick={() => setGstActiveTab("calc")}
-                  className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
-                    gstActiveTab === "calc" ? "bg-white text-primary shadow-xs" : "text-slate-500"
-                  }`}
-                >
-                  {t("கணக்கீடு & காலண்டர்", "Calculator & Dates")}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setGstActiveTab("query")}
-                  className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
-                    gstActiveTab === "query" ? "bg-white text-primary shadow-xs" : "text-slate-500"
-                  }`}
-                >
-                  {t("வரி சந்தேகங்கள்", "Ask Auditor")}
-                </button>
-              </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-              {/* GST Content: Tab 1 (Calculator & Filing dates) */}
-              {gstActiveTab === "calc" && (
-                <div className="space-y-4 pt-1 animate-fade-in text-left">
-                  {/* Micro Filing Calendar */}
-                  <div className="space-y-1.5">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Filing Deadlines</span>
-                    <div className="grid grid-cols-2 gap-2 text-xxs font-mono">
-                      <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-col">
-                        <span className="text-slate-400 font-bold">GSTR-1</span>
-                        <span className="text-slate-700 font-black mt-0.5">June 11, 2026</span>
+      {/* ── Dashboard Tab Content Area ── */}
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-6 w-full">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={dashboardTab}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.22 }}
+          >
+
+            {/* ─── TAB 1: Overview ─── */}
+            {dashboardTab === "overview" && (
+              <div className="grid lg:grid-cols-12 gap-6 items-start text-left">
+                {/* Left side: Member card & actions */}
+                <div className="lg:col-span-5 space-y-6">
+                  {/* Glowing Premium Member Card */}
+                  <div className="bg-linear-to-br from-slate-900 via-blue-950 to-slate-950 text-white rounded-3xl border border-slate-800 p-6 relative overflow-hidden shadow-xl shadow-primary/10 group">
+                    <div className="absolute top-0 right-0 w-36 h-36 bg-primary/20 rounded-full blur-3xl translate-x-1/4 -translate-y-1/4 pointer-events-none group-hover:bg-primary/25 transition duration-500" />
+                    
+                    <div className="flex justify-between items-start pb-4 border-b border-white/10">
+                      <div>
+                        <div className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
+                          {t("உறுப்பினர் அடையாள எண்", "Membership ID")}
+                        </div>
+                        <div className="font-mono text-lg font-black text-transparent bg-clip-text bg-linear-to-r from-blue-200 to-indigo-150 mt-1 tracking-wider">
+                          {epicId}
+                        </div>
                       </div>
-                      <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-col">
-                        <span className="text-slate-400 font-bold">GSTR-3B</span>
-                        <span className="text-slate-700 font-black mt-0.5">June 20, 2026</span>
+                      <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/20 p-1 bg-white shadow-xs shrink-0">
+                        <img src={orgLogo} alt="TNVS" className="w-full h-full object-contain" />
                       </div>
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-2 gap-4">
+                      <InfoCellDark label="Member Name"        value="Senthil Kumar N" />
+                      <InfoCellDark label="District"           value="Chennai" />
+                      <InfoCellDark label="Zone"               value="Chennai Zone" />
+                      <InfoCellDark label="Assembly"           value="Mylapore" />
+                      <InfoCellDark label="Registered Mobile"  value="+91 944 20 •• 44" />
+                      <InfoCellDark label="Member Class"       value="A+ Patron" />
+                    </div>
+
+                    <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                      <div className="text-[10px] text-slate-400">
+                        {t("வரை செல்லும்", "Valid till")}{" "}
+                        <span className="text-white font-bold font-mono">04 Dec 2026</span>
+                      </div>
+                      <StatusPill status="active" label="ACTIVE" />
                     </div>
                   </div>
 
-                  {/* GST Calculator */}
-                  <div className="space-y-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">GST Quick Calc</span>
-                    <div className="flex gap-2">
-                      <input
-                        type="number"
-                        placeholder="₹ Subtotal"
-                        value={calcAmount}
-                        onChange={(e) => setCalcAmount(e.target.value)}
-                        className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primary"
-                      />
-                      <select
-                        value={calcRate}
-                        onChange={(e) => setCalcRate(Number(e.target.value))}
-                        className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary cursor-pointer"
-                      >
-                        <option value="5">5%</option>
-                        <option value="12">12%</option>
-                        <option value="18">18%</option>
-                        <option value="28">28%</option>
-                      </select>
-                    </div>
-
-                    <div className="bg-primary/5 border border-primary/10 rounded-xl p-3 grid grid-cols-3 gap-1 text-center font-mono text-[10px]">
-                      <div>
-                        <span className="text-slate-400">CGST</span>
-                        <span className="block text-slate-700 font-black mt-0.5">₹{cgstAmount}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">SGST</span>
-                        <span className="block text-slate-700 font-black mt-0.5">₹{sgstAmount}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">TOTAL</span>
-                        <span className="block text-slate-900 font-extrabold mt-0.5">₹{totalCalculated}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* GST Content: Tab 2 (Ask Auditor query submission form) */}
-              {gstActiveTab === "query" && (
-                <div className="space-y-3 pt-1 animate-fade-in text-left">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Raise Tax Doubt</div>
-                  <div className="space-y-2">
-                    <textarea
-                      placeholder={t("வரி தொடர்பான சந்தேகங்களை இங்கு டைப் செய்யவும்...", "Type your GST or tax doubts here...")}
-                      rows={2}
-                      value={gstQueryText}
-                      onChange={(e) => setGstQueryText(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-none focus:border-primary"
-                    />
+                  {/* Quick Actions */}
+                  <div className="grid grid-cols-2 gap-4">
                     <button
-                      type="button"
                       onClick={() => {
-                        if (!gstQueryText.trim()) return;
-                        toast.success(
-                          language === "ta"
-                            ? "வரி சந்தேகம் சமர்ப்பிக்கப்பட்டது! வினவல் குறிப்பு எண்: #TNVS-GST-332 🚀"
-                            : "Query submitted successfully! Ref ID: #TNVS-GST-332 🚀"
-                        );
-                        setGstQueryText("");
+                        handleDownloadIdCard();
+                        toast.info("Preparing digital member pass...");
                       }}
-                      className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer min-h-[36px]"
+                      className="bg-white rounded-2xl border border-slate-200/80 p-5 text-left group min-h-[90px] cursor-pointer shadow-xxs hover:shadow-xs hover:border-primary/30 transition-all duration-205 hover:-translate-y-0.5"
                     >
-                      <Sparkles className="w-4 h-4 text-gold animate-spin" />
-                      <span>{t("கேள்வி சமர்ப்பி", "Submit Query")}</span>
+                      <div className="w-9 h-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:scale-105 transition duration-300">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div className="text-xs font-bold mt-3 text-slate-800">
+                        {t("உறுப்பினர் சான்றிதழ்", "Download Certificate")}
+                      </div>
+                      <div className="text-[10px] text-slate-400 mt-1">{t("PDF / PNG கோப்பு", "High-res PDF/PNG")}</div>
                     </button>
-                  </div>
-                </div>
-              )}
-            </div>
 
-            {/* Recent Activity — shown after GST Hub for better user flow */}
-            <div className="card-base p-5 md:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-base font-bold text-slate-800">
-                  {t("சமீபத்திய செயல்பாடுகள்", "Recent Activity")}
-                </h2>
-                <span className="text-xs bg-slate-50 text-slate-500 px-2.5 py-1 rounded-full font-semibold border border-slate-100">
-                  {t("கடந்த 30 நாட்கள்", "Last 30 days")}
-                </span>
-              </div>
-
-              {/* Desktop Table */}
-              <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-100">
-                <table className="w-full text-left border-collapse" aria-label="Recent activity">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100">
-                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("தேதி", "Date")}</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("விவரம்", "Description")}</th>
-                      <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("நிலை", "Status")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ACTIVITIES.map((a) => (
-                      <tr key={a.t} className="border-b border-slate-100 hover:bg-slate-50/60 transition">
-                        <td className="px-4 py-3.5 text-xs text-slate-400 font-mono whitespace-nowrap tabular-nums">{a.d}</td>
-                        <td className="px-4 py-3.5">
-                          <div className="text-sm font-semibold text-slate-800">{a.t}</div>
-                          <div className="text-xs text-slate-400 mt-0.5">{a.s}</div>
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <StatusPill status={a.status} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Mobile Card List */}
-              <div className="md:hidden divide-y divide-slate-100">
-                {ACTIVITIES.map((a) => (
-                  <ActivityCard
-                    key={a.t}
-                    date={a.d}
-                    title={a.t}
-                    subtitle={a.s}
-                    status={a.status}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Coordinator Widget — shown at the bottom */}
-            {!isCoordinator ? (
-              <div className="card-base p-5 md:p-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gold/5 rounded-full translate-x-1/3 -translate-y-1/3" aria-hidden="true" />
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-gold/10 text-gold flex items-center justify-center shrink-0">
-                    <Award className="w-5 h-5" aria-hidden="true" />
-                  </div>
-                  <div className="space-y-3 flex-1">
-                    <div>
-                      <h3 className="font-display font-bold text-base text-slate-800">
-                        {t("நிர்வாகியாக இணையுங்கள்", "Join as a Coordinator")}
-                      </h3>
-                      <p className="text-xs text-slate-500 leading-relaxed font-tamil mt-1">
-                        {t(
-                          "தலைமை ஏற்கத் தயாரா? உங்கள் பரிந்துரை லிங்க் மூலம் 25 வணிகர்களை ஒன்றிணைத்து, ஒருங்கிணைப்பாளர் பொறுப்பை பெற்றிடுங்கள்!",
-                          "Ready to lead? Connect 25 traders using your unique referral link and earn the Coordinator title!"
-                        )}
-                      </p>
-                    </div>
                     <button
-                      onClick={handleOptInCoordinator}
-                      className="btn-ghost text-sm"
+                      onClick={() => toast.info("Renewal window opens October 2026. Current membership valid till Dec 2026.")}
+                      className="bg-white rounded-2xl border border-slate-200/80 p-5 text-left group min-h-[90px] cursor-pointer shadow-xxs hover:shadow-xs hover:border-primary/30 transition-all duration-205 hover:-translate-y-0.5"
                     >
-                      <UserPlus className="w-4 h-4" aria-hidden="true" />
-                      {language === "ta" ? "ஒருங்கிணைப்பாளராக இணையவும்" : "Activate Recruiter Status"}
+                      <div className="w-9 h-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:scale-105 transition duration-300">
+                        <CreditCard className="w-4 h-4" />
+                      </div>
+                      <div className="text-xs font-bold mt-3 text-slate-800">
+                        {t("கணக்கு புதுப்பித்தல்", "Card Renewal")}
+                      </div>
+                      <div className="text-[10px] text-slate-400 mt-1">{t("ஆண்டுக் கட்டணம் ₹500", "Annual fee ₹500")}</div>
                     </button>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="bg-slate-950 text-white rounded-[12px] p-5 md:p-6 shadow-md relative overflow-hidden border border-slate-800/80">
-                <div className="absolute top-0 right-0 w-40 h-40 bg-primary/20 rounded-full blur-3xl" aria-hidden="true" />
-                <div className="relative space-y-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-gold/15 text-gold flex items-center justify-center">
-                        <Award className="w-4 h-4" aria-hidden="true" />
-                      </div>
-                      <h3 className="font-display font-bold text-base text-gold">
-                        {t("நிர்வாகியாக இணைய", "Become a Coordinator")}
-                      </h3>
-                    </div>
-                    <span className="status-pill status-pending text-xs">
-                      {t("ஒருங்கிணைப்பாளர்", "Coordinator")}
-                    </span>
-                  </div>
 
-                  <div className="space-y-1.5">
-                    <h4 className="font-display font-bold text-sm text-slate-100 flex items-center gap-1">
-                      <Sparkles className="w-3.5 h-3.5 text-gold" aria-hidden="true" />
-                      {t("தலைமை ஏற்கத் தயாரா?", "Ready to lead?")}
-                    </h4>
-                    <p className="text-xs text-slate-400 leading-relaxed font-tamil">
-                      {t(
-                        "உங்கள் பரிந்துரை லிங்க் மூலம் 25 வணிகர்களை ஒன்றிணைத்து, 'ஒருங்கிணைப்பாளர்' பொறுப்பை பெற்றிடுங்கள்!",
-                        "Bring together 25 traders using your referral link and earn the 'Coordinator' title!"
-                      )}
-                    </p>
-                  </div>
-
-                  {/* Progress */}
-                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <div className="flex justify-between text-sm font-semibold">
-                      <span className="text-gold">{mockReferredMembers.length} / 25</span>
-                      <span className="text-xs text-slate-400 font-tamil">
-                        {t(
-                          `${25 - mockReferredMembers.length} மேலும் பரிந்துரைகள் தேவை`,
-                          `${25 - mockReferredMembers.length} more referrals needed`
-                        )}
+                {/* Right side: Activity and events */}
+                <div className="lg:col-span-7 space-y-6">
+                  {/* Recent Activity */}
+                  <div className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs text-left">
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                      <h2 className="font-display text-xs font-bold text-slate-800 uppercase tracking-wide">
+                        {t("சமீபத்திய செயல்பாடுகள்", "Recent Activity Logs")}
+                      </h2>
+                      <span className="text-[9px] bg-slate-50 text-slate-500 px-2.5 py-1 rounded-full font-bold border border-slate-200/60 uppercase">
+                        {t("நடப்பு மாதம்", "This Month")}
                       </span>
                     </div>
-                    <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-linear-to-r from-primary to-navy h-2 rounded-full"
-                        style={{ width: `${(mockReferredMembers.length / 25) * 100}%` }}
-                        role="progressbar"
-                        aria-valuenow={mockReferredMembers.length}
-                        aria-valuemin={0}
-                        aria-valuemax={25}
-                        aria-label={`Referral progress: ${mockReferredMembers.length} of 25`}
-                      />
-                    </div>
-                  </div>
 
-                  {/* Milestones & Badges */}
-                  <div className="pt-1.5 text-left">
-                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
-                      {t("தனிப்பட்ட மைல்கற்கள்", "Milestone Badges")}
+                    {/* Desktop Table */}
+                    <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-100/85">
+                      <table className="w-full text-left border-collapse" aria-label="Recent activity">
+                        <thead>
+                          <tr className="bg-slate-50 border-b border-slate-100">
+                            <th className="px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wide">{t("தேதி", "Date")}</th>
+                            <th className="px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wide">{t("செயல்பாடு", "Activity Detail")}</th>
+                            <th className="px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wide">{t("நிலை", "Status")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {ACTIVITIES.map((a) => (
+                            <tr key={a.t} className="border-b border-slate-100 hover:bg-slate-50/50 transition">
+                              <td className="px-4 py-3.5 text-xs text-slate-400 font-mono whitespace-nowrap">{a.d}</td>
+                              <td className="px-4 py-3.5">
+                                <div className="text-xs font-bold text-slate-800">{a.t}</div>
+                                <div className="text-[10px] text-slate-400 mt-0.5">{a.s}</div>
+                              </td>
+                              <td className="px-4 py-3.5">
+                                <StatusPill status={a.status} />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="bg-slate-900 border border-amber-500/35 rounded-xl p-2.5 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-8 h-8 bg-amber-500/10 rounded-full blur-md" />
-                        <span className="text-lg">🥉</span>
-                        <span className="text-[9px] font-black text-amber-500 tracking-wider uppercase mt-1">Bronze Vendor</span>
-                        <span className="text-[8px] text-emerald-400 font-bold mt-0.5">{t("அன்லாக்", "Unlocked")} (5+)</span>
-                      </div>
-                      <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-2.5 flex flex-col items-center justify-center text-center opacity-65">
-                        <span className="text-lg">🥈</span>
-                        <span className="text-[9px] font-black text-slate-400 tracking-wider uppercase mt-1 font-sans">Silver Organizer</span>
-                        <span className="text-[8px] text-slate-500 font-bold mt-0.5">LOCKED (15)</span>
-                      </div>
-                      <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-2.5 flex flex-col items-center justify-center text-center opacity-65">
-                        <span className="text-lg">🥇</span>
-                        <span className="text-[9px] font-black text-slate-400 tracking-wider uppercase mt-1 font-sans">Gold Coordinator</span>
-                        <span className="text-[8px] text-slate-500 font-bold mt-0.5">LOCKED (25)</span>
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Referral Link — uses real origin domain */}
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="referral-link"
-                      className="text-xs text-slate-400 font-bold uppercase tracking-wider block"
-                    >
-                      {t("பரிந்துரை இணைப்பு", "Referral Link")}
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        id="referral-link"
-                        readOnly
-                        type="text"
-                        value={referralUrl}
-                        className="flex-1 bg-slate-900 border border-slate-800 rounded-[10px] px-3.5 py-2.5 text-base md:text-xs font-mono text-slate-300 focus:outline-none min-h-[44px]"
-                        aria-label="Your referral link — read only"
-                      />
-                      <button
-                        onClick={handleCopyLink}
-                        className="bg-primary hover:bg-primary/90 text-white p-2.5 rounded-[10px] transition flex items-center justify-center shrink-0 min-w-[44px] min-h-[44px] cursor-pointer"
-                        aria-label={t("நகலெடு", "Copy referral link")}
-                      >
-                        {copiedLink
-                          ? <CheckCircle2 className="w-4 h-4 text-emerald-300" aria-hidden="true" />
-                          : <Copy className="w-4 h-4" aria-hidden="true" />
-                        }
-                      </button>
-                    </div>
-                    <p className="text-xs text-slate-500 font-tamil">
-                      {t(
-                        "மேலும் உறுப்பினர்களை அழைக்க இந்த இணைப்பைப் பகிரவும்!",
-                        "Share this link to invite more members!"
-                      )}
-                    </p>
-                  </div>
-
-                  {/* Top Recruiters Leaderboard */}
-                  <div className="border-t border-slate-800 pt-4 space-y-2 text-left">
-                    <div className="flex items-center gap-1.5">
-                      <Award className="w-3.5 h-3.5 text-gold" />
-                      <span className="text-[10px] font-bold uppercase text-slate-200 tracking-wider">
-                        {t("மாநில அளவிலான லீடர்போர்டு", "Top Recruiter Leaderboard")}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 gap-1.5 pt-1 font-sans">
-                      {[
-                        { name: "Siva Shanmugam", location: "Salem", invites: 24, rank: "1st" },
-                        { name: "Muthu Pandian", location: "Madurai", invites: 18, rank: "2nd" },
-                        { name: "Senthil Kumar N (You)", location: "Chennai", invites: 5, rank: "3rd" },
-                      ].map((item, index) => (
-                        <div key={index} className={`flex items-center justify-between text-[11px] p-2 rounded-lg border ${
-                          item.invites === 5 
-                            ? "bg-primary/20 border-primary/40 text-white font-extrabold" 
-                            : "bg-slate-900/40 border-slate-850 text-slate-350"
-                        }`}>
-                          <div className="flex items-center gap-2">
-                            <span className={`w-4 text-center font-bold font-mono text-[9px] ${index === 0 ? "text-gold" : index === 1 ? "text-slate-400" : "text-amber-600"}`}>
-                              {item.rank}
-                            </span>
-                            <div>
-                              <span className="font-semibold">{item.name}</span>
-                              <span className="text-[9px] text-slate-500 ml-1 font-bold">({item.location})</span>
-                            </div>
-                          </div>
-                          <span className="font-mono text-gold text-[10px] font-bold">{item.invites} {t("நபர்", "invites")}</span>
-                        </div>
+                    {/* Mobile Card List */}
+                    <div className="md:hidden divide-y divide-slate-100">
+                      {ACTIVITIES.map((a) => (
+                        <ActivityCard
+                          key={a.t}
+                          date={a.d}
+                          title={a.t}
+                          subtitle={a.s}
+                          status={a.status}
+                        />
                       ))}
                     </div>
                   </div>
 
-                  {/* Referred Members — CRM Smart Search & Filter */}
-                  <div className="border-t border-slate-800 pt-5 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-gold" aria-hidden="true" />
-                        <span className="text-sm font-bold text-slate-200">
-                          {t("பரிந்துரை உறுப்பினர்கள்", "Referred Members")}
-                        </span>
-                      </div>
-                      <span className="text-[10px] bg-slate-900 text-slate-400 font-bold px-2 py-0.5 rounded border border-slate-800 font-mono">
-                        {filteredReferredMembers.length} {t("நபர்", "matches")}
+                  {/* Meetings and announcements */}
+                  <div className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs text-left space-y-4">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <h2 className="font-display text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                        <Bell className="w-4 h-4 text-amber-500 animate-bounce" aria-hidden="true" />
+                        {t("கூட்டங்கள் & நிகழ்வுகள்", "Meetings & Announcements")}
+                      </h2>
+                      <span className="text-[9px] font-bold bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded uppercase">
+                        {EVENTS.filter(e => e.status === "live").length > 0 ? "LIVE SESSION" : "UPCOMING"}
                       </span>
                     </div>
 
-                    {/* Search Bar Input */}
-                    <div className="relative">
-                      <Search className="absolute left-3 top-3 w-4 h-4 text-slate-500" />
-                      <input
-                        type="text"
-                        placeholder={t("பெயர், கடை, மாவட்டம் அல்லது ID மூலம் தேடுக...", "Search by name, shop, district, or ID...")}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-300 placeholder-slate-500 focus:outline-none focus:border-slate-700 min-h-[40px]"
-                      />
-                      {searchQuery && (
-                        <button
-                          onClick={() => setSearchQuery("")}
-                          className="absolute right-3 top-3.5 text-[9px] font-bold text-slate-400 hover:text-white"
-                        >
-                          CLEAR
-                        </button>
-                      )}
-                    </div>
+                    <div className="space-y-4">
+                      {EVENTS.map((e) => {
+                        const isLive = e.status === "live";
+                        const isUpcoming = e.status === "upcoming";
+                        const isRsvped = rsvpStates[e.id] === "attending";
+                        const count = attendeeCounts[e.id];
 
-                    {/* Status Filter Pills */}
-                    <div className="flex flex-wrap gap-1.5 pt-0.5">
-                      {[
-                        { id: "all", label: "All" },
-                        { id: "active", label: "Active" },
-                        { id: "pending", label: "Pending" },
-                        { id: "expired", label: "Expired" },
-                      ].map((pill) => {
-                        const active = statusFilter === pill.id;
                         return (
-                          <button
-                            key={pill.id}
-                            type="button"
-                            onClick={() => setStatusFilter(pill.id as any)}
-                            className={`px-2.5 py-1 rounded text-[10px] font-bold transition-all cursor-pointer ${
-                              active
-                                ? "bg-white text-slate-950 font-black shadow-xs"
-                                : "bg-slate-900/50 hover:bg-slate-900 text-slate-400 border border-slate-800"
+                          <div
+                            key={e.id}
+                            onClick={
+                              isLive 
+                                ? () => {
+                                    setLiveStreamTitle(language === "ta" ? e.ta : e.t);
+                                    setIsLiveStreamOpen(true);
+                                  }
+                                : e.id === "scholarship-2026"
+                                ? () => {
+                                    setWelfarePortalTab("apply");
+                                    setWelfareSchemeType("scholarship");
+                                    setWelfareFormStep(1);
+                                    setDashboardTab("welfare");
+                                    setTimeout(() => {
+                                      const element = document.getElementById("welfare-portal-section");
+                                      if (element) element.scrollIntoView({ behavior: "smooth" });
+                                    }, 100);
+                                    toast.success(
+                                      language === "ta"
+                                        ? "உதவித்தொகை விண்ணப்பப் படிவம் திறக்கப்பட்டது! 🎓"
+                                        : "Educational Scholarship Form opened in Welfare tab! 🎓"
+                                    );
+                                  }
+                                : undefined
+                            }
+                            className={`rounded-2xl border transition-all duration-300 flex flex-col gap-3 text-left group ${
+                              isLive 
+                                ? "p-5 bg-slate-900 text-white border-red-950/80 shadow-xl shadow-slate-950/30 animate-pulse-subtle cursor-pointer hover:bg-slate-950 hover:border-red-500/40 hover:shadow-2xl active:scale-[0.99]" 
+                                : e.id === "scholarship-2026"
+                                ? "p-4 bg-slate-50/50 hover:bg-amber-500/5 border-slate-150 hover:border-amber-500/30 cursor-pointer active:scale-[0.99]"
+                                : "p-4 bg-slate-50/50 hover:bg-slate-50 border-slate-150 hover:border-slate-200"
                             }`}
                           >
-                            {pill.label}
-                          </button>
+                            <div className="flex items-center justify-between gap-4 w-full">
+                              <div className="space-y-1">
+                                <div className={`text-[9px] font-black uppercase tracking-widest ${isLive ? "text-red-400 flex items-center gap-1.5" : "text-slate-450"}`}>
+                                  {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />}
+                                  {isLive ? t("நேரடி ஒளிபரப்பு", "LIVE BROADCAST") : e.id === "scholarship-2026" ? t("உதவித்தொகை", "WELFARE SCHEME") : t("நிகழ்வு", "ANNOUNCEMENT")}
+                                </div>
+                                <h4 className={`leading-snug font-bold text-xs ${isLive ? "text-base font-black text-white font-serif tracking-tight" : "text-slate-805 font-sans"}`}>
+                                  {language === "ta" ? e.ta : e.t}
+                                </h4>
+                                {isLive ? (
+                                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-sans font-semibold">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span>{e.d}</span>
+                                  </div>
+                                ) : (
+                                  <p className="text-[11px] text-slate-500 font-tamil font-semibold">
+                                    {e.d}
+                                  </p>
+                                )}
+                              </div>
+
+                              {isLive && (
+                                <div
+                                  className="bg-linear-to-r from-red-600 to-rose-600 group-hover:from-red-500 group-hover:to-rose-500 text-white px-3.5 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 shadow-lg border border-red-500/25 transition-all duration-305"
+                                >
+                                  <Play className="w-3.5 h-3.5 fill-white stroke-none" />
+                                  <span>{t("நேரடி ஒளிபரப்பு", "Watch Live")}</span>
+                                </div>
+                              )}
+
+                              {e.id === "scholarship-2026" && (
+                                <div
+                                  className="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 shadow-xs transition active:scale-95 cursor-pointer"
+                                >
+                                  <span>{t("விண்ணப்பிக்க", "Apply Online")}</span>
+                                  <ArrowRight className="w-3 h-3" />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Attendee Counters & RSVP Panel for upcoming events */}
+                            {isUpcoming && (
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200/60 mt-0.5">
+                                <div className="text-[10px] text-slate-400 font-tamil">
+                                  {count > 0 ? (
+                                    <span>✓ <strong className="text-slate-700 font-bold">{count}</strong> {t("வணிகர்கள் பங்கேற்கிறார்கள்", "traders attending")}</span>
+                                  ) : (
+                                    t("முன்பதிவு செய்ய விருப்பம்", "RSVP open to all members")
+                                  )}
+                                </div>
+
+                                <div className="flex gap-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={(e_event) => {
+                                      e_event.stopPropagation();
+                                      handleToggleRsvp(e.id, "attending");
+                                    }}
+                                    className={`px-3 py-1 rounded text-[10px] font-extrabold transition cursor-pointer border ${
+                                      isRsvped 
+                                        ? "bg-emerald-600 border-emerald-600 text-white shadow-xxs" 
+                                        : "bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
+                                    }`}
+                                  >
+                                    {isRsvped ? t("✓ நான் வருகிறேன்", "✓ Going") : t("நான் வருகிறேன்", "Going")}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e_event) => {
+                                      e_event.stopPropagation();
+                                      setRsvpStates(prev => ({ ...prev, [e.id]: "none" }));
+                                      setAttendeeCounts(prev => {
+                                        const current = rsvpStates[e.id];
+                                        const base = prev[e.id];
+                                        return { ...prev, [e.id]: current === "attending" ? base - 1 : base };
+                                      });
+                                      toast.info(t("பதில் ரத்து செய்யப்பட்டது.", "RSVP canceled."));
+                                    }}
+                                    className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-455 hover:text-slate-700 px-2 py-1 rounded text-[10px] transition cursor-pointer"
+                                  >
+                                    {t("வரவில்லை", "Decline")}
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         );
                       })}
-                    </div>
-
-                    {/* Animated Member Search Results Grid */}
-                    <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
-                      <AnimatePresence mode="popLayout">
-                        {filteredReferredMembers.length > 0 ? (
-                          filteredReferredMembers.map((m) => (
-                            <motion.div
-                              key={m.id}
-                              initial={{ opacity: 0, y: 5 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.95 }}
-                              transition={{ duration: 0.2 }}
-                              className="bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition"
-                            >
-                              <div className="space-y-0.5 text-left">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-display font-bold text-slate-200 text-xs">{m.name}</span>
-                                  <span className="text-[9px] bg-slate-800 text-slate-400 px-1 py-0.2 rounded font-mono font-semibold">{m.id}</span>
-                                </div>
-                                <div className="text-[10px] text-slate-400 leading-none">
-                                  {m.shop} • <span className="text-slate-500 font-bold">{m.district}</span>
-                                </div>
-                                <div className="text-[9px] text-slate-500 font-mono">
-                                  Joined: {m.date}
-                                </div>
-                              </div>
-
-                              <div className="flex items-center justify-between sm:justify-end gap-3.5 border-t border-slate-900 sm:border-0 pt-2 sm:pt-0 shrink-0">
-                                <span className="text-[9px] font-bold text-slate-400 font-mono">{m.phone}</span>
-                                <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
-                                  m.status === "active"
-                                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                    : m.status === "pending"
-                                    ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                                    : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                                }`}>
-                                  {m.status}
-                                </span>
-                              </div>
-                            </motion.div>
-                          ))
-                        ) : (
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="py-6 text-center"
-                          >
-                            <p className="text-xs text-slate-500 font-tamil">பொருந்தும் உறுப்பினர்கள் இல்லை</p>
-                            <p className="text-[10px] text-slate-600 mt-0.5">No matching members found.</p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-          </div>
-        </div>
+            {/* ─── TAB 2: Welfare & Loans ─── */}
+            {dashboardTab === "welfare" && (
+              <div className="space-y-6 animate-fadeIn text-left">
+                {/* Hero promo banner */}
+                <div className="relative overflow-hidden rounded-3xl bg-navy border border-blue-900/50 shadow-md flex flex-col justify-center p-6 sm:p-10 min-h-[220px] select-none bg-radial-at-tr from-blue-950 via-navy to-slate-950">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-[2px] bg-amber-500 rounded-full"></div>
+                    <span className="bg-blue-600/30 text-blue-450 border border-blue-500/20 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-md">
+                      {t("உறுப்பினர் சிறப்பு சலுகை", "MEMBER SPECIAL OFFER")}
+                    </span>
+                  </div>
+                  <h1 className="mt-4 font-serif text-xl sm:text-3xl font-extrabold text-white leading-tight max-w-2xl">
+                    {language === "ta" ? (
+                      <>வட்டியில்லா <span className="text-amber-400">கடன்</span> பெற்று உங்கள் தொழிலை வளர்க்கவும்.</>
+                    ) : (
+                      <>Grow your business with 0% <span className="text-amber-400">Interest Loans</span>.</>
+                    )}
+                  </h1>
+                  <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-300 font-tamil font-semibold">
+                    <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400" />{t("வட்டியில்லா கடன்", "0% Interest (0% Vatti)")}</span>
+                    <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400" />{t("எளிய ஆவணங்கள்", "Only Simple Documents Needed")}</span>
+                    <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400" />{t("₹25 லட்சம் வரை பெறலாம்", "Get up to ₹25 Lakhs")}</span>
+                  </div>
+                  <div className="absolute -top-12 -right-12 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+                </div>
 
-        {/* Unlocked Admin Analytics Gated Section */}
-        {isCoordinator && (
-          <AdminAnalyticsPanel t={t} language={language} />
-        )}
+                <div className="grid lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Welfare Apply/Track portal */}
+                  <div className="lg:col-span-7 space-y-6">
+                    {/* Welfare Scheme Application & Tracking Portal */}
+                    <div id="welfare-portal-section" className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs border-l-4 border-l-emerald-600">
+                      {/* Card Header */}
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <HeartPulse className="w-5 h-5 text-emerald-600 animate-pulse" />
+                          <h3 className="font-display font-bold text-sm text-slate-800">
+                            {t("நலத்திட்டங்கள் & நிதியுதவி மையம்", "Member Welfare & Credit Portal")}
+                          </h3>
+                        </div>
+                        <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                          ONLINE PORTAL
+                        </span>
+                      </div>
 
-        {/* Full-width Loan Categories Row */}
-        <div id="loan-categories-section" className="mt-10 pt-10 border-t border-slate-200/80 animate-fade-in scroll-mt-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h2 className="font-display text-lg md:text-xl font-bold text-slate-800 flex items-center gap-2">
-                <Coins className="w-5 h-5 text-primary animate-bounce" />
-                {t("கிடைக்கக்கூடிய கடன் திட்டங்கள்", "Available Loan Categories")}
-              </h2>
-              <p className="text-xs text-slate-500 font-tamil mt-1 leading-relaxed">
-                {t("உங்கள் வணிக வளர்ச்சிக்கு தகுதியான உத்தியோகபூர்வ கடன் உதவிகள்", "Official subsidized loan categories tailored for your business growth")}
-              </p>
-            </div>
-            <span className="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-bold border border-slate-200 uppercase tracking-wider self-start sm:self-center">
-              3 {t("சேவைகள்", "services")}
-            </span>
-          </div>
+                      {/* Portal Tabs Selector */}
+                      <div className="flex bg-slate-100 p-1.5 rounded-xl border border-slate-200/50 mt-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWelfarePortalTab("apply");
+                            if (welfareFormStep === 3) setWelfareFormStep(1);
+                          }}
+                          className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                            welfarePortalTab === "apply" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
+                          }`}
+                        >
+                          {t("விண்ணப்பிக்கும் தளம்", "Apply for Welfare")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setWelfarePortalTab("track")}
+                          className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                            welfarePortalTab === "track" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
+                          }`}
+                        >
+                          {t("விண்ணப்ப டிராக்கிங்", "Track Applications")}
+                          {welfareClaims.filter(c => c.status === "pending").length > 0 && (
+                            <span className="ml-1.5 px-1.5 py-0.2 bg-amber-505 text-white rounded-full text-[8px] font-bold">
+                              {welfareClaims.filter(c => c.status === "pending").length}
+                            </span>
+                          )}
+                        </button>
+                      </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Category 1: Interest-Free Business Loan */}
-            <div 
-              onClick={() => openDashboardLoanModal("business")}
-              className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/45 flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all"
-            >
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center">
-                  <Coins className="w-5 h-5" />
-                </div>
-                <h3 className="font-display font-bold text-sm text-slate-800 mt-4 leading-tight">
-                  {t("வட்டியில்லா வணிகக் கடன்", "Interest-Free Business Loan")}
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-tamil mt-2">
-                  {t(
-                    "Proprietorship, Freelancers, Pvt Ltd மற்றும் இறக்குமதி ஏற்றுமதி வணிகங்களுக்கு ₹25 லட்சம் வரை வட்டி இல்லா கடன்.",
-                    "Up to ₹25 lakh interest-free loan for Pvt Ltd, partnerships, import/export, proprietorships and freelancers."
-                  )}
-                </p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full uppercase">
-                  {t("0% வட்டி", "0% Interest")}
-                </span>
-                <div className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all">
-                  {t("விண்ணப்பம்", "Request / Apply")} <ArrowRight className="w-3.5 h-3.5 animate-pulse" />
-                </div>
-              </div>
-            </div>
+                      {/* TAB 1: APPLY FOR SCHEMES */}
+                      {welfarePortalTab === "apply" && (
+                        <div className="space-y-4 pt-4 animate-fade-in">
+                          {/* Step 1: Select Scheme & Input Details */}
+                          {welfareFormStep === 1 && (
+                            <div className="space-y-4">
+                              {/* Scheme Cards Selection */}
+                              {!welfareSchemeType ? (
+                                <div className="space-y-3">
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Select a Welfare Scheme</span>
+                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <div 
+                                      onClick={() => {
+                                        setWelfareSchemeType("health");
+                                        setWelfareFormInputs(prev => ({ ...prev, aadhaar: "", nomineeName: "" }));
+                                      }}
+                                      className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
+                                    >
+                                      <div>
+                                        <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                          <HeartPulse className="w-5 h-5" />
+                                        </div>
+                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">₹2 Lakh Group Insurance</h4>
+                                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
+                                          Family health cover including cashless hospitalizations.
+                                        </p>
+                                      </div>
+                                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
+                                        Select Scheme →
+                                      </span>
+                                    </div>
 
-            {/* Category 2: Retail Trader Loan */}
-            <div 
-              onClick={() => openDashboardLoanModal("retail")}
-              className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/45 flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all"
-            >
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
-                  <Store className="w-5 h-5" />
-                </div>
-                <h3 className="font-display font-bold text-sm text-slate-800 mt-4 leading-tight">
-                  {t("சில்லறை வணிகர்கள் கடன்", "Retail Trader Loan")}
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-tamil mt-2">
-                  {t(
-                    "பதிவுசெய்யப்பட்ட சில்லறை வணிகர்களுக்கு குறைந்தபட்ச ஆவணங்களுடன் விரைவான கடன் அனுமதி.",
-                    "Fast loan approval for registered retail traders with minimal documentation."
-                  )}
-                </p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase">
-                  {t("எளிய ஆவணங்கள்", "Easy Docs")}
-                </span>
-                <div className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all">
-                  {t("விண்ணப்பம்", "Request / Apply")} <ArrowRight className="w-3.5 h-3.5 animate-pulse" />
-                </div>
-              </div>
-            </div>
+                                    <div 
+                                      onClick={() => {
+                                        setWelfareSchemeType("loan");
+                                        setWelfareFormInputs(prev => ({ ...prev, amount: "50000", tenure: "12", reason: "" }));
+                                      }}
+                                      className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
+                                    >
+                                      <div>
+                                        <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                          <Coins className="w-5 h-5" />
+                                        </div>
+                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">Interest-Free Retail Loan</h4>
+                                        <p className="text-[10px] text-slate-505 mt-1 leading-normal font-tamil">
+                                          Working capital support up to ₹1,00,000 for retail traders.
+                                        </p>
+                                      </div>
+                                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
+                                        Select Scheme →
+                                      </span>
+                                    </div>
 
-            {/* Category 3: Young Entrepreneur Loan */}
-            <div 
-              onClick={() => openDashboardLoanModal("young")}
-              className="card-base card-interactive p-5 bg-white border border-slate-200 hover:border-primary/45 flex flex-col justify-between min-h-[220px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all"
-            >
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
-                  <Rocket className="w-5 h-5" />
+                                    <div 
+                                      onClick={() => {
+                                        setWelfareSchemeType("scholarship");
+                                        setWelfareFormInputs(prev => ({ ...prev, studentName: "", studentClass: "Class 12", instituteName: "", gpa: "" }));
+                                      }}
+                                      className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
+                                    >
+                                      <div>
+                                        <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                          <Award className="w-5 h-5" />
+                                        </div>
+                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">Scholarships Scheme</h4>
+                                        <p className="text-[10px] text-slate-505 mt-1 leading-normal font-tamil">
+                                          Educational rewards for children of active members.
+                                        </p>
+                                      </div>
+                                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
+                                        Select Scheme →
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <form onSubmit={(e) => { e.preventDefault(); setWelfareFormStep(2); startSimulatedWelfareUpload(); }} className="space-y-4 font-sans text-xs">
+                                  <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
+                                    <span className="font-bold text-slate-705 capitalize">
+                                      Scheme: <span className="text-emerald-705">{welfareSchemeType} Support</span>
+                                    </span>
+                                    <button 
+                                      type="button" 
+                                      onClick={() => setWelfareSchemeType(null)}
+                                      className="text-[9px] font-bold text-rose-605 hover:underline"
+                                    >
+                                      Change Scheme
+                                    </button>
+                                  </div>
+
+                                  {/* Render inputs dynamically based on scheme */}
+                                  {welfareSchemeType === "health" && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Aadhaar Card Number *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="12 Digit UID Number"
+                                          value={welfareFormInputs.aadhaar}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, aadhaar: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Nominee Full Name *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="Family beneficiary nominee"
+                                          value={welfareFormInputs.nomineeName}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, nomineeName: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {welfareSchemeType === "loan" && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Loan Amount Needed *</label>
+                                        <select 
+                                          value={welfareFormInputs.amount} 
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, amount: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold text-slate-700"
+                                        >
+                                          <option value="25000">₹25,000</option>
+                                          <option value="50000">₹50,000</option>
+                                          <option value="100000">₹1,00,000</option>
+                                        </select>
+                                      </div>
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Repayment Tenure *</label>
+                                        <select 
+                                          value={welfareFormInputs.tenure} 
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, tenure: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-slate-700 font-bold"
+                                        >
+                                          <option value="6">6 Months</option>
+                                          <option value="12">12 Months</option>
+                                          <option value="18">18 Months</option>
+                                        </select>
+                                      </div>
+                                      <div className="space-y-1 sm:col-span-3">
+                                        <label className="font-bold text-slate-600 block">Purpose of Loan *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="e.g. Purchase of stock, shop renovation"
+                                          value={welfareFormInputs.reason}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, reason: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {welfareSchemeType === "scholarship" && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Student Full Name *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="As per marksheet"
+                                          value={welfareFormInputs.studentName}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentName: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Class / Course Completed *</label>
+                                        <select 
+                                          value={welfareFormInputs.studentClass} 
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentClass: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold text-slate-700"
+                                        >
+                                          <option value="Class 10">Class 10 (SSLC)</option>
+                                          <option value="Class 12">Class 12 (HSC)</option>
+                                          <option value="Degree">Undergraduate / Diploma</option>
+                                        </select>
+                                      </div>
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">School / Institute Name *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="Name of school or college"
+                                          value={welfareFormInputs.studentName}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentName: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Overall Score Percentage / GPA *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="e.g. 92% or 9.4 GPA"
+                                          value={welfareFormInputs.gpa}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, gpa: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  <button
+                                    type="submit"
+                                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl cursor-pointer shadow-xs transition"
+                                  >
+                                    Continue to Documents Upload →
+                                  </button>
+                                </form>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Step 2: Upload Documents & Verify */}
+                          {welfareFormStep === 2 && (
+                            <div className="space-y-4 font-sans text-xs">
+                              <div className="bg-slate-50 border border-slate-200/60 p-3.5 rounded-xl space-y-2">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Simulated Document Verification</span>
+                                <div className="space-y-2.5">
+                                  {welfareUploads.map((file, idx) => (
+                                    <div key={idx} className="flex flex-col bg-white border border-slate-150 p-3 rounded-lg shadow-xxs">
+                                      <div className="flex justify-between items-center text-xs">
+                                        <span className="font-bold text-slate-700">{file.name}</span>
+                                        <span className="text-slate-405 font-mono text-[10px]">{file.size}</span>
+                                      </div>
+                                      <div className="flex items-center gap-3 mt-2">
+                                        <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                          <div 
+                                            className="bg-emerald-600 h-1.5 rounded-full transition-all duration-300"
+                                            style={{ width: `${file.progress}%` }}
+                                          />
+                                        </div>
+                                        <span className="text-[9px] font-bold text-emerald-600 shrink-0">{file.progress}%</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                disabled={isWelfareUploading}
+                                onClick={handleWelfarePortalSubmit}
+                                className={`w-full font-bold py-2.5 rounded-xl transition ${
+                                  isWelfareUploading 
+                                    ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
+                                    : "bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer shadow-xs"
+                                }`}
+                              >
+                                {isWelfareUploading ? t("ஆவணங்கள் பதிவேற்றப்படுகின்றன...", "Uploading verified files...") : t("நிதியுதவி விண்ணப்பத்தை சமர்ப்பி", "Submit Welfare Application")}
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Step 3: Success Screen */}
+                          {welfareFormStep === 3 && (
+                            <div className="text-center py-6 space-y-4 animate-fade-in font-sans text-xs">
+                              <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-sm">
+                                <CheckCircle2 className="w-8 h-8 animate-pulse" />
+                              </div>
+                              <div>
+                                <h4 className="font-display font-black text-sm text-slate-805 uppercase tracking-wide">
+                                  {t("விண்ணப்பம் வெற்றிகரமாகச் சமர்ப்பிக்கப்பட்டது!", "Application Submitted Successfully!")}
+                                </h4>
+                                <p className="text-[10px] text-slate-500 font-tamil mt-1">
+                                  {t("விண்ணப்பங்கள் 3 முதல் 5 வேலை நாட்களுக்குள் சரிபார்க்கப்படும்.", "All applications will be verified by the TNVS executive board within 3-5 business days.")}
+                                </p>
+                              </div>
+
+                              <div className="flex gap-2 justify-center">
+                                <button
+                                  type="button"
+                                  onClick={() => setWelfarePortalTab("track")}
+                                  className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 px-4 rounded-lg cursor-pointer"
+                                >
+                                  {t("விண்ணப்பங்களை டிராக் செய்க", "Track Application Status")}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setWelfareSchemeType(null);
+                                    setWelfareFormStep(1);
+                                  }}
+                                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 px-4 rounded-lg cursor-pointer border border-slate-200/60"
+                                >
+                                  {t("புதிய விண்ணப்பம்", "Apply Again")}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* TAB 2: TRACK APPLICATIONS */}
+                      {welfarePortalTab === "track" && (
+                        <div className="space-y-4 pt-4 animate-fade-in font-sans text-xs">
+                          {welfareClaims.length > 0 ? (
+                            <div className="space-y-4">
+                              {welfareClaims.map((claim) => (
+                                <div key={claim.id} className="border border-slate-200/80 rounded-2xl bg-white p-4 shadow-xxs space-y-4">
+                                  <div className="flex justify-between items-start gap-4">
+                                    <div className="text-left space-y-0.5">
+                                      <div className="flex items-center gap-1.5">
+                                        <span className="font-black text-slate-800">{claim.title}</span>
+                                        <span className="text-[9px] bg-slate-50 text-slate-400 font-mono px-1.5 rounded font-bold">{claim.id}</span>
+                                      </div>
+                                      <p className="text-[10px] text-slate-500 font-tamil leading-relaxed">{claim.description}</p>
+                                    </div>
+                                    <StatusPill 
+                                      status={
+                                        claim.status === "approved" || claim.status === "disbursed"
+                                          ? "success"
+                                          : claim.status === "rejected"
+                                          ? "error"
+                                          : "pending"
+                                      } 
+                                    />
+                                  </div>
+
+                                  {/* Multi-step progress tracker */}
+                                  <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-150/70 space-y-4">
+                                    {/* STAGE 1: SUBMITTED */}
+                                    <div className="flex gap-2.5 items-start">
+                                      <div className="flex flex-col items-center shrink-0">
+                                        <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                          claim.step >= 1 ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-400"
+                                        }`}>
+                                          1
+                                        </div>
+                                        <div className={`w-[1.5px] h-4 ${claim.step >= 2 ? "bg-emerald-600" : "bg-slate-200"}`} />
+                                      </div>
+                                      <div className="text-xxs text-left -mt-0.5">
+                                        <p className={`font-bold ${claim.step >= 1 ? "text-slate-700" : "text-slate-400"}`}>
+                                          Application Digitally Received
+                                        </p>
+                                        <p className="text-slate-400">
+                                          {claim.step >= 1 ? `Submitted on ${claim.date} with linked digital ID.` : "Awaiting submission."}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {/* STAGE 2: DOCUMENT VERIFICATION */}
+                                    <div className="flex gap-2.5 items-start">
+                                      <div className="flex flex-col items-center shrink-0">
+                                        <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                          claim.step >= 2 ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-400"
+                                        }`}>
+                                          2
+                                        </div>
+                                        <div className={`w-[1.5px] h-4 ${claim.step >= 3 ? "bg-emerald-600" : "bg-slate-200"}`} />
+                                      </div>
+                                      <div className="text-xxs text-left -mt-0.5">
+                                        <p className={`font-bold ${claim.step >= 2 ? "text-slate-700" : "text-slate-400"}`}>
+                                          Document Verification
+                                        </p>
+                                        <p className="text-slate-400">
+                                          {claim.step >= 2 
+                                            ? `Verified documents: ${claim.docs.join(", ")}` 
+                                            : "Awaiting automatic verified upload."}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {/* STAGE 3: EXECUTIVE BOARD APPROVAL */}
+                                    <div className="flex gap-2.5 items-start">
+                                      <div className="flex flex-col items-center shrink-0">
+                                        <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                          claim.step >= 3 ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-400"
+                                        }`}>
+                                          3
+                                        </div>
+                                        <div className={`w-[1.5px] h-4 ${claim.step >= 4 ? "bg-emerald-600" : "bg-slate-200"}`} />
+                                      </div>
+                                      <div className="text-xxs text-left -mt-0.5">
+                                        <p className={`font-bold ${claim.step >= 3 ? "text-slate-700" : "text-slate-400"}`}>
+                                          TNVS Board Executive Review
+                                          {claim.step === 3 && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 inline-block animate-ping" />}
+                                        </p>
+                                        <p className="text-slate-405">
+                                          {claim.step >= 3 
+                                            ? "Approved by state executive committee. Allocation queued." 
+                                            : "Awaiting board verification approval."}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {/* STAGE 4: DISBURSEMENT / ENROLLMENT ACTIVE */}
+                                    <div className="flex gap-2.5 items-start">
+                                      <div className="flex flex-col items-center shrink-0">
+                                        <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                          claim.step >= 4 ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-400"
+                                        }`}>
+                                          4
+                                        </div>
+                                      </div>
+                                      <div className="text-xxs text-left -mt-0.5">
+                                        <p className={`font-bold ${claim.step >= 4 ? "text-slate-700" : "text-slate-400"}`}>
+                                          {claim.type === "health" 
+                                            ? "Coverage Card Dispatched" 
+                                            : claim.type === "scholarship"
+                                            ? "Scholarship Disbursed"
+                                            : "Credit Disbursed"}
+                                        </p>
+                                        <p className="text-slate-400">
+                                          {claim.step >= 4 
+                                            ? (claim.type === "health" 
+                                                ? "Group Policy Card sent to shop address." 
+                                                : claim.type === "scholarship"
+                                                ? "Scholarship amount transferred via Direct Benefit Transfer (DBT)."
+                                                : "Credit funds transferred to primary bank account.")
+                                            : (claim.type === "health" 
+                                                ? "Awaiting Policy Card dispatch." 
+                                                : claim.type === "scholarship"
+                                                ? "Awaiting direct scholarship disbursement."
+                                                : "Awaiting final credit transfer.")}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <EmptyState 
+                              icon={HeartPulse}
+                              title={t("சமர்ப்பிக்கப்பட்ட விண்ணப்பங்கள் இல்லை", "No Active Applications")} 
+                              subtitle={t("விண்ணப்பம் செய்ய அப்ளை டேபிற்கு செல்லவும்.", "Apply for welfare schemes or credit aid above.")} 
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Column: Active banner + subvented loan categories stacked nicely */}
+                  <div className="lg:col-span-5 space-y-6">
+                    {/* Welfare Coverage Banner */}
+                    <div className="bg-primary text-white rounded-3xl p-6 border border-primary/20 relative overflow-hidden shadow-sm">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-white/8 rounded-full translate-x-1/3 -translate-y-1/3" aria-hidden="true" />
+                      <div className="relative flex items-start gap-4">
+                        <ShieldCheck className="w-6 h-6 text-gold shrink-0 mt-0.5" aria-hidden="true" />
+                        <div className="space-y-1">
+                          <h3 className="font-display font-bold text-base text-slate-50 leading-tight">
+                            {t("நலன் பாதுகாப்பு செயலில் உள்ளது", "Welfare Coverage Active")}
+                          </h3>
+                          <p className="text-xs text-primary-foreground/80 leading-relaxed font-tamil">
+                            {t(
+                              "நீங்களும் உங்கள் பதிவுசெய்யப்பட்ட குடும்பமும் ₹2 லட்சம் குழு சுகாதார காப்பீட்டுத் திட்டத்தின் கீழ் ஏப்ரல் 2027 வரை முழுமையாக பாதுகாக்கப்படுகிறீர்கள்.",
+                              "You and your registered trade family are fully covered under the association's ₹2 Lakh group health insurance scheme until April 2027."
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Available Loan Categories Directory */}
+                    <div className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs space-y-4">
+                      <div className="pb-2.5 border-b border-slate-100">
+                        <h4 className="font-display font-bold text-slate-805 text-sm tracking-wide">SUBVENTED LOAN DIRECTORY</h4>
+                        <p className="text-[10px] text-slate-400 font-tamil mt-0.5">உங்கள் வணிக வளர்ச்சிக்கு தகுதியான கடன்கள்</p>
+                      </div>
+
+                      <div className="space-y-3.5">
+                        {[
+                          { id: "business", icon: Coins, title: t("வட்டியில்லா வணிகக் கடன்", "Interest-Free Business Loan"), desc: t("இறக்குமதி ஏற்றுமதி வணிகங்களுக்கு ₹25 லட்சம் வரை வட்டி இல்லா கடன்.", "Up to ₹25 lakh interest-free loan for Pvt Ltd, partnerships, import/export, and freelancers."), spec: "0% Interest" },
+                          { id: "retail", icon: Store, title: t("சில்லறை வணிகர்கள் கடன்", "Retail Trader Loan"), desc: t("பதிவுசெய்யப்பட்ட சில்லறை வணிகர்களுக்கு குறைந்தபட்ச ஆவணங்களுடன் விரைவான கடன் அனுமதி.", "Fast loan approval for registered retail traders with minimal documentation."), spec: "Subsidized" },
+                          { id: "young", icon: Rocket, title: t("இளைய தொழில்முனைவோர் கடன்", "Young Entrepreneur Loan"), desc: t("40 வயதுக்குட்பட்ட இளைய தொழில்முனைவோருக்கு சிறப்பு மானியத்துடன் கூடிய நிதி உதவி திட்டம்.", "Special subsidised loan scheme for entrepreneurs under 40 years."), spec: "Special Subsidy" }
+                        ].map((loan) => {
+                          const Icon = loan.icon;
+                          return (
+                            <div
+                              key={loan.id}
+                              onClick={() => openDashboardLoanModal(loan.id as any)}
+                              className="p-4 rounded-2xl border border-slate-150 hover:border-primary/30 bg-slate-50/20 hover:bg-white transition duration-200 cursor-pointer flex flex-col justify-between min-h-[140px] group shadow-xxs hover:shadow-xs"
+                            >
+                              <div>
+                                <div className="flex justify-between items-center gap-2">
+                                  <div className="w-8 h-8 rounded-lg bg-primary/5 text-primary flex items-center justify-center shrink-0">
+                                    <Icon className="w-4 h-4" />
+                                  </div>
+                                  <span className="text-[8px] bg-slate-105 text-slate-655 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                    {loan.spec}
+                                  </span>
+                                </div>
+                                <h5 className="text-xs font-bold text-slate-850 mt-3 group-hover:text-primary transition">{loan.title}</h5>
+                                <p className="text-[10px] text-slate-500 leading-normal font-tamil mt-1">{loan.desc}</p>
+                              </div>
+                              <span className="text-[9px] font-black text-primary uppercase tracking-wider mt-3 flex items-center gap-0.5">
+                                Apply Now →
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-display font-bold text-sm text-slate-800 mt-4 leading-tight">
-                  {t("இளைய தொழில்முனைவோர் கடன்", "Young Entrepreneur Loan")}
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-tamil mt-2">
-                  {t(
-                    "40 வயதுக்குட்பட்ட இளைய தொழில்முனைவோருக்கு சிறப்பு மானியத்துடன் கூடிய நிதி உதவி திட்டம்.",
-                    "Special subsidised loan scheme for entrepreneurs under 40 years."
-                  )}
-                </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full uppercase">
-                  {t("மானியம் உண்டு", "Subsidized")}
-                </span>
-                <div className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:gap-1.5 transition-all">
-                  {t("விண்ணப்பம்", "Request / Apply")} <ArrowRight className="w-3.5 h-3.5 animate-pulse" />
+            )}
+
+            {/* ─── TAB 3: Recruiter Hub & Analytics ─── */}
+            {dashboardTab === "recruiter" && (
+              <div className="space-y-6 animate-fadeIn text-left">
+                <div className="grid lg:grid-cols-12 gap-6 items-start">
+                  {/* Left column: Recruiter invite progress & milestones */}
+                  <div className="lg:col-span-5 space-y-6">
+                    {/* Coordinator Widget Card */}
+                    <div className="bg-slate-950 text-white rounded-3xl p-6 shadow-md relative overflow-hidden border border-slate-800/80">
+                      <div className="absolute top-0 right-0 w-40 h-40 bg-primary/20 rounded-full blur-3xl" aria-hidden="true" />
+                      <div className="relative space-y-5">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-xl bg-gold/15 text-gold flex items-center justify-center shrink-0">
+                              <Award className="w-4 h-4" aria-hidden="true" />
+                            </div>
+                            <h3 className="font-display font-bold text-base text-gold">
+                              {t("நிர்வாகியாக இணைய", "Become a Coordinator")}
+                            </h3>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${isCoordinator ? "bg-emerald-600 text-white" : "bg-amber-600 text-white animate-pulse"}`}>
+                            {isCoordinator ? t("ஒருங்கிணைப்பாளர்", "Coordinator") : t("விருப்பம்", "Recruiter Mode")}
+                          </span>
+                        </div>
+
+                        {!isCoordinator ? (
+                          <div className="space-y-3">
+                            <p className="text-xs text-slate-400 leading-relaxed font-tamil">
+                              {t(
+                                "தலைமை ஏற்கத் தயாரா? உங்கள் பரிந்துரை லிங்க் மூலம் 25 வணிகர்களை ஒன்றிணைத்து, ஒருங்கிணைப்பாளர் பொறுப்பை பெற்றிடுங்கள்!",
+                                "Ready to lead? Connect 25 traders using your unique referral link and earn the Coordinator title!"
+                              )}
+                            </p>
+                            <button
+                              onClick={handleOptInCoordinator}
+                              className="btn-primary w-full py-2.5 rounded-xl text-xs font-bold justify-center cursor-pointer"
+                            >
+                              <UserPlus className="w-4 h-4" aria-hidden="true" />
+                              {language === "ta" ? "ஒருங்கிணைப்பாளராக இணையவும்" : "Activate Recruiter Status"}
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="space-y-1.5">
+                              <h4 className="font-display font-bold text-sm text-slate-100 flex items-center gap-1">
+                                <Sparkles className="w-3.5 h-3.5 text-gold" aria-hidden="true" />
+                                {t("தலைமை ஏற்கத் தயாரா?", "Ready to lead?")}
+                              </h4>
+                              <p className="text-xs text-slate-400 leading-relaxed font-tamil">
+                                {t(
+                                  "உங்கள் பரிந்துரை லிங்க் மூலம் 25 வணிகர்களை ஒன்றிணைத்து, 'ஒருங்கிணைப்பாளர்' பொறுப்பை பெற்றிடுங்கள்!",
+                                  "Bring together 25 traders using your referral link and earn the 'Coordinator' title!"
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Progress */}
+                            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3">
+                              <div className="flex justify-between text-sm font-semibold">
+                                <span className="text-gold">{mockReferredMembers.length} / 25</span>
+                                <span className="text-xs text-slate-400 font-tamil">
+                                  {t(
+                                    `${25 - mockReferredMembers.length} மேலும் பரிந்துரைகள் தேவை`,
+                                    `${25 - mockReferredMembers.length} more referrals needed`
+                                  )}
+                                </span>
+                              </div>
+                              <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                <div
+                                  className="bg-linear-to-r from-primary to-navy h-2 rounded-full"
+                                  style={{ width: `${(mockReferredMembers.length / 25) * 105}%` }}
+                                  role="progressbar"
+                                  aria-valuenow={mockReferredMembers.length}
+                                  aria-valuemin={0}
+                                  aria-valuemax={25}
+                                  aria-label={`Referral progress: ${mockReferredMembers.length} of 25`}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Milestones & Badges */}
+                            <div className="pt-1.5 text-left">
+                              <div className="text-[10px] text-slate-450 font-bold uppercase tracking-wider mb-2">
+                                {t("தனிப்பட்ட மைல்கற்கள்", "Milestone Badges")}
+                              </div>
+                              <div className="grid grid-cols-3 gap-2">
+                                <div className="bg-slate-900 border border-amber-500/35 rounded-xl p-2.5 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                                  <div className="absolute top-0 right-0 w-8 h-8 bg-amber-500/10 rounded-full blur-md" />
+                                  <span className="text-lg">🥉</span>
+                                  <span className="text-[8px] font-black text-amber-505 tracking-wider uppercase mt-1 font-sans">Bronze Vendor</span>
+                                  <span className="text-[8px] text-emerald-400 font-bold mt-0.5">{t("அன்லாக்", "Unlocked")} (5+)</span>
+                                </div>
+                                <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-2.5 flex flex-col items-center justify-center text-center opacity-65">
+                                  <span className="text-lg">🥈</span>
+                                  <span className="text-[8px] font-black text-slate-405 tracking-wider uppercase mt-1 font-sans">Silver Organizer</span>
+                                  <span className="text-[8px] text-slate-505 font-bold mt-0.5">LOCKED (15)</span>
+                                </div>
+                                <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-2.5 flex flex-col items-center justify-center text-center opacity-65">
+                                  <span className="text-lg">🥇</span>
+                                  <span className="text-[8px] font-black text-slate-450 tracking-wider uppercase mt-1 font-sans">Gold Coordinator</span>
+                                  <span className="text-[8px] text-slate-500 font-bold mt-0.5">LOCKED (25)</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Referral Link — uses real origin domain */}
+                        <div className="space-y-2 pt-2 text-left">
+                          <label
+                            htmlFor="referral-link"
+                            className="text-xs text-slate-400 font-bold uppercase tracking-wider block"
+                          >
+                            {t("பரிந்துரை இணைப்பு", "Referral Link")}
+                          </label>
+                          <div className="flex gap-2">
+                            <input
+                              id="referral-link"
+                              readOnly
+                              type="text"
+                              value={referralUrl}
+                              className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-base md:text-xs font-mono text-slate-300 focus:outline-none min-h-[40px]"
+                              aria-label="Your referral link — read only"
+                            />
+                            <button
+                              onClick={handleCopyLink}
+                              className="bg-primary hover:bg-primary/90 text-white p-2.5 rounded-xl transition flex items-center justify-center shrink-0 min-w-[40px] min-h-[40px] cursor-pointer"
+                              aria-label={t("நகலெடு", "Copy referral link")}
+                            >
+                              {copiedLink
+                                ? <CheckCircle2 className="w-4 h-4 text-emerald-300" aria-hidden="true" />
+                                : <Copy className="w-4 h-4" aria-hidden="true" />
+                              }
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-slate-500 font-tamil">
+                            {t("மேலும் உறுப்பினர்களை அழைக்க இந்த இணைப்பைப் பகிரவும்!", "Share this link to invite more members!")}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Top Recruiters Leaderboard */}
+                    <div className="bg-slate-950 text-white rounded-3xl p-5 border border-slate-850 space-y-4">
+                      <div className="flex items-center gap-1.5 pb-2 border-b border-white/10">
+                        <Award className="w-4 h-4 text-gold" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                          {t("மாநில அளவிலான லீடர்போர்டு", "Top Recruiter Leaderboard")}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2 font-sans">
+                        {[
+                          { name: "Siva Shanmugam", location: "Salem", invites: 24, rank: "1st" },
+                          { name: "Muthu Pandian", location: "Madurai", invites: 18, rank: "2nd" },
+                          { name: "Senthil Kumar N (You)", location: "Chennai", invites: 5, rank: "3rd" },
+                        ].map((item, index) => (
+                          <div key={index} className={`flex items-center justify-between text-[11px] p-2.5 rounded-xl border ${
+                            item.invites === 5 
+                              ? "bg-primary/20 border-primary/40 text-white font-extrabold" 
+                              : "bg-slate-900/40 border-slate-800 text-slate-400"
+                          }`}>
+                            <div className="flex items-center gap-2">
+                              <span className={`w-4 text-center font-bold font-mono text-[10px] ${index === 0 ? "text-gold" : index === 1 ? "text-slate-400" : "text-amber-600"}`}>
+                                {item.rank}
+                              </span>
+                              <div>
+                                <span className="font-semibold">{item.name}</span>
+                                <span className="text-[9px] text-slate-505 ml-1 font-bold">({item.location})</span>
+                              </div>
+                            </div>
+                            <span className="font-mono text-gold text-[10px] font-bold">{item.invites} {t("நபர்", "invites")}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Referred Database CRM */}
+                  <div className="lg:col-span-7 space-y-6">
+                    <div className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs space-y-4">
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-5 h-5 text-primary" />
+                          <h3 className="font-display font-bold text-sm text-slate-805">
+                            {t("பரிந்துரைக்கப்பட்ட உறுப்பினர்கள்", "Referred Member CRM")}
+                          </h3>
+                        </div>
+                        <span className="text-[9px] bg-primary/5 text-primary border border-primary/10 px-2 py-0.5 rounded font-bold uppercase font-mono">
+                          {filteredReferredMembers.length} MATCHED
+                        </span>
+                      </div>
+
+                      {/* CRM Search Input */}
+                      <div className="relative">
+                        <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder={t("பெயர், கடை, மாவட்டம் அல்லது ID மூலம் தேடுக...", "Search by name, shop, district, or ID...")}
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-primary transition"
+                        />
+                      </div>
+
+                      {/* Status Filter Pills */}
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          { id: "all", label: "All Statuses" },
+                          { id: "active", label: "Active" },
+                          { id: "pending", label: "Pending" },
+                          { id: "expired", label: "Expired" }
+                        ].map((pill) => {
+                          const active = statusFilter === pill.id;
+                          return (
+                            <button
+                              key={pill.id}
+                              type="button"
+                              onClick={() => setStatusFilter(pill.id as any)}
+                              className={`px-3 py-1 rounded-lg text-[10px] font-bold border transition cursor-pointer ${
+                                active 
+                                  ? "bg-primary border-primary text-white shadow-xxs" 
+                                  : "bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100"
+                              }`}
+                            >
+                              {pill.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* CRM Results Grid */}
+                      <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                        <AnimatePresence mode="popLayout">
+                          {filteredReferredMembers.length > 0 ? (
+                            filteredReferredMembers.map((m) => (
+                              <motion.div
+                                key={m.id}
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.2 }}
+                                className="bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition"
+                              >
+                                <div className="space-y-0.5 text-left">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-slate-800 text-xs">{m.name}</span>
+                                    <span className="text-[9px] bg-slate-200/60 text-slate-600 px-1.5 py-0.2 rounded font-mono font-bold">{m.id}</span>
+                                  </div>
+                                  <div className="text-[10px] text-slate-505 font-semibold">
+                                    {m.shop} • <span className="text-slate-400">{m.district}</span>
+                                  </div>
+                                  <div className="text-[9px] text-slate-400 font-mono">
+                                    Joined: {m.date}
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center justify-between sm:justify-end gap-3.5 border-t border-slate-100 sm:border-0 pt-2 sm:pt-0 shrink-0">
+                                  <span className="text-[9px] font-bold text-slate-405 font-mono">{m.phone}</span>
+                                  <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                                    m.status === "active"
+                                      ? "bg-emerald-50 text-emerald-705 border border-emerald-100"
+                                      : m.status === "pending"
+                                      ? "bg-amber-50 text-amber-705 border border-amber-100"
+                                      : "bg-rose-50 text-rose-705 border border-rose-100"
+                                  }`}>
+                                    {m.status}
+                                  </span>
+                                </div>
+                              </motion.div>
+                            ))
+                          ) : (
+                            <motion.div initial={{ opacity: 0 }} className="py-8 text-center bg-slate-50/30 rounded-2xl border border-dashed border-slate-200">
+                              <p className="text-xs text-slate-400 font-tamil">பொருந்தும் பரிந்துரைகள் இல்லை</p>
+                              <p className="text-[10px] text-slate-500 mt-0.5">No referred members found matching query.</p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Statewide Association Analytics Panel Gated Section */}
+                {isCoordinator && (
+                  <AdminAnalyticsPanel t={t} language={language} />
+                )}
+              </div>
+            )}
+
+            {/* ─── TAB 4: Tools & Apps ─── */}
+            {dashboardTab === "tools" && (
+              <div className="grid lg:grid-cols-12 gap-6 items-start text-left animate-fadeIn">
+                {/* Left Column: Digital GST & Finance Hub */}
+                <div className="lg:col-span-7 space-y-6">
+                  <div className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs space-y-5">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <Coins className="w-5 h-5 text-primary" />
+                        <h3 className="font-display font-bold text-sm text-slate-800">
+                          {t("டிஜிட்டல் ஜிஎஸ்டி & நிதி மையம்", "Digital GST & Finance Hub")}
+                        </h3>
+                      </div>
+                      <span className="text-[9px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider">
+                        FREE SERVICE
+                      </span>
+                    </div>
+
+                    {/* Sub-Tabs Selector */}
+                    <div className="flex bg-slate-105 p-1 rounded-xl border border-slate-200/50">
+                      <button
+                        type="button"
+                        onClick={() => setGstActiveTab("calc")}
+                        className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                          gstActiveTab === "calc" ? "bg-white text-primary shadow-xs" : "text-slate-500 hover:text-slate-700"
+                        }`}
+                      >
+                        {t("கணக்கீடு & காலண்டர்", "Calculator & Dates")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setGstActiveTab("query")}
+                        className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                          gstActiveTab === "query" ? "bg-white text-primary shadow-xs" : "text-slate-500 hover:text-slate-700"
+                        }`}
+                      >
+                        {t("வரி சந்தேகங்கள்", "Ask Auditor")}
+                      </button>
+                    </div>
+
+                    {/* GST Content: Tab 1 (Calculator & Filing dates) */}
+                    {gstActiveTab === "calc" && (
+                      <div className="space-y-4 pt-1 animate-fade-in text-left">
+                        {/* Micro Filing Calendar */}
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Filing Deadlines</span>
+                          <div className="grid grid-cols-2 gap-2 text-xxs font-mono">
+                            <div className="bg-slate-50 border border-slate-100 rounded-lg p-2.5 flex flex-col">
+                              <span className="text-slate-400 font-bold">GSTR-1 (Monthly)</span>
+                              <span className="text-slate-705 font-black mt-0.5">June 11, 2026</span>
+                            </div>
+                            <div className="bg-slate-50 border border-slate-100 rounded-lg p-2.5 flex flex-col">
+                              <span className="text-slate-400 font-bold">GSTR-3B (Monthly)</span>
+                              <span className="text-slate-705 font-black mt-0.5">June 20, 2026</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* GST Calculator */}
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">GST Quick Calc</span>
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              placeholder="₹ Subtotal"
+                              value={calcAmount}
+                              onChange={(e) => setCalcAmount(e.target.value)}
+                              className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primary"
+                            />
+                            <select
+                              value={calcRate}
+                              onChange={(e) => setCalcRate(Number(e.target.value))}
+                              className="bg-white border border-slate-250 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary cursor-pointer"
+                            >
+                              <option value="5">5%</option>
+                              <option value="12">12%</option>
+                              <option value="18">18%</option>
+                              <option value="28">28%</option>
+                            </select>
+                          </div>
+
+                          <div className="bg-primary/5 border border-primary/10 rounded-xl p-3.5 grid grid-cols-3 gap-1 text-center font-mono text-[10px]">
+                            <div>
+                              <span className="text-slate-400">CGST</span>
+                              <span className="block text-slate-705 font-black mt-0.5">₹{cgstAmount}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400">SGST</span>
+                              <span className="block text-slate-705 font-black mt-0.5">₹{sgstAmount}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400">TOTAL</span>
+                              <span className="block text-slate-900 font-extrabold mt-0.5">₹{totalCalculated}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* GST Content: Tab 2 (Ask Auditor query submission form) */}
+                    {gstActiveTab === "query" && (
+                      <div className="space-y-3 pt-1 animate-fade-in text-left">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Raise Tax Doubt</div>
+                        <div className="space-y-2">
+                          <textarea
+                            placeholder={t("வரி தொடர்பான சந்தேகங்களை இங்கு டைப் செய்யவும்...", "Type your GST or tax doubts here...")}
+                            rows={3}
+                            value={gstQueryText}
+                            onChange={(e) => setGstQueryText(e.target.value)}
+                            className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-none focus:border-primary"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (!gstQueryText.trim()) return;
+                              toast.success(
+                                language === "ta"
+                                  ? "வரி சந்தேகம் சமர்ப்பிக்கப்பட்டது! வினவல் குறிப்பு எண்: #TNVS-GST-332 🚀"
+                                  : "Query submitted successfully! Ref ID: #TNVS-GST-332 🚀"
+                              );
+                              setGstQueryText("");
+                            }}
+                            className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer min-h-[36px]"
+                          >
+                            <Sparkles className="w-4 h-4 text-gold animate-spin" />
+                            <span>{t("கேள்வி சமர்ப்பி", "Submit Query")}</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right Column: Google Play Store App Download Promotion */}
+                <div className="lg:col-span-5 space-y-6">
+                  <div className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs space-y-4">
+                    <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+                      <div className="w-8 h-8 rounded-xl bg-primary/5 text-primary flex items-center justify-center shrink-0">
+                        <Smartphone className="w-4 h-4" aria-hidden="true" />
+                      </div>
+                      <h3 className="font-display font-bold text-sm text-slate-800">
+                        {t("அதிகாரப்பூர்வ மொபைல் ஆப்", "Download Vanigan AI App")}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed font-tamil">
+                      {t(
+                        "எங்கள் அதிகாரப்பூர்வ மொபைல் ஆப் மூலம் உங்கள் கடை விவரங்களை நிர்வகிக்கலாம், உடனடி ஜிஎஸ்டி விழிப்பூட்டல்களைப் பெறலாம் மற்றும் பிற வணிகர்களுடன் இணைந்திருக்கலாம்.",
+                        "Access the complete GST desk, chat with auditor support, track your local welfare benefits, and verify referrals instantly with the Vanigan AI android app."
+                      )}
+                    </p>
+                    <a
+                      href="https://play.google.com/store/apps/details?id=com.thirumoolar.vanigan"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition active:scale-[0.98] min-h-[44px]"
+                    >
+                      <Play className="w-4 h-4 fill-white text-white border-none" aria-hidden="true" />
+                      <span>{t("Play Store இல் பதிவிறக்கம்", "Download on Google Play")}</span>
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </Section>
+            )}
+
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
       {/* SEAMLESS CONVERSATIONAL LOAN MODAL */}
       <AnimatePresence>
@@ -2013,7 +1848,7 @@ function Dashboard() {
                 </div>
                 <button
                   onClick={() => setIsLoanModalOpen(false)}
-                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer animate-none border-none outline-none"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -2038,7 +1873,7 @@ function Dashboard() {
                 {loanChatStep >= 1 && (
                   <div className="space-y-3">
                     <div className="flex items-start gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-blue-105 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                         AI
                       </div>
                       <div className="bg-white border border-slate-200/80 p-3 rounded-2xl rounded-tl-none shadow-xs text-xs text-slate-700 font-tamil">
@@ -2098,7 +1933,7 @@ function Dashboard() {
                     </div>
 
                     <div className="flex items-start gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-blue-105 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                         AI
                       </div>
                       <div className="bg-white border border-slate-200/80 p-3 rounded-2xl rounded-tl-none shadow-xs text-xs text-slate-700 font-tamil leading-relaxed">
@@ -2130,7 +1965,7 @@ function Dashboard() {
                           setIsLoanModalOpen(false);
                           toast.info(t("விண்ணப்பம் ரத்து செய்யப்பட்டது", "Application canceled"));
                         }}
-                        className="bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer"
+                        className="bg-slate-200 hover:bg-slate-300 text-slate-705 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer"
                       >
                         {t("ரத்து", "Cancel")}
                       </button>
@@ -2142,7 +1977,7 @@ function Dashboard() {
                 {loanChatStep === 3 && (
                   <div className="space-y-3 animate-fade-in">
                     <div className="flex items-start gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-blue-105 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                         AI
                       </div>
                       <div className="bg-emerald-50 border border-emerald-200/80 p-4 rounded-2xl rounded-tl-none shadow-xs text-xs text-emerald-800 font-tamil leading-relaxed space-y-2">
@@ -2152,7 +1987,7 @@ function Dashboard() {
                         </p>
                         <p>
                           {t(
-                            "உங்களது குறிப்பு எண்: #L-998083. எங்கள் கடன் அதிகாரி 24 மணி நேரத்திற்குள் உங்களைத் தொடர்புகொள்வார். நன்றி!",
+                            "உங்களது குறிப்பு எண்: #L-998083. எங்கள் கடன் அதிகாரி 24 மணி நேரத்திற்குள் உங்களைத் தொடர்புகொள்கிறோம். நன்றி!",
                             "Your reference number is #L-998083. Our loan officer will contact you within 24 hours. Thank you!"
                           )}
                         </p>
@@ -2172,9 +2007,7 @@ function Dashboard() {
               </div>
             </motion.div>
           </div>
-        )}
-
-        {/* HIGH-FIDELITY LIVE STREAM BROADCAST MODAL */}
+        )}        {/* HIGH-FIDELITY LIVE STREAM BROADCAST MODAL */}
         {isLiveStreamOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
             {/* Backdrop */}
@@ -2233,7 +2066,7 @@ function Dashboard() {
                 </div>
 
                 {/* Stream Footer Control Bar */}
-                <div className="z-10 w-full flex items-center justify-between pt-4 border-t border-white/5 bg-gradient-to-t from-black/60 to-transparent p-2 rounded-xl">
+                <div className="z-10 w-full flex items-center justify-between pt-4 border-t border-white/5 bg-linear-to-t from-black/60 to-transparent p-2 rounded-xl">
                   <div className="text-[10px] text-white/70 font-semibold font-mono tracking-wide">
                     1080p Stream • Low Latency Mode
                   </div>
@@ -2409,7 +2242,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
             {/* Metric Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Card 1 */}
-              <div className="card-base p-5 bg-gradient-to-br from-white to-blue-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
+              <div className="card-base p-5 bg-linear-to-br from-white to-blue-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
                 <div className="flex justify-between items-start">
                   <div>
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
@@ -2427,7 +2260,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                 </div>
               </div>
               {/* Card 2 */}
-              <div className="card-base p-5 bg-gradient-to-br from-white to-emerald-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
+              <div className="card-base p-5 bg-linear-to-br from-white to-emerald-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
                 <div className="flex justify-between items-start">
                   <div>
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
@@ -2445,7 +2278,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                 </div>
               </div>
               {/* Card 3 */}
-              <div className="card-base p-5 bg-gradient-to-br from-white to-amber-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
+              <div className="card-base p-5 bg-linear-to-br from-white to-amber-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
                 <div className="flex justify-between items-start">
                   <div>
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
@@ -2463,7 +2296,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                 </div>
               </div>
               {/* Card 4 */}
-              <div className="card-base p-5 bg-gradient-to-br from-white to-indigo-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
+              <div className="card-base p-5 bg-linear-to-br from-white to-indigo-50/10 border border-slate-200/80 shadow-xs relative overflow-hidden">
                 <div className="flex justify-between items-start">
                   <div>
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
@@ -2491,7 +2324,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                 </h3>
               </div>
 
-              <div className="relative pt-2 pb-1 bg-gradient-to-b from-slate-50/50 to-white rounded-xl border border-slate-100 overflow-x-auto select-none">
+              <div className="relative pt-2 pb-1 bg-linear-to-b from-slate-50/50 to-white rounded-xl border border-slate-100 overflow-x-auto select-none">
                 <svg 
                   viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
                   className="min-w-[640px] w-full h-[180px]"
@@ -2525,7 +2358,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
 
                   {points.map((p, index) => (
                     <g key={index}>
-                      <text x={p.x} y={chartHeight - padding.bottom + 15} fill={hoveredIndex === index ? "#1e3a8a" : "#94a3b8"} fontSize="8" fontWeight="bold" textAnchor="middle" className="font-display font-sans">
+                      <text x={p.x} y={chartHeight - padding.bottom + 15} fill={hoveredIndex === index ? "#1e3a8a" : "#94a3b8"} fontSize="8" fontWeight="bold" textAnchor="middle" className="font-sans">
                         {language === "ta" ? p.data.labelTa : p.data.month}
                       </text>
                       {hoveredIndex === index && <circle cx={p.x} cy={p.y} r="5" fill="#1e3a8a" stroke="#ffffff" strokeWidth="1.5" />}

@@ -367,6 +367,7 @@ function Wings() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
+      <h1 className="sr-only">{t("சங்கமப் பிரிவுகள் மற்றும் மண்டலங்கள்", "Wings & Regional Zones")}</h1>
       {/* Header section with tab switcher */}
       <section className="border-b border-slate-200/60 bg-white">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 py-10 md:py-12 w-full">
@@ -446,9 +447,9 @@ function Wings() {
                 <span>{t("துணைப் பிரிவுகள்", "Specialized Wings")}</span>
               </div>
               
-              <h1 className="mt-3 font-display text-2xl md:text-4xl font-bold text-slate-800 leading-tight max-w-3xl">
+              <h2 className="mt-3 font-display text-2xl md:text-4xl font-bold text-slate-800 leading-tight max-w-3xl">
                 {t("வணிகர்களின் சங்கமத்தின் 34 பிரிவுகள்", "34 Organizational Wings")}
-              </h1>
+              </h2>
               
               <p className="mt-4 text-xs md:text-sm text-slate-500 max-w-2xl font-tamil leading-relaxed">
                 {t(
@@ -507,9 +508,9 @@ function Wings() {
                 <span>{t("புவியியல் கவரேஜ்", "Geographical Coverage")}</span>
               </div>
               
-              <h1 className="mt-3 font-display text-2xl md:text-4xl font-bold text-slate-800 leading-tight max-w-3xl">
+              <h2 className="mt-3 font-display text-2xl md:text-4xl font-bold text-slate-800 leading-tight max-w-3xl">
                 {t("தமிழக மண்டல மற்றும் தொகுதி வாரியான பகுப்பாய்வு", "Tamil Nadu Zone & Constituency Breakdown")}
-              </h1>
+              </h2>
               
               <p className="mt-4 text-xs md:text-sm text-slate-500 max-w-2xl font-tamil leading-relaxed">
                 {t(

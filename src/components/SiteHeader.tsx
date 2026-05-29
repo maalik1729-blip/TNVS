@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, User, Phone } from "lucide-react";
+import { Menu, X, User, Phone, Globe } from "lucide-react";
 import templeLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
 import { useLanguage } from "@/hooks/useLanguage";
 import { motion } from "framer-motion";
@@ -187,7 +187,7 @@ export function SiteHeader() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1 min-w-0 shrink" aria-label="Main navigation">
+          <nav className="hidden xl:flex items-center gap-0.5 lg:gap-1 min-w-0 shrink" aria-label="Main navigation">
             {NAV.map((n) => {
               const active = loc.pathname === n.to;
               return (
@@ -228,34 +228,31 @@ export function SiteHeader() {
           </nav>
 
           {/* Desktop Right Controls */}
-          <div className="hidden md:flex items-center gap-1 lg:gap-2 shrink-0">
+          <div className="hidden xl:flex items-center gap-1 lg:gap-2 shrink-0">
 
-            {/* Language Toggle */}
+            {/* Language Toggle - Prominent */}
             <button
               onClick={toggleLanguage}
               aria-label={`Switch to ${language === "ta" ? "English" : "Tamil"}`}
               aria-pressed={language === "ta"}
-              className="inline-flex items-center gap-1 px-3 py-2 rounded-[10px] text-xs font-semibold border border-slate-200/80 bg-white/60 hover:bg-white/90 backdrop-blur-sm transition text-slate-700 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 cursor-pointer"
+              className={[
+                "inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold border transition min-h-[44px]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer shrink-0",
+                language === "ta"
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              ].join(" ")}
             >
-              <span className={language === "ta" ? "font-bold text-primary" : "text-slate-400"}>TA</span>
-              <span className="text-slate-300" aria-hidden="true">|</span>
-              <span className={language === "en" ? "font-bold text-primary" : "text-slate-400"}>EN</span>
+              <Globe className="w-4 h-4" aria-hidden="true" />
+              <span>{language === "ta" ? "தமிழ்" : "English"}</span>
             </button>
 
             <Link
               to="/dashboard"
-              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
             >
               <User className="w-3.5 h-3.5" aria-hidden="true" />
               {language === "ta" ? "எனது கணக்கு" : "My Account"}
-            </Link>
-            {/* Icon-only My Account for md breakpoint (saves space) */}
-            <Link
-              to="/dashboard"
-              className="lg:hidden inline-flex items-center justify-center p-2 text-slate-600 hover:text-primary transition min-h-[44px] min-w-[44px] rounded-lg"
-              aria-label={language === "ta" ? "எனது கணக்கு" : "My Account"}
-            >
-              <User className="w-4 h-4" aria-hidden="true" />
             </Link>
 
             <Link
@@ -268,7 +265,7 @@ export function SiteHeader() {
 
           {/* Mobile Hamburger */}
           <button
-            className="md:hidden p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-600 border border-slate-200/80 rounded-[10px] bg-white/60 backdrop-blur-sm hover:bg-white/90 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="xl:hidden p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-600 border border-slate-200/80 rounded-[10px] bg-white/60 backdrop-blur-sm hover:bg-white/90 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             onClick={() => setOpen(true)}
             aria-label="Open navigation menu"
             aria-expanded={open}
@@ -282,7 +279,7 @@ export function SiteHeader() {
       {/* ── Mobile menu — full-screen overlay ─────────────────────────────── */}
       {open && (
         <div
-          className="md:hidden fixed inset-0 z-60 flex flex-col"
+          className="xl:hidden fixed inset-0 z-60 flex flex-col"
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"

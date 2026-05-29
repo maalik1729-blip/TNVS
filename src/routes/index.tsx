@@ -151,7 +151,7 @@ function Home() {
             style={{ background: "radial-gradient(circle, oklch(0.78 0.12 85) 0%, transparent 70%)" }}
           />
           {/* Subtle dot pattern overlay */}
-          <div className="absolute inset-0 bg-primary/[0.015]" />
+          <div className="absolute inset-0 bg-primary/1.5" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 pt-10 sm:pt-14 pb-10 sm:pb-16 grid md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-10 items-center">
@@ -331,7 +331,7 @@ function Home() {
                   WebkitBackfaceVisibility: "hidden",
                   backfaceVisibility: "hidden",
                   // Optimize sub-pixel details and rendering clarity
-                  imageRendering: "high-quality",
+                  imageRendering: "auto",
                 }}
                 aria-label={t(
                   "தமிழ்நாடு வணிகர்களின் சங்கமம் வரவேற்பு காணொளி",

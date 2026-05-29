@@ -42,6 +42,13 @@ try {
     // Copy dist/client/assets to public/assets
     const distAssets = path.join(distClientDir, 'assets');
     const publicAssets = path.join(publicDir, 'assets');
+    
+    // Clean public/assets first to prevent accumulation of stale hashed assets from old builds
+    if (fs.existsSync(publicAssets)) {
+      console.log(`[copy-assets] Cleaning stale assets from ${publicAssets}...`);
+      fs.rmSync(publicAssets, { recursive: true, force: true });
+    }
+
     if (fs.existsSync(distAssets)) {
       copyFolderSync(distAssets, publicAssets);
       console.log(`[copy-assets] Copied ${distAssets} to ${publicAssets}`);

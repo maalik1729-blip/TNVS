@@ -206,7 +206,7 @@ function AnalyticsDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 
                 {/* Metric 1 */}
-                <div className="relative overflow-hidden card-base p-6 bg-gradient-to-br from-white to-blue-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-primary/20 hover:-translate-y-0.5 transition-all duration-300">
+                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-blue-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-primary/20 hover:-translate-y-0.5 transition-all duration-300">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
@@ -226,7 +226,7 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Metric 2 */}
-                <div className="relative overflow-hidden card-base p-6 bg-gradient-to-br from-white to-emerald-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-500/20 hover:-translate-y-0.5 transition-all duration-300">
+                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-emerald-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-500/20 hover:-translate-y-0.5 transition-all duration-300">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
@@ -246,7 +246,7 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Metric 3 */}
-                <div className="relative overflow-hidden card-base p-6 bg-gradient-to-br from-white to-amber-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-amber-500/20 hover:-translate-y-0.5 transition-all duration-300">
+                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-amber-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-amber-500/20 hover:-translate-y-0.5 transition-all duration-300">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
@@ -266,7 +266,7 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Metric 4 */}
-                <div className="relative overflow-hidden card-base p-6 bg-gradient-to-br from-white to-indigo-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-indigo-500/20 hover:-translate-y-0.5 transition-all duration-300">
+                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-indigo-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-indigo-500/20 hover:-translate-y-0.5 transition-all duration-300">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
@@ -304,7 +304,7 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Custom Responsive SVG Chart Canvas */}
-                <div className="relative pt-2 pb-1 bg-gradient-to-b from-slate-50/50 to-white rounded-xl border border-slate-100 shadow-inner overflow-x-auto select-none">
+                <div className="relative pt-2 pb-1 bg-linear-to-b from-slate-50/50 to-white rounded-xl border border-slate-100 shadow-inner overflow-x-auto select-none">
                   <svg 
                     viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
                     className="min-w-[640px] w-full h-[220px]"
@@ -389,7 +389,7 @@ function AnalyticsDashboard() {
                           fontSize="9" 
                           fontWeight="bold"
                           textAnchor="middle"
-                          className="font-display font-sans"
+                          className="font-display"
                         >
                           {language === "ta" ? p.data.labelTa : p.data.month}
                         </text>

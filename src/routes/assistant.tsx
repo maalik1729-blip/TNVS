@@ -104,7 +104,7 @@ export function Assistant() {
     <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8 overflow-x-hidden">
       {/* Top Breadcrumb */}
       <div>
-        <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all">
+        <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline pt-4 pb-2 transition-all">
           <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
         </Link>
       </div>
@@ -366,7 +366,7 @@ export function Assistant() {
         <div className="space-y-6">
           
           {/* SIDEBAR WIDGET 1: Hero Membership Application Promo */}
-          <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-6 shadow-md space-y-4 relative overflow-hidden border border-slate-800">
+          <div className="bg-linear-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-6 shadow-md space-y-4 relative overflow-hidden border border-slate-800">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-xl" aria-hidden="true" />
             
             <div className="relative space-y-3">
@@ -420,7 +420,7 @@ export function Assistant() {
 
           {/* SIDEBAR WIDGET 3: Emergency Support Card / Contact */}
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-            <h4 className="font-display font-bold text-xs text-slate-800 font-tamil">
+            <h4 className="font-display font-bold text-xs text-slate-800">
               {t("அவசர உதவிக்கு தொடர்பு கொள்ளவும்", "Need Urgent Assistance?")}
             </h4>
             <p className="text-xs text-slate-500 leading-relaxed font-tamil">

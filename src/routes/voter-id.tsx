@@ -739,7 +739,7 @@ function VoterIdPage() {
                   <label className="cursor-pointer inline-flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md text-xs font-medium transition">
                     <Upload className="w-3.5 h-3.5" />
                     Upload Photo (உரிமையாளர் படம்)
-                    <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+                    <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" aria-label="உங்களை அடையாளப்படுத்தும் புகைப்படம் / Upload your identification photo" />
                   </label>
                 </div>
                   <div className="pt-4 flex justify-between">
