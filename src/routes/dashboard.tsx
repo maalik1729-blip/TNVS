@@ -38,23 +38,22 @@ const ACTIVITIES = [
   { d: "02 May 2026", t: "Welfare Claim Submission",   s: "Medical Aid Claim · Under Verification", status: "pending" as const },
   { d: "20 Apr 2026", t: "Profile Address Update",     s: "Shop Location Mylapore",                status: "info"    as const },
 ];
-
 const EVENTS = [
   {
     id: "agm-2026",
-    t: "Annual General Meeting · Chennai",
-    d: "28 June 2026 · Mylapore Office",
-    ta: "ஆண்டு பொதுக்குழு கூட்டம் · சென்னை",
-    status: "upcoming",
-    attendees: 184,
+    t: "Annual General Meeting (AGM) · Chennai",
+    d: "Live Now · (In case you cannot attend offline, connect directly)",
+    ta: "ஆண்டு பொதுக்குழு கூட்டம் · (நேரில் வர முடியாதவர்கள் நேரலையில் இணையலாம்)",
+    status: "live",
+    attendees: 428,
   },
   {
     id: "gst-webinar",
-    t: "GST Compliance & Trader Advisory Webinar",
-    d: "Live Now · Virtual Broadcast Room",
-    ta: "ஜிஎஸ்டி மற்றும் வணிகர் ஆலோசனை நேரலை",
-    status: "live",
-    attendees: 428,
+    t: "GST Compliance & Trader Advisory Seminar",
+    d: "15 June 2026 · Mylapore Office Hub",
+    ta: "ஜிஎஸ்டி மற்றும் வணிகர் ஆலோசனை கருத்தரங்கம்",
+    status: "upcoming",
+    attendees: 184,
   },
   {
     id: "scholarship-2026",
@@ -65,7 +64,6 @@ const EVENTS = [
     attendees: 0,
   },
 ];
-
 function Dashboard() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
@@ -131,8 +129,8 @@ function Dashboard() {
   });
 
   const [attendeeCounts, setAttendeeCounts] = useState<Record<string, number>>({
-    "agm-2026": 184,
-    "gst-webinar": 428,
+    "agm-2026": 428,
+    "gst-webinar": 184,
     "scholarship-2026": 0,
   });
 
@@ -711,8 +709,8 @@ function Dashboard() {
                       </div>
 
                       {/* Attendee Counters & RSVP Panel for upcoming events */}
-                      {isUpcoming && rsvpStates[e.id] !== "not_attending" && (
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200/60 mt-0.5 font-sans">
+                      {isUpcoming && (
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200/60 mt-0.5">
                           <div className="text-[10px] text-slate-400 font-tamil">
                             {count > 0 ? (
                               <span>✓ <strong className="text-slate-700 font-bold">{count}</strong> {t("வணிகர்கள் பங்கேற்கிறார்கள்", "traders attending")}</span>
@@ -736,69 +734,18 @@ function Dashboard() {
                             <button
                               type="button"
                               onClick={() => {
-                                setRsvpStates(prev => ({ ...prev, [e.id]: "not_attending" }));
+                                setRsvpStates(prev => ({ ...prev, [e.id]: "none" }));
                                 setAttendeeCounts(prev => {
                                   const current = rsvpStates[e.id];
                                   const base = prev[e.id];
                                   return { ...prev, [e.id]: current === "attending" ? base - 1 : base };
                                 });
-                                toast.success(
-                                  language === "ta" 
-                                    ? "ஆன்லைன் நேரலை இணைப்பு தயார்! 📺" 
-                                    : "Virtual livecast connection ready! 📺"
-                                );
+                                toast.info(t("பதில் ரத்து செய்யப்பட்டது.", "RSVP canceled."));
                               }}
                               className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-400 hover:text-slate-600 px-2 py-1 rounded text-[10px] transition cursor-pointer"
                             >
                               {t("வரவில்லை", "Decline")}
                             </button>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Decline Online Livecast Gated Panel */}
-                      {isUpcoming && rsvpStates[e.id] === "not_attending" && (
-                        <div className="flex flex-col gap-3 pt-2.5 border-t border-slate-200/60 mt-1 animate-fade-in text-left font-sans">
-                          <div className="p-3 bg-red-50/40 border border-red-100 rounded-xl text-xxs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div className="space-y-0.5 max-w-sm">
-                              <p className="font-bold text-red-800 flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping shrink-0" />
-                                {t("ஆன்லைன் நேரலை இணைப்பு தயார்!", "Virtual Livecast Connected!")}
-                              </p>
-                              <p className="text-slate-500 font-tamil leading-relaxed">
-                                {t(
-                                  "சென்னைக்கு நேரடிப் பயணம் செய்ய முடியவில்லையா? கவலை வேண்டாம், ஆன்லைனில் நேரலையாக இணைந்திடுங்கள்!",
-                                  "Unable to travel to Chennai offline? No worries, directly stream the meeting online live here!"
-                                )}
-                              </p>
-                            </div>
-                            
-                            <div className="flex gap-2.5 items-center shrink-0">
-                              {/* Open live stream */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setLiveStreamTitle(language === "ta" ? `${e.ta} (நேரலை)` : `${e.t} (Live Stream)`);
-                                  setIsLiveStreamOpen(true);
-                                }}
-                                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white px-3.5 py-2 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 shadow-md shadow-red-200 transition active:scale-95 cursor-pointer font-sans"
-                              >
-                                <Play className="w-3 h-3 fill-white stroke-none" />
-                                <span>{t("நேரலை காண்", "Watch Online")}</span>
-                              </button>
-
-                              {/* Reset option */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setRsvpStates(prev => ({ ...prev, [e.id]: "none" }));
-                                  toast.info(t("அமைப்புகள் மாற்றப்பட்டன.", "RSVP reset."));
-                                }}
-                                className="text-slate-400 hover:text-slate-600 text-[9px] font-bold underline transition cursor-pointer"
-                              >
-                                {t("மாற்று", "Change RSVP")}
-                              </button>
-                            </div>
                           </div>
                         </div>
                       )}
