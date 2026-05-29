@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Section, SectionLabel } from "@/components/Section";
 import templeLogo from "@/assets/temple-logo.png";
 import {
@@ -121,6 +123,17 @@ const HOW_IT_WORKS = [
 
 function Home() {
   const { language, t } = useLanguage();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlayPause = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+  };
 
   return (
     <div className="pb-16 sm:pb-0">
@@ -301,24 +314,40 @@ function Home() {
           </ScrollReveal>
 
           <ScrollReveal direction="up" delay={0.1}>
-            <div className="relative rounded-2xl overflow-hidden shadow-xl border border-slate-200/60 bg-slate-900">
+            <div className="relative rounded-2xl overflow-hidden shadow-xl border border-slate-200/60 bg-slate-900 group">
               <video
+                ref={videoRef}
                 src="/welcome_video.mp4"
                 controls
                 preload="none"
                 poster="/favicon.png"
-                className="w-full block aspect-video object-cover"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                className="w-full block aspect-video object-cover cursor-pointer"
+                onClick={handlePlayPause}
                 aria-label={t(
                   "தமிழ்நாடு வணிகர்களின் சங்கமம் வரவேற்பு காணொளி",
                   "Tamil Nadu Vanigargalin Sangamam welcome video"
                 )}
               />
-              {/* Play overlay — browser hides this once controls are clicked */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-lg">
-                  <Play className="w-7 h-7 text-white fill-white" aria-hidden="true" />
-                </div>
-              </div>
+              {/* Play/Pause overlay */}
+              <AnimatePresence>
+                {!isPlaying && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={handlePlayPause}
+                    className="absolute inset-0 flex items-center justify-center bg-black/35 hover:bg-black/45 transition-colors cursor-pointer z-10 w-full h-full border-none focus:outline-none"
+                    aria-label={t("காணொளியை இயக்கு", "Play Video")}
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-lg transition-transform duration-300 hover:scale-110">
+                      <Play className="w-7 h-7 text-white fill-white ml-0.5" aria-hidden="true" />
+                    </div>
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
           </ScrollReveal>
         </div>
