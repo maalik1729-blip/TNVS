@@ -176,6 +176,124 @@ function Dashboard() {
   const [calcRate, setCalcRate] = useState<number>(18);
   const [gstQueryText, setGstQueryText] = useState("");
 
+  // Welfare Scheme Portal states
+  const [welfarePortalTab, setWelfarePortalTab] = useState<"apply" | "track">("apply");
+  const [welfareSchemeType, setWelfareSchemeType] = useState<"health" | "loan" | null>(null);
+  const [welfareFormStep, setWelfareFormStep] = useState(1); // 1: Select/Fill, 2: Upload, 3: Success
+  const [welfareFormInputs, setWelfareFormInputs] = useState({
+    shopName: "Senthil Traders",
+    proprietorName: "Senthil Kumar N",
+    phone: "+91 944 20 •• 44",
+    aadhaar: "",
+    nomineeName: "",
+    nomineeRelation: "Wife",
+    amount: "100000",
+    tenure: "12",
+    reason: ""
+  });
+  const [welfareUploads, setWelfareUploads] = useState<Array<{ name: string; size: string; progress: number; status: "uploading" | "done" }>>([]);
+  const [isWelfareUploading, setIsWelfareUploading] = useState(false);
+  const [welfareClaims, setWelfareClaims] = useState<Array<{
+    id: string;
+    type: "health" | "loan";
+    title: string;
+    description: string;
+    date: string;
+    status: "pending" | "approved" | "disbursed" | "rejected";
+    step: number; // 1: Submitted, 2: Verification, 3: Approved, 4: Disbursed
+    docs: string[];
+  }>>([
+    {
+      id: "TNVS-WEL-88301",
+      type: "health",
+      title: "Group Health Cover (₹2 Lakh)",
+      description: "Annual Health Policy Coverage for Family",
+      date: "08 May 2026",
+      status: "approved",
+      step: 3,
+      docs: ["AadharCard.pdf", "ShopLicense.pdf"]
+    },
+    {
+      id: "TNVS-WEL-41102",
+      type: "loan",
+      title: "Interest-Free Retail Loan",
+      description: "Business Working Capital · ₹50,000",
+      date: "02 May 2026",
+      status: "pending",
+      step: 2,
+      docs: ["ShopLicense.pdf", "GSTR1_May.pdf"]
+    }
+  ]);
+
+  const startSimulatedWelfareUpload = () => {
+    setIsWelfareUploading(true);
+    const files = welfareSchemeType === "health" 
+      ? [
+          { name: "AadharCard.pdf", size: "1.2 MB", progress: 0, status: "uploading" as const },
+          { name: "Family_RationCard.pdf", size: "2.4 MB", progress: 0, status: "uploading" as const }
+        ]
+      : [
+          { name: "ShopLicense.pdf", size: "1.8 MB", progress: 0, status: "uploading" as const },
+          { name: "BankStatement_3M.pdf", size: "4.1 MB", progress: 0, status: "uploading" as const }
+        ];
+
+    setWelfareUploads(files);
+
+    let progress1 = 0;
+    let progress2 = 0;
+
+    const timer = setInterval(() => {
+      progress1 = Math.min(progress1 + Math.floor(Math.random() * 25) + 15, 100);
+      progress2 = Math.min(progress2 + Math.floor(Math.random() * 20) + 12, 100);
+
+      setWelfareUploads(prev => {
+        if (prev.length < 2) return prev;
+        const next = [...prev];
+        next[0] = { ...next[0], progress: progress1, status: progress1 === 100 ? "done" : "uploading" };
+        next[1] = { ...next[1], progress: progress2, status: progress2 === 100 ? "done" : "uploading" };
+        return next;
+      });
+
+      if (progress1 === 100 && progress2 === 100) {
+        clearInterval(timer);
+        setIsWelfareUploading(false);
+        toast.success(
+          language === "ta"
+            ? "ஆவணங்கள் வெற்றிகரமாக பதிவேற்றப்பட்டன! 📄"
+            : "Documents uploaded successfully! 📄"
+        );
+      }
+    }, 150);
+  };
+
+  const handleWelfarePortalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!welfareSchemeType) return;
+
+    const newApp = {
+      id: `TNVS-WEL-${Math.floor(Math.random() * 90000) + 10000}`,
+      type: welfareSchemeType,
+      title: welfareSchemeType === "health" 
+        ? "Group Health Cover (₹2 Lakh)" 
+        : `Interest-Free Loan (₹${Number(welfareFormInputs.amount).toLocaleString()})`,
+      description: welfareSchemeType === "health" 
+        ? `Family Policy Enrollment` 
+        : `Working Capital · ${welfareFormInputs.tenure} Months`,
+      date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+      status: "pending" as const,
+      step: 1, // Submitted
+      docs: welfareUploads.map(f => f.name)
+    };
+
+    setWelfareClaims(prev => [newApp, ...prev]);
+    setWelfareFormStep(3); // Success Step
+    toast.success(
+      language === "ta"
+        ? "விண்ணப்பம் சமர்ப்பிக்கப்பட்டது! டிராக்கிங் ஐடி: " + newApp.id
+        : "Application submitted successfully! Tracking ID: " + newApp.id
+    );
+  };
+
   const cgstAmount = useMemo(() => {
     const amt = Number(calcAmount) || 0;
     return ((amt * (calcRate / 2)) / 100).toFixed(2);
@@ -649,6 +767,501 @@ function Dashboard() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Welfare Scheme Application & Tracking Portal */}
+            <div className="card-base p-5 md:p-6 space-y-5 text-left border-l-4 border-l-emerald-600">
+              {/* Card Header */}
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <HeartPulse className="w-5 h-5 text-emerald-600 animate-pulse" />
+                  <h3 className="font-display font-bold text-sm text-slate-800">
+                    {t("நலத்திட்டங்கள் & நிதியுதவி மையம்", "Member Welfare & Credit Portal")}
+                  </h3>
+                </div>
+                <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                  ONLINE PORTAL
+                </span>
+              </div>
+
+              {/* Portal Tabs Selector */}
+              <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setWelfarePortalTab("apply");
+                    // Reset step when switching back to apply
+                    if (welfareFormStep === 3) setWelfareFormStep(1);
+                  }}
+                  className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                    welfarePortalTab === "apply" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  {t("விண்ணப்பிக்கும் தளம்", "Apply for Welfare")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setWelfarePortalTab("track")}
+                  className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                    welfarePortalTab === "track" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  {t("விண்ணப்ப டிராக்கிங்", "Track Applications")}
+                  {welfareClaims.filter(c => c.status === "pending").length > 0 && (
+                    <span className="ml-1.5 px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[8px] font-bold">
+                      {welfareClaims.filter(c => c.status === "pending").length}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* TAB 1: APPLY FOR SCHEMES */}
+              {welfarePortalTab === "apply" && (
+                <div className="space-y-4 pt-1 animate-fade-in">
+                  
+                  {/* Step 1: Select Scheme & Input Details */}
+                  {welfareFormStep === 1 && (
+                    <div className="space-y-4">
+                      {/* Scheme Cards Selection */}
+                      {!welfareSchemeType ? (
+                        <div className="space-y-3">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">Select a Welfare Scheme</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {/* Health cover card option */}
+                            <div 
+                              onClick={() => {
+                                setWelfareSchemeType("health");
+                                setWelfareFormInputs(prev => ({ ...prev, aadhaar: "", nomineeName: "" }));
+                              }}
+                              className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
+                            >
+                              <div>
+                                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                  <HeartPulse className="w-5 h-5" />
+                                </div>
+                                <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">₹2 Lakh Group Insurance</h4>
+                                <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
+                                  Family health cover including cashless hospitalizations.
+                                </p>
+                              </div>
+                              <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider mt-3 font-sans group-hover:translate-x-1 transition flex items-center gap-0.5">
+                                Select Scheme →
+                              </span>
+                            </div>
+
+                            {/* Loan card option */}
+                            <div 
+                              onClick={() => {
+                                setWelfareSchemeType("loan");
+                                setWelfareFormInputs(prev => ({ ...prev, amount: "100000", reason: "" }));
+                              }}
+                              className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-blue-50/20 hover:border-blue-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
+                            >
+                              <div>
+                                <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                  <Coins className="w-5 h-5" />
+                                </div>
+                                <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">0% Interest Credit Support</h4>
+                                <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
+                                  Working capital loans up to ₹2 Lakhs with easy tenures.
+                                </p>
+                              </div>
+                              <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider mt-3 font-sans group-hover:translate-x-1 transition flex items-center gap-0.5">
+                                Select Scheme →
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        /* Scheme Form Details */
+                        <div className="space-y-4">
+                          {/* Back to scheme select button */}
+                          <button
+                            type="button"
+                            onClick={() => setWelfareSchemeType(null)}
+                            className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-slate-800 transition cursor-pointer"
+                          >
+                            ← Change Scheme Selection
+                          </button>
+
+                          <div className="bg-slate-50 border border-slate-150 rounded-xl p-3.5 flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${welfareSchemeType === "health" ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600"}`}>
+                              {welfareSchemeType === "health" ? <HeartPulse className="w-4 h-4" /> : <Coins className="w-4 h-4" />}
+                            </div>
+                            <div className="space-y-0.5">
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block font-sans">Active Application</span>
+                              <h4 className="text-xs font-extrabold text-slate-800 font-tamil leading-none">
+                                {welfareSchemeType === "health" ? t("சுகாதார காப்பீடு (₹2 லட்சம்)", "Group Health Cover (₹2 Lakh)") : t("வட்டியில்லா நிதியுதவிக் கடன்", "Interest-Free Credit Support")}
+                              </h4>
+                            </div>
+                          </div>
+
+                          {/* Dynamic Inputs Form */}
+                          <div className="space-y-3 font-sans">
+                            <div className="grid grid-cols-2 gap-2 text-xxs font-mono">
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Trader Name</label>
+                                <input
+                                  type="text"
+                                  disabled
+                                  value={welfareFormInputs.proprietorName}
+                                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-500 cursor-not-allowed focus:outline-none"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Shop Name</label>
+                                <input
+                                  type="text"
+                                  disabled
+                                  value={welfareFormInputs.shopName}
+                                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-500 cursor-not-allowed focus:outline-none"
+                                />
+                              </div>
+                            </div>
+
+                            {welfareSchemeType === "health" ? (
+                              /* HEALTH COVER SPECIAL INPUTS */
+                              <div className="space-y-3">
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Aadhaar Card Number *</label>
+                                  <input
+                                    type="text"
+                                    maxLength={12}
+                                    placeholder="Enter 12-digit Aadhaar Number"
+                                    value={welfareFormInputs.aadhaar}
+                                    onChange={e => setWelfareFormInputs({ ...welfareFormInputs, aadhaar: e.target.value.replace(/\D/g, '') })}
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600/30"
+                                  />
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nominee Name *</label>
+                                    <input
+                                      type="text"
+                                      placeholder="Nominee Full Name"
+                                      value={welfareFormInputs.nomineeName}
+                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, nomineeName: e.target.value })}
+                                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nominee Relationship *</label>
+                                    <select
+                                      value={welfareFormInputs.nomineeRelation}
+                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, nomineeRelation: e.target.value })}
+                                      className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 cursor-pointer"
+                                    >
+                                      <option value="Wife">Wife</option>
+                                      <option value="Husband">Husband</option>
+                                      <option value="Son">Son</option>
+                                      <option value="Daughter">Daughter</option>
+                                      <option value="Mother">Mother</option>
+                                      <option value="Father">Father</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              /* LOAN SUPPORT SPECIAL INPUTS */
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-2 font-sans">
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-sans">Required Amount *</label>
+                                    <select
+                                      value={welfareFormInputs.amount}
+                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, amount: e.target.value })}
+                                      className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-600 cursor-pointer font-bold font-mono"
+                                    >
+                                      <option value="50000">₹50,000</option>
+                                      <option value="100000">₹1,00,000</option>
+                                      <option value="150000">₹1,50,000</option>
+                                      <option value="200000">₹2,00,000</option>
+                                    </select>
+                                  </div>
+                                  <div className="space-y-1 font-sans">
+                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-sans">Repayment Tenure *</label>
+                                    <select
+                                      value={welfareFormInputs.tenure}
+                                      onChange={e => setWelfareFormInputs({ ...welfareFormInputs, tenure: e.target.value })}
+                                      className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-600 cursor-pointer font-bold font-mono"
+                                    >
+                                      <option value="12">12 Months (0% Vatti)</option>
+                                      <option value="18">18 Months (0% Vatti)</option>
+                                      <option value="24">24 Months (0% Vatti)</option>
+                                    </select>
+                                  </div>
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Purpose of Funds *</label>
+                                  <textarea
+                                    rows={2}
+                                    placeholder="Briefly explain how you plan to use this capital (e.g. purchasing stock, shop expansion)..."
+                                    value={welfareFormInputs.reason}
+                                    onChange={e => setWelfareFormInputs({ ...welfareFormInputs, reason: e.target.value })}
+                                    className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-600"
+                                  />
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Submit Button to Step 2 */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                // Validation
+                                if (welfareSchemeType === "health") {
+                                  if (!welfareFormInputs.aadhaar || welfareFormInputs.aadhaar.length !== 12) {
+                                    toast.error(t("சரியான 12-இலக்க ஆதார் எண்ணை உள்ளிடவும்.", "Please enter a valid 12-digit Aadhaar number."));
+                                    return;
+                                  }
+                                  if (!welfareFormInputs.nomineeName.trim()) {
+                                    toast.error(t("வாரிசுதாரர் பெயரை உள்ளிடவும்.", "Please enter Nominee Name."));
+                                    return;
+                                  }
+                                } else {
+                                  if (!welfareFormInputs.reason.trim()) {
+                                    toast.error(t("கடன் உபயோகக் காரணத்தை உள்ளிடவும்.", "Please specify the purpose of funds."));
+                                    return;
+                                  }
+                                }
+                                setWelfareFormStep(2);
+                                // Trigger Simulated file upload immediately for a gorgeous dynamic feel
+                                setTimeout(() => startSimulatedWelfareUpload(), 100);
+                              }}
+                              className={`w-full text-white py-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-md min-h-[44px] ${welfareSchemeType === "health" ? "bg-emerald-600 hover:bg-emerald-500" : "bg-blue-600 hover:bg-blue-500"}`}
+                            >
+                              <span>Next: Upload Documents</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Step 2: Document Upload Simulation */}
+                  {welfareFormStep === 2 && (
+                    <div className="space-y-4 pt-1 animate-fade-in font-sans">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">Step 2: Document Verification</span>
+                      
+                      {/* Upload Box Dropzone Area */}
+                      <div className="p-5 border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-xl text-center space-y-2 relative overflow-hidden">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+                          <FileText className="w-5 h-5 animate-pulse" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs font-bold text-slate-700">Verification Engine Initialized</p>
+                          <p className="text-[10px] text-slate-400">Uploading required documents for automatic OCR parsing</p>
+                        </div>
+                      </div>
+
+                      {/* File Upload Progress List */}
+                      <div className="space-y-2">
+                        {welfareUploads.map((file, idx) => (
+                          <div key={file.name} className="bg-slate-50 border border-slate-150 rounded-xl p-3 flex flex-col gap-2 transition-all">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <FileText className="w-4 h-4 text-emerald-600" />
+                                <div className="text-xs text-left">
+                                  <p className="font-bold text-slate-800 truncate max-w-[180px]">{file.name}</p>
+                                  <p className="text-[9px] text-slate-400">{file.size}</p>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-mono font-bold text-emerald-700">
+                                {file.progress}%
+                              </span>
+                            </div>
+                            
+                            {/* Animated Progress Bar */}
+                            <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                              <div 
+                                className="bg-emerald-600 h-full transition-all duration-150" 
+                                style={{ width: `${file.progress}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Submit form button */}
+                      <form onSubmit={handleWelfarePortalSubmit}>
+                        <button
+                          type="submit"
+                          disabled={isWelfareUploading}
+                          className={`w-full py-3 rounded-lg text-xs font-bold text-white transition flex items-center justify-center gap-1.5 cursor-pointer shadow-md min-h-[44px] ${isWelfareUploading ? "bg-slate-300 cursor-not-allowed text-slate-500 shadow-none" : "bg-emerald-600 hover:bg-emerald-500"}`}
+                        >
+                          {isWelfareUploading ? (
+                            <>
+                              <span className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin shrink-0" />
+                              <span>Uploading Documents ({Math.min(...welfareUploads.map(f => f.progress)) || 0}%)</span>
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="w-4 h-4 shrink-0" />
+                              <span>Submit Application to Board</span>
+                            </>
+                          )}
+                        </button>
+                      </form>
+                    </div>
+                  )}
+
+                  {/* Step 3: Success Screen */}
+                  {welfareFormStep === 3 && (
+                    <div className="text-center py-6 space-y-4 animate-fade-in font-sans">
+                      <div className="w-14 h-14 bg-emerald-50 border border-emerald-200 rounded-full flex items-center justify-center mx-auto text-emerald-600 shadow-xs animate-bounce">
+                        <CheckCircle2 className="w-8 h-8" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-display font-bold text-slate-800 text-sm">Application Filed Successfully!</h4>
+                        <p className="text-[10px] text-slate-400 font-tamil">
+                          விண்ணப்பம் வெற்றிகரமாக பதிவு செய்யப்பட்டுள்ளது.
+                        </p>
+                      </div>
+                      <div className="bg-slate-50 border border-slate-150 rounded-xl p-4 text-left text-xxs font-mono text-slate-700 max-w-[280px] mx-auto space-y-1.5">
+                        <div><strong className="text-slate-400 uppercase tracking-widest font-sans text-[8px] block">Application ID</strong> <span className="font-black text-slate-800 text-xs">{welfareClaims[0]?.id}</span></div>
+                        <div><strong className="text-slate-400 uppercase tracking-widest font-sans text-[8px] block">Welfare Scheme</strong> <span className="text-slate-700">{welfareClaims[0]?.title}</span></div>
+                        <div><strong className="text-slate-400 uppercase tracking-widest font-sans text-[8px] block">Filing Timestamp</strong> <span className="text-slate-700">{new Date().toLocaleString("en-GB")}</span></div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setWelfarePortalTab("track");
+                          setWelfareFormStep(1);
+                          setWelfareSchemeType(null);
+                        }}
+                        className="btn-primary py-2 px-4 text-xs tracking-wider"
+                      >
+                        Track Status Pipeline →
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 2: TRACK APPLICATIONS */}
+              {welfarePortalTab === "track" && (
+                <div className="space-y-4 pt-1 animate-fade-in">
+                  <div className="space-y-3">
+                    {welfareClaims.map((claim) => {
+                      const isPending = claim.status === "pending";
+                      const isApproved = claim.status === "approved";
+                      
+                      return (
+                        <div key={claim.id} className="border border-slate-200 rounded-xl p-3.5 bg-slate-50/20 hover:bg-slate-50 transition text-left flex flex-col gap-3 font-sans">
+                          {/* Top row */}
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="space-y-0.5">
+                              <span className="text-[8px] font-mono text-slate-400 block font-bold">{claim.id} · {claim.date}</span>
+                              <h4 className="text-xs font-bold text-slate-800 leading-tight">{claim.title}</h4>
+                              <p className="text-[10px] text-slate-400 font-tamil mt-0.5">{claim.description}</p>
+                            </div>
+                            <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full border shrink-0 ${
+                              isApproved 
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-150" 
+                                : "bg-amber-50 text-amber-700 border-amber-150 animate-pulse"
+                            }`}>
+                              {claim.status}
+                            </span>
+                          </div>
+
+                          {/* Expansion Status Pipeline Tracker */}
+                          <div className="pt-3 border-t border-slate-100 mt-1">
+                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest block mb-3 font-sans">Application Status Pipeline</span>
+                            
+                            <div className="space-y-3 font-sans pl-1">
+                              {/* STAGE 1: SUBMITTED */}
+                              <div className="flex gap-2.5 items-start">
+                                <div className="flex flex-col items-center shrink-0">
+                                  <div className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[9px] font-bold">✓</div>
+                                  <div className="w-[1.5px] h-4 bg-emerald-600" />
+                                </div>
+                                <div className="text-xxs text-left -mt-0.5">
+                                  <p className="font-bold text-slate-700">Application Submitted</p>
+                                  <p className="text-slate-400">Signed with member EPIC ID. Shop verification queued.</p>
+                                </div>
+                              </div>
+
+                              {/* STAGE 2: DOCUMENT AUDIT */}
+                              <div className="flex gap-2.5 items-start">
+                                <div className="flex flex-col items-center shrink-0">
+                                  <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                    claim.step >= 2 
+                                      ? "bg-emerald-600 text-white" 
+                                      : "bg-slate-200 text-slate-400"
+                                  }`}>
+                                    {claim.step > 2 ? "✓" : "2"}
+                                  </div>
+                                  <div className={`w-[1.5px] h-4 ${claim.step >= 3 ? "bg-emerald-600" : "bg-slate-200"}`} />
+                                </div>
+                                <div className="text-xxs text-left -mt-0.5">
+                                  <p className={`font-bold ${claim.step >= 2 ? "text-slate-700" : "text-slate-400"}`}>
+                                    Auditor Verification
+                                    {claim.step === 2 && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 inline-block animate-ping" />}
+                                  </p>
+                                  <p className="text-slate-400">
+                                    {claim.step >= 2 
+                                      ? "Chennai Regional Auditor verifying uploaded licenses & tax files." 
+                                      : "Pending auditor assignment."}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* STAGE 3: EXECUTIVE BOARD APPROVAL */}
+                              <div className="flex gap-2.5 items-start">
+                                <div className="flex flex-col items-center shrink-0">
+                                  <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                    claim.step >= 3 
+                                      ? "bg-emerald-600 text-white" 
+                                      : "bg-slate-200 text-slate-400"
+                                  }`}>
+                                    {claim.step > 3 ? "✓" : "3"}
+                                  </div>
+                                  <div className={`w-[1.5px] h-4 ${claim.step >= 4 ? "bg-emerald-600" : "bg-slate-200"}`} />
+                                </div>
+                                <div className="text-xxs text-left -mt-0.5">
+                                  <p className={`font-bold ${claim.step >= 3 ? "text-slate-700" : "text-slate-400"}`}>
+                                    TNVS Board Executive Review
+                                    {claim.step === 3 && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 inline-block animate-ping" />}
+                                  </p>
+                                  <p className="text-slate-400">
+                                    {claim.step >= 3 
+                                      ? "Approved by state executive committee. Allocation queued." 
+                                      : "Awaiting board verification approval."}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* STAGE 4: DISBURSEMENT / ENROLLMENT ACTIVE */}
+                              <div className="flex gap-2.5 items-start">
+                                <div className="flex flex-col items-center shrink-0">
+                                  <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                    claim.step >= 4 
+                                      ? "bg-emerald-600 text-white" 
+                                      : "bg-slate-200 text-slate-400"
+                                  }`}>
+                                    4
+                                  </div>
+                                </div>
+                                <div className="text-xxs text-left -mt-0.5">
+                                  <p className={`font-bold ${claim.step >= 4 ? "text-slate-700" : "text-slate-400"}`}>
+                                    {claim.type === "health" ? "Coverage Card Dispatched" : "Credit Disbursed"}
+                                  </p>
+                                  <p className="text-slate-400">
+                                    {claim.step >= 4 
+                                      ? (claim.type === "health" ? "Group Policy Card sent to shop address." : "Credit funds transferred to primary bank account.")
+                                      : (claim.type === "health" ? "Awaiting Policy Card dispatch." : "Awaiting final credit transfer.")}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Digital GST & Finance Hub */}
