@@ -317,14 +317,22 @@ function Home() {
             <div className="relative rounded-2xl overflow-hidden shadow-xl border border-slate-200/60 bg-slate-900 group">
               <video
                 ref={videoRef}
-                src="https://assets.mixkit.co/videos/preview/mixkit-stalls-at-an-outdoor-market-42233-large.mp4"
+                src="/welcome_video.mp4"
                 controls
-                preload="auto"
-                playsInline
-                loop
+                preload="none"
+                poster="/favicon.png"
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
                 className="w-full block aspect-video object-cover"
+                style={{
+                  // Force GPU hardware acceleration for ultra-smooth rendering & fluid scaling
+                  willChange: "transform",
+                  transform: "translate3d(0, 0, 0)",
+                  WebkitBackfaceVisibility: "hidden",
+                  backfaceVisibility: "hidden",
+                  // Optimize sub-pixel details and rendering clarity
+                  imageRendering: "high-quality",
+                }}
                 aria-label={t(
                   "தமிழ்நாடு வணிகர்களின் சங்கமம் வரவேற்பு காணொளி",
                   "Tamil Nadu Vanigargalin Sangamam welcome video"
