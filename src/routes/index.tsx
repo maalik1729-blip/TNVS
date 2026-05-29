@@ -317,10 +317,11 @@ function Home() {
             <div className="relative rounded-2xl overflow-hidden shadow-xl border border-slate-200/60 bg-slate-900 group">
               <video
                 ref={videoRef}
-                src="/welcome_video.mp4"
+                src="https://assets.mixkit.co/videos/preview/mixkit-stalls-at-an-outdoor-market-42233-large.mp4"
                 controls
-                preload="none"
-                poster="/favicon.png"
+                preload="auto"
+                playsInline
+                loop
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
                 className="w-full block aspect-video object-cover"
