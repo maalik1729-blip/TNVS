@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Section } from "@/components/Section";
 import {
   Download, FileText, CreditCard, Bell, ChevronRight, ShieldCheck,
@@ -39,10 +39,31 @@ const ACTIVITIES = [
   { d: "20 Apr 2026", t: "Profile Address Update",     s: "Shop Location Mylapore",                status: "info"    as const },
 ];
 
-const NOTICES = [
-  { t: "Annual General Meeting · Chennai",        d: "28 June 2026 · Mylapore Office" },
-  { t: "Scholarship applications open for Member children", d: "Apply before 15 July 2026" },
-  { t: "GST free helpdesk – direct advisory",     d: "Every Friday, 11AM – 1PM" },
+const EVENTS = [
+  {
+    id: "agm-2026",
+    t: "Annual General Meeting · Chennai",
+    d: "28 June 2026 · Mylapore Office",
+    ta: "ஆண்டு பொதுக்குழு கூட்டம் · சென்னை",
+    status: "upcoming",
+    attendees: 184,
+  },
+  {
+    id: "gst-webinar",
+    t: "GST Compliance & Trader Advisory Webinar",
+    d: "Live Now · Virtual Broadcast Room",
+    ta: "ஜிஎஸ்டி மற்றும் வணிகர் ஆலோசனை நேரலை",
+    status: "live",
+    attendees: 428,
+  },
+  {
+    id: "scholarship-2026",
+    t: "Scholarship Applications Scheme",
+    d: "Closes 15 July 2026 · Online Submissions",
+    ta: "கல்வி உதவித்தொகை விண்ணப்பம்",
+    status: "info",
+    attendees: 0,
+  },
 ];
 
 function Dashboard() {
@@ -101,6 +122,87 @@ function Dashboard() {
       return matchesSearch && matchesFilter;
     });
   }, [searchQuery, statusFilter, mockReferredMembers]);
+
+  // RSVP Toggles States
+  const [rsvpStates, setRsvpStates] = useState<Record<string, "attending" | "not_attending" | "none">>({
+    "agm-2026": "none",
+    "gst-webinar": "none",
+    "scholarship-2026": "none",
+  });
+
+  const [attendeeCounts, setAttendeeCounts] = useState<Record<string, number>>({
+    "agm-2026": 184,
+    "gst-webinar": 428,
+    "scholarship-2026": 0,
+  });
+
+  // Live Stream Simulator overlay state
+  const [isLiveStreamOpen, setIsLiveStreamOpen] = useState(false);
+  const [liveStreamTitle, setLiveStreamTitle] = useState("");
+
+  const [streamComments, setStreamComments] = useState<Array<{ id: number; user: string; text: string; location: string }>>([
+    { id: 1, user: "Siva Shanmugam", text: "வணக்கம் அசோசியேஷன் தலைவர்களே! 🙏", location: "Salem" },
+    { id: 2, user: "Muthu Pandian", text: "Good initiative by TNVS team.", location: "Madurai" },
+    { id: 3, user: "Rajasekar K", text: "சென்னை போக முடியல, இங்கிருந்தே பார்க்குறது சூப்பர்!", location: "Coimbatore" },
+  ]);
+
+  useEffect(() => {
+    if (!isLiveStreamOpen) return;
+
+    const dummyComments = [
+      { user: "Selvaraj M", text: "ஜிஎஸ்டி ஹெல்ப் டெஸ்க் ரொம்ப பயனுள்ளதா இருக்கு.", location: "Trichy" },
+      { user: "Devi Prasad", text: "TNVS வாழ்க! 🌟", location: "Nellai" },
+      { user: "Arun Kumar", text: "Excellent clarity in video and sound.", location: "Erode" },
+      { user: "Ramakrishnan", text: "வணக்கம்! சென்னை அலுவலகம் சிறப்பா செயல்படுது.", location: "Vellore" },
+      { user: "Meera Nair", text: "Proud to be a TNVS member.", location: "Kanyakumari" },
+      { user: "Kathiravan S", text: "அடுத்த மாநாடு எப்போ நடக்கும்?", location: "Tiruppur" },
+    ];
+
+    let count = 4;
+    const interval = setInterval(() => {
+      const randomComment = dummyComments[Math.floor(Math.random() * dummyComments.length)];
+      setStreamComments(prev => [
+        ...prev, 
+        { id: count++, user: randomComment.user, text: randomComment.text, location: randomComment.location }
+      ].slice(-8)); // Keep last 8 comments
+    }, 2800);
+
+    return () => clearInterval(interval);
+  }, [isLiveStreamOpen]);
+  
+  const handleToggleRsvp = (eventId: string, status: "attending" | "not_attending") => {
+    const current = rsvpStates[eventId];
+    
+    // Toggle logic
+    let nextStatus: "attending" | "not_attending" | "none" = status;
+    if (current === status) {
+      nextStatus = "none";
+    }
+
+    setRsvpStates(prev => ({ ...prev, [eventId]: nextStatus }));
+
+    // Adjust attendee counter
+    setAttendeeCounts(prev => {
+      const base = prev[eventId];
+      let diff = 0;
+      if (nextStatus === "attending" && current !== "attending") {
+        diff = 1;
+      } else if (nextStatus !== "attending" && current === "attending") {
+        diff = -1;
+      }
+      return { ...prev, [eventId]: base + diff };
+    });
+
+    if (nextStatus === "attending") {
+      toast.success(
+        language === "ta" 
+          ? "வருகை உறுதி செய்யப்பட்டது! கூட்டத்தில் சந்திப்போம். 🤝" 
+          : "RSVP confirmed! See you at the event. 🤝"
+      );
+    } else if (nextStatus === "none") {
+      toast.info(t("பதில் ரத்து செய்யப்பட்டது.", "RSVP canceled."));
+    }
+  };
 
   const handleLogout = () => {
     clearSession();
@@ -405,29 +507,105 @@ function Dashboard() {
             </div>
 
             {/* Notices */}
-            <div className="card-base p-5 md:p-6">
-              <div className="flex items-center justify-between mb-4">
+            {/* Interactive Meetings & Events Section */}
+            <div className="card-base p-5 md:p-6 space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <h2 className="font-display text-base font-bold text-slate-800 flex items-center gap-1.5">
-                  <Bell className="w-4 h-4 text-gold" aria-hidden="true" />
-                  {t("அறிவிப்புகள்", "Notices & Announcements")}
+                  <Bell className="w-4 h-4 text-gold animate-bounce" aria-hidden="true" />
+                  {t("கூட்டங்கள் & நிகழ்வுகள்", "Meetings & Announcements")}
                 </h2>
-                <Link to="/services" className="text-xs text-primary font-semibold hover:underline">
-                  {t("அனைத்தையும் காண்க", "View all")}
-                </Link>
+                <span className="text-[10px] font-bold bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded uppercase">
+                  {EVENTS.filter(e => e.status === "live").length > 0 ? "LIVE MEETING ACTIVE" : "UPCOMING"}
+                </span>
               </div>
-              <div className="space-y-1">
-                {NOTICES.map((n) => (
-                  <div
-                    key={n.t}
-                    className="flex items-start justify-between gap-4 p-3 rounded-xl hover:bg-slate-50/60 transition cursor-pointer border border-transparent hover:border-slate-100"
-                  >
-                    <div>
-                      <div className="text-sm font-semibold text-slate-700">{n.t}</div>
-                      <div className="text-xs text-slate-400 mt-0.5">{n.d}</div>
+              <div className="space-y-3.5">
+                {EVENTS.map((e) => {
+                  const isLive = e.status === "live";
+                  const isUpcoming = e.status === "upcoming";
+                  const isRsvped = rsvpStates[e.id] === "attending";
+                  const count = attendeeCounts[e.id];
+
+                  return (
+                    <div
+                      key={e.id}
+                      className={`p-4 rounded-xl border transition flex flex-col gap-3 text-left ${
+                        isLive 
+                          ? "bg-slate-900 text-white border-slate-800 shadow-md animate-pulse-subtle" 
+                          : "bg-slate-50/50 hover:bg-slate-50 border-slate-150 hover:border-slate-200"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="space-y-0.5">
+                          <div className={`text-[10px] font-black uppercase tracking-wider ${isLive ? "text-red-400 flex items-center gap-1" : "text-slate-400"}`}>
+                            {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />}
+                            {isLive ? t("நேரடி ஒளிபரப்பு", "LIVE BROADCAST") : t("நிகழ்வு", "ANNOUNCEMENT")}
+                          </div>
+                          <h4 className={`text-sm font-bold leading-snug ${isLive ? "text-white font-extrabold" : "text-slate-800"}`}>
+                            {language === "ta" ? e.ta : e.t}
+                          </h4>
+                          <p className={`text-xs ${isLive ? "text-slate-400 font-semibold" : "text-slate-500 font-tamil"}`}>
+                            {e.d}
+                          </p>
+                        </div>
+
+                        {isLive && (
+                          <button
+                            onClick={() => {
+                              setLiveStreamTitle(language === "ta" ? e.ta : e.t);
+                              setIsLiveStreamOpen(true);
+                            }}
+                            className="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 cursor-pointer transition active:scale-95 animate-pulse"
+                          >
+                            <Play className="w-3 h-3 fill-white" />
+                            <span>{t("நேரடி ஒளிபரப்பு", "Watch Live")}</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Attendee Counters & RSVP Panel for upcoming events */}
+                      {isUpcoming && (
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200/60 mt-0.5">
+                          <div className="text-[10px] text-slate-400 font-tamil">
+                            {count > 0 ? (
+                              <span>✓ <strong className="text-slate-700 font-bold">{count}</strong> {t("வணிகர்கள் பங்கேற்கிறார்கள்", "traders attending")}</span>
+                            ) : (
+                              t("முன்பதிவு செய்ய விருப்பம்", "RSVP open to all members")
+                            )}
+                          </div>
+
+                          <div className="flex gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleRsvp(e.id, "attending")}
+                              className={`px-3 py-1 rounded text-[10px] font-extrabold transition cursor-pointer border ${
+                                isRsvped 
+                                  ? "bg-emerald-600 border-emerald-600 text-white" 
+                                  : "bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
+                              }`}
+                            >
+                              {isRsvped ? t("✓ நான் வருகிறேன்", "✓ Going") : t("நான் வருகிறேன்", "Going")}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setRsvpStates(prev => ({ ...prev, [e.id]: "none" }));
+                                setAttendeeCounts(prev => {
+                                  const current = rsvpStates[e.id];
+                                  const base = prev[e.id];
+                                  return { ...prev, [e.id]: current === "attending" ? base - 1 : base };
+                                });
+                                toast.info(t("பதில் ரத்து செய்யப்பட்டது.", "RSVP canceled."));
+                              }}
+                              className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-400 hover:text-slate-600 px-2 py-1 rounded text-[10px] transition cursor-pointer"
+                            >
+                              {t("வரவில்லை", "Decline")}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" aria-hidden="true" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -995,6 +1173,121 @@ function Dashboard() {
                     </div>
                   </div>
                 )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* HIGH-FIDELITY LIVE STREAM BROADCAST MODAL */}
+        {isLiveStreamOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsLiveStreamOpen(false)}
+              className="fixed inset-0"
+            />
+
+            {/* Live Frame Container */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              className="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl z-10 flex flex-col md:grid md:grid-cols-12 min-h-[460px] md:h-[480px]"
+            >
+              {/* Left 8 Columns - Video Stream Canvas */}
+              <div className="md:col-span-8 bg-black relative flex flex-col justify-between p-4 h-[280px] md:h-full">
+                {/* Overlay header specs */}
+                <div className="flex justify-between items-center z-10 w-full">
+                  <div className="flex items-center gap-2">
+                    <span className="flex items-center gap-1 bg-red-600 text-white font-black text-[9px] px-2 py-0.5 rounded tracking-widest uppercase animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                      LIVE
+                    </span>
+                    <span className="bg-white/10 text-white/90 text-[9px] font-mono px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1 font-semibold">
+                      <Users className="w-3 h-3 text-red-400" />
+                      482 watching
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setIsLiveStreamOpen(false)}
+                    className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer md:hidden"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Simulated Visual Broadcast Waves & Graphics */}
+                <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_center,rgba(30,58,138,0.25)_0%,rgba(0,0,0,1)_80%)] overflow-hidden pointer-events-none">
+                  {/* Wave graphics */}
+                  <div className="absolute w-[240px] h-[240px] rounded-full border border-primary/20 animate-ping opacity-60" style={{ animationDuration: "3s" }} />
+                  <div className="absolute w-[360px] h-[360px] rounded-full border border-sky-500/10 animate-ping opacity-40" style={{ animationDuration: "5s" }} />
+                  
+                  <div className="text-center space-y-3 z-10">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xl font-bold animate-pulse mx-auto">
+                      TNVS
+                    </div>
+                    <div className="text-[10px] text-sky-400 font-bold uppercase tracking-widest">Simulated Video Feed Active</div>
+                    <div className="text-xs text-slate-400 font- तमिल max-w-sm px-4">
+                      {t("ஜிஎஸ்டி மற்றும் வணிகர் ஆலோசனை நேரலை ஒளிபரப்பு சென்னை அலுவலகத்திலிருந்து.", "GST & Trader Advisory live webinar feed broadcasted from Mylapore Office.")}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stream Footer Control Bar */}
+                <div className="z-10 w-full flex items-center justify-between pt-4 border-t border-white/5 bg-gradient-to-t from-black/60 to-transparent p-2 rounded-xl">
+                  <div className="text-[10px] text-white/70 font-semibold font-mono tracking-wide">
+                    1080p Stream • Low Latency Mode
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-[9px] text-green-400 font-black uppercase tracking-wider font-sans">Server Connected</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right 4 Columns - Scrolling Chat Panel */}
+              <div className="md:col-span-4 bg-slate-900 border-t md:border-t-0 md:border-l border-slate-800 flex flex-col justify-between h-[200px] md:h-full">
+                {/* Chat Header */}
+                <div className="px-4 py-3 bg-slate-900/80 border-b border-slate-850 flex justify-between items-center shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-gold" />
+                    <span className="text-xs font-black uppercase text-slate-200 tracking-wider font-sans">Live Chat Feed</span>
+                  </div>
+                  <button
+                    onClick={() => setIsLiveStreamOpen(false)}
+                    className="hidden md:flex w-6 h-6 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white items-center justify-center transition cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Comments Container */}
+                <div className="flex-1 p-4 overflow-y-auto space-y-3 flex flex-col justify-end min-h-0 select-none">
+                  {streamComments.map((comment) => (
+                    <div key={comment.id} className="text-xs space-y-0.5 text-left bg-slate-950/30 p-2 rounded-xl border border-slate-850/40">
+                      <div className="flex items-center justify-between text-[9px] font-bold">
+                        <span className="text-gold font-sans">{comment.user}</span>
+                        <span className="text-slate-500 uppercase tracking-widest">{comment.location}</span>
+                      </div>
+                      <p className="text-slate-300 font-tamil leading-relaxed">{comment.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Input Placeholder */}
+                <div className="p-3.5 bg-slate-950/40 border-t border-slate-850 shrink-0">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      disabled
+                      placeholder={t("கமெண்ட் செய்ய உள்நுழையவும்...", "Signing in to chat...")}
+                      className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-[10px] text-slate-500 focus:outline-none cursor-not-allowed"
+                    />
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
