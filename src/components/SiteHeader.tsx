@@ -165,7 +165,7 @@ export function SiteHeader() {
         </div>
 
         {/* Brand + Nav row */}
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between gap-4 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6 py-3 flex items-center justify-between gap-2 sm:gap-4 w-full">
 
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Tamil Nadu Vanigargalin Sangamam — Home">
@@ -187,7 +187,7 @@ export function SiteHeader() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden xl:flex items-center gap-0.5 lg:gap-1 min-w-0 shrink" aria-label="Main navigation">
+          <nav className="hidden xl:flex items-center gap-0.5 lg:gap-1 min-w-0 flex-1 justify-center" aria-label="Main navigation">
             {NAV.map((n) => {
               const active = loc.pathname === n.to;
               return (
@@ -196,7 +196,7 @@ export function SiteHeader() {
                   to={n.to}
                   aria-current={active ? "page" : undefined}
                   className={[
-                    "relative px-2 lg:px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg whitespace-nowrap group",
+                    "relative px-1.5 sm:px-2 lg:px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg whitespace-nowrap group",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                     active
                       ? "text-primary font-bold"
@@ -228,7 +228,7 @@ export function SiteHeader() {
           </nav>
 
           {/* Desktop Right Controls */}
-          <div className="hidden xl:flex items-center gap-1 lg:gap-2 shrink-0">
+          <div className="hidden xl:flex items-center gap-1 lg:gap-2 shrink-0 ml-2">
 
             <Link
               to="/dashboard"
