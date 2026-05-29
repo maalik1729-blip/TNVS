@@ -124,7 +124,66 @@ function GovFront({ voter }: { voter: Voter }) {
       flexDirection: "column",
       background: "#fff",
       border: "1.5px solid #dce3f0",
+      position: "relative",
     }}>
+
+      {/* ── Watermark Background ── */}
+      <div style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        opacity: 0.03,
+        pointerEvents: "none",
+        zIndex: 0,
+      }}>
+        <img 
+          src={rightLogo} 
+          alt="Watermark" 
+          width={200} 
+          height={200}
+          style={{ width: 200, height: 200, objectFit: "contain" }}
+        />
+      </div>
+
+      {/* ── Official Seal Stamp ── */}
+      <div style={{
+        position: "absolute",
+        bottom: 45,
+        right: 15,
+        width: 50,
+        height: 50,
+        borderRadius: "50%",
+        border: "2px solid #d4b26f",
+        opacity: 0.7,
+        pointerEvents: "none",
+        zIndex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        transform: "rotate(-15deg)",
+      }}>
+        <div style={{
+          width: 44,
+          height: 44,
+          borderRadius: "50%",
+          border: "1px dashed #d4b26f",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+          <span style={{
+            fontSize: 6,
+            fontWeight: 800,
+            color: "#d4b26f",
+            textAlign: "center",
+            lineHeight: 1.1,
+            textTransform: "uppercase",
+          }}>
+            OFFICIAL
+          </span>
+        </div>
+      </div>
 
       {/* ── Header ── */}
       <div style={{
@@ -287,7 +346,27 @@ function GovBack({ voter }: { voter: Voter }) {
       flexDirection: "column",
       background: "#fff",
       border: "1.5px solid #dce3f0",
+      position: "relative",
     }}>
+
+      {/* ── Watermark Background ── */}
+      <div style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        opacity: 0.03,
+        pointerEvents: "none",
+        zIndex: 0,
+      }}>
+        <img 
+          src={rightLogo} 
+          alt="Watermark" 
+          width={200} 
+          height={200}
+          style={{ width: 200, height: 200, objectFit: "contain" }}
+        />
+      </div>
 
       {/* Top accent */}
       <div style={{ height: 3, background: `linear-gradient(90deg, ${GOLD}, ${GOLD_L}, ${GOLD})` }} />
