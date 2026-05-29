@@ -54,11 +54,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Tamil Nadu Vanigargalin Sangamam — Trader Membership Portal" },
       { name: "description", content: "Official portal for Tamil Nadu Vanigargalin Sangamam. Apply for membership, download certificates, access services and trader welfare." },
+      { name: "theme-color", content: "#1e3a8a" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png?v=2", type: "image/png" },
       { rel: "apple-touch-icon", href: "/favicon.png?v=2" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
   shellComponent: RootShell,
@@ -95,6 +97,16 @@ function RootComponent() {
 function RootInner() {
   const { language } = useLanguage();
   const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js")
+          .then((reg) => console.log("Service Worker registered successfully with scope:", reg.scope))
+          .catch((err) => console.error("Service Worker registration failed:", err));
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
