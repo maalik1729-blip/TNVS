@@ -5,7 +5,7 @@ import { Section, SectionLabel } from "@/components/Section";
 import templeLogo from "@/assets/temple-logo.png";
 import {
   Award, ShieldCheck, Users, IdCard, ArrowRight,
-  CheckCircle, Sparkles, Phone, Coins, Play, Search,
+  CheckCircle, CheckCircle2, Sparkles, Phone, Coins, Play, Search,
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
