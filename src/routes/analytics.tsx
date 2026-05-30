@@ -141,8 +141,8 @@ function AnalyticsDashboard() {
           </h1>
           <p className="mt-3 text-xs md:text-sm text-slate-500 max-w-2xl font-tamil leading-relaxed">
             {t(
-              "உறுப்பினர் சேர்க்கை, 34 தனிப்பிரிவுகள், 38 மாவட்டங்கள் மற்றும் நலத்திட்ட விநியோகங்களை பகுப்பாய்வு செய்யும் அதிகாரப்பூர்வ கண்காணிப்பகம்.",
-              "The official dashboard providing live statistical transparency for member registrations, specialized departments, and emergency capital allocation across Tamil Nadu."
+              "உறுப்பினர் சேர்க்கை, 34 தனிப்பிரிவுகள், 38 மாவட்டங்கள் மற்றும் வணிகக் கடன் ஒதுக்கீடுகளை பகுப்பாய்வு செய்யும் அதிகாரப்பூர்வ கண்காணிப்பகம்.",
+              "The official dashboard providing live statistical transparency for member registrations, specialized departments, and business credit capital distribution across Tamil Nadu."
             )}
           </p>
 
@@ -151,7 +151,7 @@ function AnalyticsDashboard() {
             {[
               { id: "overview", ta: "பொது விவரங்கள்", en: "Overview" },
               { id: "regional", ta: "மண்டல வாரியாக", en: "Regional Layout" },
-              { id: "welfare", ta: "நிவாரண நிதி & கடன்", en: "Welfare & Credit" },
+              { id: "welfare", ta: "நிதியுதவி & கடன்கள்", en: "Loans & Credit" },
             ].map((tab) => {
               const active = activeTab === tab.id;
               return (
@@ -633,10 +633,10 @@ function AnalyticsDashboard() {
                 <div className="border-b border-slate-100 pb-3">
                   <h3 className="font-display font-bold text-base text-slate-800 flex items-center gap-2">
                     <PieIcon className="w-4 h-4 text-primary animate-pulse" />
-                    {t("நலத்திட்ட நிதி ஒதுக்கீடு", "Welfare Allocation Intel (Donut Chart)")}
+                    {t("கடன் விநியோகப் பகிர்வு", "Loan Portfolio Distribution (Donut Chart)")}
                   </h3>
                   <p className="text-[11px] text-slate-400 mt-1 font-tamil">
-                    {t("₹8.4 கோடி மொத்த நலத்திட்ட நிதி ஒதுக்கீட்டின் விநியோக விகிதம்.", "Breakdown of ₹8.4 Crore welfare aid distributed to registered traders.")}
+                    {t("₹12.5 கோடி மொத்த வணிகக் கடன் ஒதுக்கீட்டின் விநியோக விகிதம்.", "Breakdown of ₹12.5 Crore credit capital distributed to registered traders.")}
                   </p>
                 </div>
 
@@ -662,8 +662,8 @@ function AnalyticsDashboard() {
                     </svg>
                     {/* Centered label */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-[10px] font-black uppercase text-slate-400 font-sans tracking-wide">TOTAL AID</span>
-                      <span className="text-sm font-black text-slate-800 font-mono">₹8.40 Cr</span>
+                      <span className="text-[10px] font-black uppercase text-slate-400 font-sans tracking-wide">TOTAL LOANS</span>
+                      <span className="text-sm font-black text-slate-800 font-mono">₹12.50 Cr</span>
                     </div>
                   </div>
 

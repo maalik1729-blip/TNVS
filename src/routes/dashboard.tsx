@@ -2203,16 +2203,16 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
             {t("மாநில சங்க பகுப்பாய்வு", "Statewide Association Analytics")}
           </h2>
           <p className="text-xs text-slate-500 font-tamil mt-1 leading-relaxed">
-            {t("அசோசியேஷன் வளர்ச்சி, வட்டார முன்னிலை மற்றும் நிதி ஒதுக்கீடு விவரங்கள்.", "Comprehensive administrative oversight of member growth, district rankings, and welfare segments.")}
+            {t("அசோசியேஷன் வளர்ச்சி, வட்டார முன்னிலை மற்றும் கடனுதவி ஒதுக்கீட்டு விவரங்கள்.", "Comprehensive administrative oversight of member growth, district rankings, and loan portfolio breakdown.")}
           </p>
         </div>
 
         {/* Sub-Header Tab Switcher */}
-        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/50 self-start sm:self-center">
+        <div className="flex bg-slate-105 p-1 rounded-xl border border-slate-200/50 self-start sm:self-center">
           {[
             { id: "overview", ta: "வளர்ச்சி", en: "Overview" },
             { id: "regional", ta: "வட்டாரம்", en: "Regional Layout" },
-            { id: "welfare", ta: "நிதி", en: "Welfare & Credit" },
+            { id: "welfare", ta: "நிதியுதவி", en: "Loans & Credit" },
           ].map((tab) => {
             const active = activeTab === tab.id;
             return (
@@ -2266,17 +2266,17 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                 <div className="flex justify-between items-start">
                   <div>
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
-                      {t("நலத்திட்ட நிதி", "WELFARE DISBURSED")}
+                      {t("வழங்கப்பட்ட மொத்த கடன்கள்", "TOTAL LOANS DISBURSED")}
                     </span>
                     <div className="text-2xl font-extrabold text-slate-800 mt-1.5 tabular-nums">
-                      ₹8.40 Cr
+                      ₹12.50 Cr
                     </div>
                   </div>
-                  <div className="p-1.5 bg-emerald-500/10 text-emerald-600 rounded-lg"><HeartPulse className="w-4 h-4" /></div>
+                  <div className="p-1.5 bg-emerald-500/10 text-emerald-600 rounded-lg"><Coins className="w-4 h-4" /></div>
                 </div>
                 <div className="text-[10px] font-semibold text-emerald-600 mt-2 flex items-center gap-0.5">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>94.8% {t("ஒப்புதல் விகிதம்", "approval rate")}</span>
+                  <span>94.8% {t("ஒப்புதல் விகிதம்", "disbursement rate")}</span>
                 </div>
               </div>
               {/* Card 3 */}
@@ -2284,17 +2284,17 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                 <div className="flex justify-between items-start">
                   <div>
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 font-sans">
-                      {t("வட்டியில்லா வணிகக் கடன்", "0% INTEREST LOANS")}
+                      {t("ஒப்புதல் பெற்ற விண்ணப்பங்கள்", "APPLICATIONS APPROVED")}
                     </span>
                     <div className="text-2xl font-extrabold text-slate-800 mt-1.5 tabular-nums">
-                      ₹12.50 Cr
+                      428+
                     </div>
                   </div>
-                  <div className="p-1.5 bg-amber-500/10 text-amber-600 rounded-lg"><Coins className="w-4 h-4" /></div>
+                  <div className="p-1.5 bg-amber-500/10 text-amber-600 rounded-lg"><CheckCircle2 className="w-4 h-4" /></div>
                 </div>
                 <div className="text-[10px] font-semibold text-primary mt-2 flex items-center gap-0.5">
                   <ArrowUpRight className="w-3.5 h-3.5" />
-                  <span>420+ {t("விண்ணப்பதாரர்கள்", "traders assisted")}</span>
+                  <span>{t("வணிகர்கள் பயனடைந்தனர்", "traders assisted")}</span>
                 </div>
               </div>
               {/* Card 4 */}
@@ -2520,7 +2520,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
               <div className="border-b border-slate-100 pb-3">
                 <h3 className="font-display font-bold text-sm text-slate-800 flex items-center gap-1.5">
                   <PieIcon className="w-4 h-4 text-primary animate-pulse" />
-                  {t("நலத்திட்ட நிதி ஒதுக்கீடு", "Welfare Allocation Donut")}
+                  {t("கடன் விநியோகப் பகிர்வு", "Loan Portfolio Distribution")}
                 </h3>
               </div>
 
@@ -2545,7 +2545,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-[8px] font-black text-slate-400 font-sans tracking-wide">TOTAL</span>
-                    <span className="text-xs font-black text-slate-800 font-mono">₹8.40 Cr</span>
+                    <span className="text-xs font-black text-slate-800 font-mono">₹12.50 Cr</span>
                   </div>
                 </div>
 
