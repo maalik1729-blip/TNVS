@@ -176,7 +176,7 @@ export function SiteHeader() {
               width={40}
               height={40}
             />
-            <div className="leading-tight min-w-0">
+            <div className="leading-tight min-w-0 flex flex-col justify-center">
               <div className="font-display font-bold text-slate-800 text-sm md:text-[15px] truncate">
                 Tamil Nadu Vanigargalin Sangamam
               </div>
@@ -187,7 +187,7 @@ export function SiteHeader() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden xl:flex items-center gap-0.5 lg:gap-1 min-w-0 flex-1 justify-center" aria-label="Main navigation">
+          <nav className="hidden xl:flex items-center gap-0.5 lg:gap-1 min-w-0 flex-1 justify-center h-full" aria-label="Main navigation">
             {NAV.map((n) => {
               const active = loc.pathname === n.to;
               return (
@@ -196,7 +196,7 @@ export function SiteHeader() {
                   to={n.to}
                   aria-current={active ? "page" : undefined}
                   className={[
-                    "relative px-2 sm:px-3 lg:px-4 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center rounded-lg whitespace-nowrap group",
+                    "relative px-2 sm:px-3 lg:px-4 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center justify-center rounded-lg whitespace-nowrap group",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                     active
                       ? "text-primary font-bold"
@@ -228,11 +228,11 @@ export function SiteHeader() {
           </nav>
 
           {/* Desktop Right Controls */}
-          <div className="hidden xl:flex items-center gap-1 lg:gap-2 shrink-0 ml-2">
+          <div className="hidden xl:flex items-center gap-1 lg:gap-2 shrink-0 ml-2 h-full">
 
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
             >
               <User className="w-3.5 h-3.5" aria-hidden="true" />
               {language === "ta" ? "எனது கணக்கு" : "My Account"}
@@ -240,7 +240,7 @@ export function SiteHeader() {
 
             <Link
               to="/membership"
-              className="btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-3 py-2 min-h-[44px]"
+              className="btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-3 py-2 min-h-[44px] inline-flex items-center justify-center"
             >
               {language === "ta" ? "இணைவு" : "Join Now"}
             </Link>
