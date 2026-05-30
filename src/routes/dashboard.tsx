@@ -6,7 +6,7 @@ import {
   LogOut, ArrowLeft, Copy, Award, Users, Smartphone, Play,
   CheckCircle2, UserPlus, Sparkles, Clock, AlertCircle,
   Coins, Store, Rocket, ArrowRight, X,
-  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight, Search, GraduationCap
+  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight, Search
 } from "lucide-react";
 import {
   growthData, wingMetrics, districtStats, welfareDistribution
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/dashboard")({
 const ACTIVITIES = [
   { d: "12 May 2026", t: "Membership Renewal",        s: "Payment ₹500 · UPI Success",           status: "success" as const },
   { d: "08 May 2026", t: "Certificate Download",       s: "EPIC PNG Format",                       status: "success" as const },
-  { d: "02 May 2026", t: "Welfare Claim Submission",   s: "Medical Aid Claim · Under Verification", status: "pending" as const },
+  { d: "02 May 2026", t: "Loan Request Submission",   s: "Retail Trader Loan · Under Verification", status: "pending" as const },
   { d: "20 Apr 2026", t: "Profile Address Update",     s: "Shop Location Mylapore",                status: "info"    as const },
 ];
 const EVENTS = [
@@ -57,10 +57,10 @@ const EVENTS = [
     attendees: 184,
   },
   {
-    id: "scholarship-2026",
-    t: "Scholarship Applications Scheme",
-    d: "Closes 15 July 2026 · Online Submissions",
-    ta: "கல்வி உதவித்தொகை விண்ணப்பம்",
+    id: "loan-2026",
+    t: "0% Interest Retail Loan Application Window",
+    d: "Open until 15 July 2026 · Online Fast-track Submissions",
+    ta: "வட்டியில்லா சில்லறை வணிகக் கடன் திட்டம்",
     status: "info",
     attendees: 0,
   },
@@ -70,7 +70,7 @@ function Dashboard() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [epicId, setEpicId] = useState<string | null>(() => getSession());
-  const [dashboardTab, setDashboardTab] = useState<"overview" | "welfare" | "recruiter" | "tools">("overview");
+  const [dashboardTab, setDashboardTab] = useState<"overview" | "loans" | "recruiter" | "tools">("overview");
 
   // Subsidized Loan Gated States
   const [showLoanCategories, setShowLoanCategories] = useState(true);
@@ -128,13 +128,13 @@ function Dashboard() {
   const [rsvpStates, setRsvpStates] = useState<Record<string, "attending" | "not_attending" | "none">>({
     "agm-live": "none",
     "agm-offline": "none",
-    "scholarship-2026": "none",
+    "loan-2026": "none",
   });
 
   const [attendeeCounts, setAttendeeCounts] = useState<Record<string, number>>({
     "agm-live": 428,
     "agm-offline": 184,
-    "scholarship-2026": 0,
+    "loan-2026": 0,
   });
 
   // Live Stream Simulator overlay state
@@ -177,30 +177,26 @@ function Dashboard() {
   const [calcRate, setCalcRate] = useState<number>(18);
   const [gstQueryText, setGstQueryText] = useState("");
 
-  // Welfare Scheme Portal states
+  // Business Loans & Credit Portal states
   const [welfarePortalTab, setWelfarePortalTab] = useState<"apply" | "track">("apply");
-  const [welfareSchemeType, setWelfareSchemeType] = useState<"higher_edu" | "loan" | "scholarship" | null>(null);
+  const [welfareSchemeType, setWelfareSchemeType] = useState<"business" | "retail" | "young" | "micro" | null>(null);
   const [welfareFormStep, setWelfareFormStep] = useState(1); // 1: Select/Fill, 2: Upload, 3: Success
   const [welfareFormInputs, setWelfareFormInputs] = useState({
     shopName: "Senthil Traders",
     proprietorName: "Senthil Kumar N",
     phone: "+91 944 20 •• 44",
     aadhaar: "",
-    nomineeName: "",
-    nomineeRelation: "Wife",
-    amount: "100000",
-    tenure: "12",
+    amount: "500000",
+    tenure: "24",
+    businessStructure: "Proprietorship",
     reason: "",
-    studentName: "",
-    studentClass: "Class 12",
-    instituteName: "",
-    gpa: ""
+    age: "30"
   });
   const [welfareUploads, setWelfareUploads] = useState<Array<{ name: string; size: string; progress: number; status: "uploading" | "done" }>>([]);
   const [isWelfareUploading, setIsWelfareUploading] = useState(false);
   const [welfareClaims, setWelfareClaims] = useState<Array<{
     id: string;
-    type: "higher_edu" | "loan" | "scholarship";
+    type: "business" | "retail" | "young" | "micro";
     title: string;
     description: string;
     date: string;
@@ -209,42 +205,47 @@ function Dashboard() {
     docs: string[];
   }>>([
     {
-      id: "TNVS-WEL-88301",
-      type: "scholarship",
-      title: "Educational Merit Scholarship",
-      description: "Class 12 Merit Reward · ₹15,000",
+      id: "TNVS-LN-88301",
+      type: "business",
+      title: "Interest-Free Business Loan (₹5,00,000)",
+      description: "Proprietorship · 24 Months repayment",
       date: "08 May 2026",
       status: "approved",
       step: 3,
-      docs: ["AadharCard.pdf", "Marksheet_Class12.pdf"]
+      docs: ["ShopLicense.pdf", "GSTR_Registration.pdf", "BankStatement_6M.pdf"]
     },
     {
-      id: "TNVS-WEL-41102",
-      type: "loan",
-      title: "Interest-Free Retail Loan",
-      description: "Business Working Capital · ₹50,000",
+      id: "TNVS-LN-41102",
+      type: "retail",
+      title: "Retail Trader Loan (₹50,000)",
+      description: "Proprietorship · 12 Months repayment",
       date: "02 May 2026",
       status: "pending",
       step: 2,
-      docs: ["ShopLicense.pdf", "GSTR1_May.pdf"]
+      docs: ["ShopLicense.pdf", "AadharCard.pdf", "BankStatement_3M.pdf"]
     }
   ]);
 
   const startSimulatedWelfareUpload = () => {
     setIsWelfareUploading(true);
-    const files = welfareSchemeType === "higher_edu" 
+    const files = welfareSchemeType === "business" 
       ? [
-          { name: "Student_AadharCard.pdf", size: "1.2 MB", progress: 0, status: "uploading" as const },
-          { name: "College_Admission_Letter.pdf", size: "2.4 MB", progress: 0, status: "uploading" as const }
+          { name: "GSTR_Registration.pdf", size: "2.1 MB", progress: 0, status: "uploading" as const },
+          { name: "BankStatement_6M.pdf", size: "5.4 MB", progress: 0, status: "uploading" as const }
         ]
-      : welfareSchemeType === "scholarship"
+      : welfareSchemeType === "retail"
       ? [
-          { name: "Student_Marksheet.pdf", size: "1.5 MB", progress: 0, status: "uploading" as const },
-          { name: "School_ID_Card.pdf", size: "0.8 MB", progress: 0, status: "uploading" as const }
-        ]
-      : [
           { name: "ShopLicense.pdf", size: "1.8 MB", progress: 0, status: "uploading" as const },
           { name: "BankStatement_3M.pdf", size: "4.1 MB", progress: 0, status: "uploading" as const }
+        ]
+      : welfareSchemeType === "young"
+      ? [
+          { name: "AadharCard.pdf", size: "1.2 MB", progress: 0, status: "uploading" as const },
+          { name: "BusinessProjectReport.pdf", size: "3.5 MB", progress: 0, status: "uploading" as const }
+        ]
+      : [
+          { name: "AadharCard.pdf", size: "1.2 MB", progress: 0, status: "uploading" as const },
+          { name: "ShopPhoto.jpg", size: "2.8 MB", progress: 0, status: "uploading" as const }
         ];
 
     setWelfareUploads(files);
@@ -281,18 +282,16 @@ function Dashboard() {
     if (!welfareSchemeType) return;
 
     const newApp = {
-      id: `TNVS-WEL-${Math.floor(Math.random() * 90000) + 10000}`,
+      id: `TNVS-LN-${Math.floor(Math.random() * 90000) + 10000}`,
       type: welfareSchemeType,
-      title: welfareSchemeType === "higher_edu" 
-        ? "Higher Education Grant (₹25,000)" 
-        : welfareSchemeType === "scholarship"
-        ? "Educational Scholarship"
-        : `Interest-Free Loan (₹${Number(welfareFormInputs.amount).toLocaleString()})`,
-      description: welfareSchemeType === "higher_edu" 
-        ? `${welfareFormInputs.studentName} · ${welfareFormInputs.studentClass}` 
-        : welfareSchemeType === "scholarship"
-        ? `${welfareFormInputs.studentName} · ${welfareFormInputs.studentClass}`
-        : `Working Capital · ${welfareFormInputs.tenure} Months`,
+      title: welfareSchemeType === "business"
+        ? t("வட்டியில்லா வணிகக் கடன்", "Interest-Free Business Loan") + ` (₹${Number(welfareFormInputs.amount).toLocaleString()})`
+        : welfareSchemeType === "retail"
+        ? t("சில்லறை வணிகர்கள் கடன்", "Retail Trader Loan") + ` (₹${Number(welfareFormInputs.amount).toLocaleString()})`
+        : welfareSchemeType === "young"
+        ? t("இளைய தொழில்முனைவோர் கடன்", "Young Entrepreneur Loan") + ` (₹${Number(welfareFormInputs.amount).toLocaleString()})`
+        : t("நுண்ணிய & சாலையோர வியாபாரிகள் கடன்", "Micro & Street Vendor Loan") + ` (₹${Number(welfareFormInputs.amount).toLocaleString()})`,
+      description: `${welfareFormInputs.businessStructure} · ${welfareFormInputs.tenure} Months repayment`,
       date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
       status: "pending" as const,
       step: 1, // Submitted
@@ -462,7 +461,7 @@ function Dashboard() {
           <div className="flex bg-slate-105 p-1.5 rounded-2xl border border-slate-200/50 w-full sm:w-auto overflow-x-auto scrollbar-none">
             {[
               { id: "overview", label: "Overview", labelTa: "முன்னோட்டம்", icon: Store },
-              { id: "welfare", label: "Scholarship & Loans", labelTa: "கல்வி உதவித்தொகை & கடன்கள்", icon: GraduationCap },
+              { id: "loans", label: "Business Loans", labelTa: "வணிகக் கடன்கள்", icon: Coins },
               { id: "recruiter", label: "Recruiter Hub", labelTa: "ஒருங்கிணைப்பாளர்", icon: Users },
               { id: "tools", label: "Tools & Apps", labelTa: "டிஜிட்டல் சேவைகள்", icon: Smartphone }
             ].map((tab) => {
@@ -616,8 +615,6 @@ function Dashboard() {
                         </tbody>
                       </table>
                     </div>
-
-                    {/* Mobile Card List */}
                     <div className="md:hidden divide-y divide-slate-100">
                       {ACTIVITIES.map((a) => (
                         <ActivityCard
@@ -659,20 +656,20 @@ function Dashboard() {
                                     setLiveStreamTitle(language === "ta" ? e.ta : e.t);
                                     setIsLiveStreamOpen(true);
                                   }
-                                : e.id === "scholarship-2026"
+                                : e.id === "loan-2026"
                                 ? () => {
                                     setWelfarePortalTab("apply");
-                                    setWelfareSchemeType("scholarship");
+                                    setWelfareSchemeType("retail");
                                     setWelfareFormStep(1);
-                                    setDashboardTab("welfare");
+                                    setDashboardTab("loans");
                                     setTimeout(() => {
                                       const element = document.getElementById("welfare-portal-section");
                                       if (element) element.scrollIntoView({ behavior: "smooth" });
                                     }, 100);
                                     toast.success(
                                       language === "ta"
-                                        ? "உதவித்தொகை விண்ணப்பப் படிவம் திறக்கப்பட்டது! 🎓"
-                                        : "Educational Scholarship Form opened in Welfare tab! 🎓"
+                                        ? "வட்டியில்லா சில்லறை வணிகக் கடன் விண்ணப்பம் திறக்கப்பட்டது! 🪙"
+                                        : "Interest-Free Retail Loan Form opened in Loans tab! 🪙"
                                     );
                                   }
                                 : undefined
@@ -680,7 +677,7 @@ function Dashboard() {
                             className={`rounded-2xl border transition-all duration-300 flex flex-col gap-3 text-left group ${
                               isLive 
                                 ? "p-5 bg-slate-900 text-white border-red-950/80 shadow-xl shadow-slate-950/30 animate-pulse-subtle cursor-pointer hover:bg-slate-950 hover:border-red-500/40 hover:shadow-2xl active:scale-[0.99]" 
-                                : e.id === "scholarship-2026"
+                                : e.id === "loan-2026"
                                 ? "p-4 bg-slate-50/50 hover:bg-amber-500/5 border-slate-150 hover:border-amber-500/30 cursor-pointer active:scale-[0.99]"
                                 : "p-4 bg-slate-50/50 hover:bg-slate-50 border-slate-150 hover:border-slate-200"
                             }`}
@@ -689,7 +686,7 @@ function Dashboard() {
                               <div className="space-y-1">
                                 <div className={`text-[9px] font-black uppercase tracking-widest ${isLive ? "text-red-400 flex items-center gap-1.5" : "text-slate-450"}`}>
                                   {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />}
-                                  {isLive ? t("நேரடி ஒளிபரப்பு", "LIVE BROADCAST") : e.id === "scholarship-2026" ? t("உதவித்தொகை", "WELFARE SCHEME") : t("நிகழ்வு", "ANNOUNCEMENT")}
+                                  {isLive ? t("நேரடி ஒளிபரப்பு", "LIVE BROADCAST") : e.id === "loan-2026" ? t("கடன் திட்டம்", "LOAN SCHEME") : t("நிகழ்வு", "ANNOUNCEMENT")}
                                 </div>
                                 <h4 className={`leading-snug font-bold text-xs ${isLive ? "text-base font-black text-white font-serif tracking-tight" : "text-slate-805 font-sans"}`}>
                                   {language === "ta" ? e.ta : e.t}
@@ -715,7 +712,7 @@ function Dashboard() {
                                 </div>
                               )}
 
-                              {e.id === "scholarship-2026" && (
+                              {e.id === "loan-2026" && (
                                 <div
                                   className="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 shadow-xs transition active:scale-95 cursor-pointer"
                                 >
@@ -779,8 +776,8 @@ function Dashboard() {
               </div>
             )}
 
-            {/* ─── TAB 2: Welfare & Loans ─── */}
-            {dashboardTab === "welfare" && (
+            {/* ─── TAB 2: Business Loans ─── */}
+            {dashboardTab === "loans" && (
               <div className="space-y-6 animate-fadeIn text-left">
                 {/* Hero promo banner */}
                 <div className="relative overflow-hidden rounded-3xl bg-navy border border-blue-900/50 shadow-md flex flex-col justify-center p-6 sm:p-10 min-h-[220px] select-none bg-radial-at-tr from-blue-950 via-navy to-slate-950">
@@ -808,87 +805,55 @@ function Dashboard() {
                 <div className="grid lg:grid-cols-12 gap-6 items-start">
                   {/* Left Column: Welfare Apply/Track portal */}
                   <div className="lg:col-span-7 space-y-6">
-                    {/* Welfare Scheme Application & Tracking Portal */}
+                    {/* Business Loans & Credit Portal */}
                     <div id="welfare-portal-section" className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs border-l-4 border-l-emerald-600">
                       {/* Card Header */}
                       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div className="flex items-center gap-2">
-                          <GraduationCap className="w-5 h-5 text-emerald-600 animate-pulse" />
+                          <Coins className="w-5 h-5 text-emerald-600 animate-pulse" />
                           <h3 className="font-display font-bold text-sm text-slate-800">
-                            {t("கல்வி உதவித்தொகை & நிதியுதவி மையம்", "Member Scholarship & Credit Portal")}
+                            {t("வணிகக் கடன் & நிதியுதவி", "Business Loans & Credit Portal")}
                           </h3>
                         </div>
-                        <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                          ONLINE PORTAL
-                        </span>
+                        <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-205/40 text-[10px]">
+                          <button
+                            type="button"
+                            onClick={() => setWelfarePortalTab("apply")}
+                            className={`px-3 py-1 font-bold rounded-md transition ${
+                              welfarePortalTab === "apply"
+                                ? "bg-white text-emerald-600 shadow-xxs"
+                                : "text-slate-500 hover:text-slate-800"
+                            }`}
+                          >
+                            {t("விண்ணப்பிக்க", "Apply")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setWelfarePortalTab("track")}
+                            className={`px-3 py-1 font-bold rounded-md transition ${
+                              welfarePortalTab === "track"
+                                ? "bg-white text-emerald-600 shadow-xxs"
+                                : "text-slate-500 hover:text-slate-800"
+                            }`}
+                          >
+                            {t("டிராக் செய்க", "Track Status")}
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Portal Tabs Selector */}
-                      <div className="flex bg-slate-100 p-1.5 rounded-xl border border-slate-200/50 mt-4">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setWelfarePortalTab("apply");
-                            if (welfareFormStep === 3) setWelfareFormStep(1);
-                          }}
-                          className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
-                            welfarePortalTab === "apply" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
-                          }`}
-                        >
-                          {t("விண்ணப்பிக்கும் தளம்", "Apply for Scholarship / Loan")}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setWelfarePortalTab("track")}
-                          className={`flex-1 py-1.5 rounded-lg font-display text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
-                            welfarePortalTab === "track" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
-                          }`}
-                        >
-                          {t("விண்ணப்ப டிராக்கிங்", "Track Applications")}
-                          {welfareClaims.filter(c => c.status === "pending").length > 0 && (
-                            <span className="ml-1.5 px-1.5 py-0.2 bg-amber-505 text-white rounded-full text-[8px] font-bold">
-                              {welfareClaims.filter(c => c.status === "pending").length}
-                            </span>
-                          )}
-                        </button>
-                      </div>
-
-                      {/* TAB 1: APPLY FOR SCHEMES */}
+                      {/* Portal Body */}
                       {welfarePortalTab === "apply" && (
-                        <div className="space-y-4 pt-4 animate-fade-in">
-                          {/* Step 1: Select Scheme & Input Details */}
+                        <div className="pt-4 text-left">
                           {welfareFormStep === 1 && (
-                            <div className="space-y-4">
-                              {/* Scheme Cards Selection */}
+                            <div>
                               {!welfareSchemeType ? (
                                 <div className="space-y-3">
-                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Select a Scholarship or Loan Scheme</span>
-                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">{t("கடன் பிரிவைத் தேர்ந்தெடுக்கவும்", "Select a Loan Type")}</span>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div 
                                       onClick={() => {
-                                        setWelfareSchemeType("higher_edu");
-                                        setWelfareFormInputs(prev => ({ ...prev, studentName: "", studentClass: "Undergraduate", instituteName: "", gpa: "" }));
-                                      }}
-                                      className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
-                                    >
-                                      <div>
-                                        <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                                          <GraduationCap className="w-5 h-5" />
-                                        </div>
-                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">Higher Education Grant</h4>
-                                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
-                                          Financial assistance of up to ₹25,000 for children entering college.
-                                        </p>
-                                      </div>
-                                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
-                                        Select Scheme →
-                                      </span>
-                                    </div>
-
-                                    <div 
-                                      onClick={() => {
-                                        setWelfareSchemeType("loan");
-                                        setWelfareFormInputs(prev => ({ ...prev, amount: "50000", tenure: "12", reason: "" }));
+                                        setWelfareSchemeType("business");
+                                        setWelfareFormInputs(prev => ({ ...prev, amount: "500000", tenure: "24", reason: "" }));
                                       }}
                                       className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
                                     >
@@ -896,34 +861,76 @@ function Dashboard() {
                                         <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
                                           <Coins className="w-5 h-5" />
                                         </div>
-                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">Interest-Free Retail Loan</h4>
-                                        <p className="text-[10px] text-slate-505 mt-1 leading-normal font-tamil">
-                                          Working capital support up to ₹1,00,000 for retail traders.
+                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">{t("வட்டியில்லா வணிகக் கடன்", "Interest-Free Business Loan")}</h4>
+                                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
+                                          {t("இறக்குமதி, ஏற்றுமதி, மற்றும் பிற வணிகங்களுக்கு ₹25 லட்சம் வரை.", "Up to ₹25 lakh for Pvt Ltd, partnerships, and freelancers.")}
                                         </p>
                                       </div>
                                       <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
-                                        Select Scheme →
+                                        {t("கடன் கோருக →", "Select Loan →")}
                                       </span>
                                     </div>
 
                                     <div 
                                       onClick={() => {
-                                        setWelfareSchemeType("scholarship");
-                                        setWelfareFormInputs(prev => ({ ...prev, studentName: "", studentClass: "Class 12", instituteName: "", gpa: "" }));
+                                        setWelfareSchemeType("retail");
+                                        setWelfareFormInputs(prev => ({ ...prev, amount: "50000", tenure: "12", reason: "" }));
                                       }}
                                       className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
                                     >
                                       <div>
                                         <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                                          <Award className="w-5 h-5" />
+                                          <Store className="w-5 h-5" />
                                         </div>
-                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">Scholarships Scheme</h4>
-                                        <p className="text-[10px] text-slate-505 mt-1 leading-normal font-tamil">
-                                          Educational rewards for children of active members.
+                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">{t("சில்லறை வணிகர்கள் கடன்", "Retail Trader Loan")}</h4>
+                                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
+                                          {t("பதிவுசெய்த சில்லறை வர்த்தகர்களுக்கு ₹5 லட்சம் வரை எளிய கடன்.", "Quick working capital up to ₹5 lakh with minimal documents.")}
                                         </p>
                                       </div>
                                       <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
-                                        Select Scheme →
+                                        {t("கடன் கோருக →", "Select Loan →")}
+                                      </span>
+                                    </div>
+
+                                    <div 
+                                      onClick={() => {
+                                        setWelfareSchemeType("young");
+                                        setWelfareFormInputs(prev => ({ ...prev, amount: "200000", tenure: "18", reason: "" }));
+                                      }}
+                                      className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
+                                    >
+                                      <div>
+                                        <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                          <Rocket className="w-5 h-5" />
+                                        </div>
+                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">{t("இளைய தொழில்முனைவோர் கடன்", "Young Entrepreneur Loan")}</h4>
+                                        <p className="text-[10px] text-slate-505 mt-1 leading-normal font-tamil">
+                                          {t("40 வயதுக்குட்பட்ட இளைஞர்களுக்கு வட்டி மானியத்துடன் கூடிய நிதியுதவி.", "Special subsidized loan scheme for entrepreneurs under 40 years.")}
+                                        </p>
+                                      </div>
+                                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
+                                        {t("கடன் கோருக →", "Select Loan →")}
+                                      </span>
+                                    </div>
+
+                                    <div 
+                                      onClick={() => {
+                                        setWelfareSchemeType("micro");
+                                        setWelfareFormInputs(prev => ({ ...prev, amount: "25000", tenure: "6", reason: "" }));
+                                      }}
+                                      className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
+                                    >
+                                      <div>
+                                        <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                          <Smartphone className="w-5 h-5" />
+                                        </div>
+                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">{t("நுண்ணிய & சாலையோர வியாபாரிகள் கடன்", "Micro & Street Vendor Loan")}</h4>
+                                        <p className="text-[10px] text-slate-505 mt-1 leading-normal font-tamil">
+                                          {t("சாலையோர மற்றும் சிறு வணிகர்களுக்கான ₹50,000 வரையிலான உடனடி குறுங்கடன்.", "Zero-interest micro-loans up to ₹50,000 for local street merchants.")}
+                                        </p>
+                                      </div>
+                                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
+                                        {t("கடன் கோருக →", "Select Loan →")}
                                       </span>
                                     </div>
                                   </div>
@@ -932,162 +939,145 @@ function Dashboard() {
                                 <form onSubmit={(e) => { e.preventDefault(); setWelfareFormStep(2); startSimulatedWelfareUpload(); }} className="space-y-4 font-sans text-xs">
                                   <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
                                     <span className="font-bold text-slate-705 capitalize">
-                                      Scheme: <span className="text-emerald-705">{welfareSchemeType} Support</span>
+                                      {t("தேர்ந்தெடுக்கப்பட்ட கடன்:", "Selected Loan:")} <span className="text-emerald-705">
+                                        {welfareSchemeType === "business"
+                                          ? t("வட்டியில்லா வணிகக் கடன்", "Interest-Free Business Loan")
+                                          : welfareSchemeType === "retail"
+                                          ? t("சில்லறை வணிகர்கள் கடன்", "Retail Trader Loan")
+                                          : welfareSchemeType === "young"
+                                          ? t("இளைய தொழில்முனைவோர் கடன்", "Young Entrepreneur Loan")
+                                          : t("நுண்ணிய & சாலையோர வியாபாரிகள் கடன்", "Micro & Street Vendor Loan")}
+                                      </span>
                                     </span>
                                     <button 
                                       type="button" 
                                       onClick={() => setWelfareSchemeType(null)}
-                                      className="text-[9px] font-bold text-rose-605 hover:underline"
+                                      className="text-[9px] font-bold text-rose-650 hover:underline"
                                     >
-                                      Change Scheme
+                                      {t("மாற்று", "Change Type")}
                                     </button>
                                   </div>
 
-                                  {/* Render inputs dynamically based on scheme */}
-                                  {welfareSchemeType === "higher_edu" && (
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Student Full Name *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="As per admission letter"
-                                          value={welfareFormInputs.studentName}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentName: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">College / University Name *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="Name of college or university"
-                                          value={welfareFormInputs.instituteName}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, instituteName: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Course / Degree *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="e.g. B.E. Computer Science, B.Com"
-                                          value={welfareFormInputs.studentClass}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentClass: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Aadhaar Card Number *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="12 Digit UID Number"
-                                          value={welfareFormInputs.aadhaar}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, aadhaar: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                      <label className="font-bold text-slate-650 block">{t("தேவைப்படும் கடன் தொகை *", "Loan Amount Needed *")}</label>
+                                      <select 
+                                        value={welfareFormInputs.amount} 
+                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, amount: e.target.value })}
+                                        className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold text-slate-700"
+                                      >
+                                        {welfareSchemeType === "micro" ? (
+                                          <>
+                                            <option value="10000">₹10,000</option>
+                                            <option value="25000">₹25,000</option>
+                                            <option value="50000">₹50,000</option>
+                                          </>
+                                        ) : welfareSchemeType === "retail" ? (
+                                          <>
+                                            <option value="50000">₹50,000</option>
+                                            <option value="100000">₹1,00,000</option>
+                                            <option value="200000">₹2,00,000</option>
+                                            <option value="500000">₹5,00,000</option>
+                                          </>
+                                        ) : welfareSchemeType === "young" ? (
+                                          <>
+                                            <option value="100000">₹1,00,000</option>
+                                            <option value="250000">₹2,50,000</option>
+                                            <option value="500000">₹5,00,000</option>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <option value="500000">₹5,00,000</option>
+                                            <option value="1000000">₹10,00,000</option>
+                                            <option value="1500000">₹15,00,000</option>
+                                            <option value="2500000">₹25,00,000</option>
+                                          </>
+                                        )}
+                                      </select>
                                     </div>
-                                  )}
 
-                                  {welfareSchemeType === "loan" && (
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Loan Amount Needed *</label>
-                                        <select 
-                                          value={welfareFormInputs.amount} 
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, amount: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold text-slate-700"
-                                        >
-                                          <option value="25000">₹25,000</option>
-                                          <option value="50000">₹50,000</option>
-                                          <option value="100000">₹1,00,000</option>
-                                        </select>
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Repayment Tenure *</label>
-                                        <select 
-                                          value={welfareFormInputs.tenure} 
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, tenure: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-slate-700 font-bold"
-                                        >
-                                          <option value="6">6 Months</option>
-                                          <option value="12">12 Months</option>
-                                          <option value="18">18 Months</option>
-                                        </select>
-                                      </div>
-                                      <div className="space-y-1 sm:col-span-3">
-                                        <label className="font-bold text-slate-600 block">Purpose of Loan *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="e.g. Purchase of stock, shop renovation"
-                                          value={welfareFormInputs.reason}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, reason: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
+                                    <div className="space-y-1">
+                                      <label className="font-bold text-slate-650 block">{t("திருப்பிக் செலுத்தும் காலம் *", "Repayment Tenure *")}</label>
+                                      <select 
+                                        value={welfareFormInputs.tenure} 
+                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, tenure: e.target.value })}
+                                        className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-slate-700 font-bold"
+                                      >
+                                        {welfareSchemeType === "micro" ? (
+                                          <>
+                                            <option value="6">6 Months</option>
+                                            <option value="12">12 Months</option>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <option value="12">12 Months</option>
+                                            <option value="18">18 Months</option>
+                                            <option value="24">24 Months</option>
+                                            <option value="36">36 Months</option>
+                                          </>
+                                        )}
+                                      </select>
                                     </div>
-                                  )}
 
-                                  {welfareSchemeType === "scholarship" && (
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Student Full Name *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="As per marksheet"
-                                          value={welfareFormInputs.studentName}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentName: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Class / Course Completed *</label>
-                                        <select 
-                                          value={welfareFormInputs.studentClass} 
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentClass: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold text-slate-700"
-                                        >
-                                          <option value="Class 10">Class 10 (SSLC)</option>
-                                          <option value="Class 12">Class 12 (HSC)</option>
-                                          <option value="Degree">Undergraduate / Diploma</option>
-                                        </select>
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">School / Institute Name *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="Name of school or college"
-                                          value={welfareFormInputs.instituteName}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, instituteName: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Overall Score Percentage / GPA *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="e.g. 92% or 9.4 GPA"
-                                          value={welfareFormInputs.gpa}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, gpa: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
+                                    <div className="space-y-1">
+                                      <label className="font-bold text-slate-650 block">{t("வணிக அமைப்பு முறை *", "Business Structure *")}</label>
+                                      <select 
+                                        value={welfareFormInputs.businessStructure} 
+                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, businessStructure: e.target.value })}
+                                        className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-slate-700 font-bold"
+                                      >
+                                        <option value="Proprietorship">{t("தனியுரிமை", "Proprietorship")}</option>
+                                        <option value="Partnership">{t("கூட்டாண்மை", "Partnership")}</option>
+                                        <option value="Pvt Ltd">{t("பிரைவேட் லிமிடெட்", "Pvt Ltd")}</option>
+                                        <option value="Freelancer">{t("சுயதொழில்", "Freelancer")}</option>
+                                      </select>
                                     </div>
-                                  )}
+
+                                    <div className="space-y-1">
+                                      <label className="font-bold text-slate-650 block">{t("ஆதார் எண் *", "Aadhaar Card Number *")}</label>
+                                      <input 
+                                        type="text" 
+                                        required 
+                                        placeholder="12 Digit UID Number"
+                                        value={welfareFormInputs.aadhaar}
+                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, aadhaar: e.target.value.replace(/\D/g, "").slice(0,12) })}
+                                        className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold" 
+                                      />
+                                    </div>
+
+                                    {welfareSchemeType === "young" && (
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-650 block">{t("வயது *", "Age *")}</label>
+                                        <input 
+                                          type="number" 
+                                          required 
+                                          min="18"
+                                          max="40"
+                                          value={welfareFormInputs.age}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, age: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold" 
+                                        />
+                                      </div>
+                                    )}
+
+                                    <div className="space-y-1 sm:col-span-2">
+                                      <label className="font-bold text-slate-650 block">{t("கடன் கோருவதற்கான நோக்கம் *", "Purpose of Loan *")}</label>
+                                      <input 
+                                        type="text" 
+                                        required 
+                                        placeholder={t("எ.கா. சரக்கு கொள்முதல், கடை புதுப்பித்தல்", "e.g. Purchase of stock, shop renovation")}
+                                        value={welfareFormInputs.reason}
+                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, reason: e.target.value })}
+                                        className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                      />
+                                    </div>
+                                  </div>
 
                                   <button
                                     type="submit"
                                     className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl cursor-pointer shadow-xs transition"
                                   >
-                                    Continue to Documents Upload →
+                                    {t("ஆவணங்கள் பதிவேற்றத்திற்குத் தொடரவும் →", "Continue to Documents Upload →")}
                                   </button>
                                 </form>
                               )}
@@ -1130,7 +1120,7 @@ function Dashboard() {
                                     : "bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer shadow-xs"
                                 }`}
                               >
-                                {isWelfareUploading ? t("ஆவணங்கள் பதிவேற்றப்படுகின்றன...", "Uploading verified files...") : t("நிதியுதவி விண்ணப்பத்தை சமர்ப்பி", "Submit Welfare Application")}
+                                {isWelfareUploading ? t("ஆவணங்கள் பதிவேற்றப்படுகின்றன...", "Uploading verified files...") : t("கடன் விண்ணப்பத்தை சமர்ப்பி", "Submit Loan Application")}
                               </button>
                             </div>
                           )}
@@ -1278,24 +1268,12 @@ function Dashboard() {
                                       </div>
                                       <div className="text-xxs text-left -mt-0.5">
                                         <p className={`font-bold ${claim.step >= 4 ? "text-slate-700" : "text-slate-400"}`}>
-                                          {claim.type === "higher_edu" 
-                                            ? "Grant Disbursed" 
-                                            : claim.type === "scholarship"
-                                            ? "Scholarship Disbursed"
-                                            : "Credit Disbursed"}
+                                          {t("கடன் நிதி வழங்கப்பட்டது", "Credit Disbursed")}
                                         </p>
-                                        <p className="text-slate-405">
+                                        <p className="text-slate-400">
                                           {claim.step >= 4 
-                                            ? (claim.type === "higher_edu" 
-                                                ? "Higher Education grant transferred via Direct Benefit Transfer (DBT)." 
-                                                : claim.type === "scholarship"
-                                                ? "Scholarship amount transferred via Direct Benefit Transfer (DBT)."
-                                                : "Credit funds transferred to primary bank account.")
-                                            : (claim.type === "higher_edu" 
-                                                ? "Awaiting direct grant disbursement." 
-                                                : claim.type === "scholarship"
-                                                ? "Awaiting direct scholarship disbursement."
-                                                : "Awaiting final credit transfer.")}
+                                            ? t("கடன் நிதி முதன்மை வங்கிக் கணக்கிற்கு மாற்றப்பட்டது.", "Credit funds transferred to primary bank account.")
+                                            : t("நிதி பரிமாற்றத்திற்காக காத்திருக்கிறது.", "Awaiting final credit transfer.")}
                                         </p>
                                       </div>
                                     </div>
@@ -1305,9 +1283,9 @@ function Dashboard() {
                             </div>
                           ) : (
                             <EmptyState 
-                              icon={GraduationCap}
+                              icon={Coins}
                               title={t("சமர்ப்பிக்கப்பட்ட விண்ணப்பங்கள் இல்லை", "No Active Applications")} 
-                              subtitle={t("விண்ணப்பம் செய்ய அப்ளை டேபிற்கு செல்லவும்.", "Apply for scholarship schemes or credit aid above.")} 
+                              subtitle={t("கடன் பெற தகுதியான திட்டங்களுக்கு மேல் உள்ள பிரிவில் விண்ணப்பிக்கவும்.", "Apply for eligible credit aid above.")} 
                             />
                           )}
                         </div>
@@ -1317,19 +1295,19 @@ function Dashboard() {
 
                   {/* Right Column: Active banner + subvented loan categories stacked nicely */}
                   <div className="lg:col-span-5 space-y-6">
-                    {/* Welfare Coverage Banner */}
+                    {/* Loan Credit Line Active Banner */}
                     <div className="bg-primary text-white rounded-3xl p-6 border border-primary/20 relative overflow-hidden shadow-sm">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-white/8 rounded-full translate-x-1/3 -translate-y-1/3" aria-hidden="true" />
                       <div className="relative flex items-start gap-4">
                         <ShieldCheck className="w-6 h-6 text-gold shrink-0 mt-0.5" aria-hidden="true" />
                         <div className="space-y-1">
                           <h3 className="font-display font-bold text-base text-slate-50 leading-tight">
-                            {t("நலன் பாதுகாப்பு செயலில் உள்ளது", "Welfare Coverage Active")}
+                            {t("முன் அங்கீகரிக்கப்பட்ட கடன் வரம்பு செயலில் உள்ளது", "Loan Credit Line Active")}
                           </h3>
                           <p className="text-xs text-primary-foreground/80 leading-relaxed font-tamil">
                             {t(
-                              "நீங்களும் உங்கள் பதிவுசெய்யப்பட்ட குடும்பமும் ₹2 லட்சம் குழு சுகாதார காப்பீட்டுத் திட்டத்தின் கீழ் ஏப்ரல் 2027 வரை முழுமையாக பாதுகாக்கப்படுகிறீர்கள்.",
-                              "You and your registered trade family are fully covered under the association's ₹2 Lakh group health insurance scheme until April 2027."
+                              "உங்கள் தகுதியின் அடிப்படையில், ₹5,00,000 வரை முன் அங்கீகரிக்கப்பட்ட வணிகக் கடன் வரம்பு ஏப்ரல் 2027 வரை உடனடியாகப் பெற தயாராக உள்ளது.",
+                              "Based on your member profile, you have a pre-approved credit line of up to ₹5,00,000 active until April 2027. Deploy instantly."
                             )}
                           </p>
                         </div>

@@ -45,12 +45,12 @@ const cats: Category[] = [
     ],
   },
   {
-    label: "கல்வி உதவித்தொகை",
-    labelEn: "Scholarship Schemes",
+    label: "நலத்திட்டங்கள்",
+    labelEn: "Welfare Schemes",
     items: [
-      { i: GraduationCap, t: "மெரிட் கல்வி உதவித்தொகை", e: "Merit Scholarships", d: "தேர்வுகளில் 90% மேல் மதிப்பெண் பெற்ற மாணவர்களுக்கு கல்வி உதவித்தொகை.", de: "Educational rewards for children of active members who scored > 90% in exams.", modalType: "welfare" },
-      { i: Award, t: "உயர்கல்வி உதவித்தொகை", e: "Higher Education Grant", d: "கல்லூரி படிப்பைத் தொடங்கும் மாணவர்களுக்கு ₹25,000 வரை நிதியுதவி.", de: "Financial assistance of up to ₹25,000 for children entering college.", modalType: "welfare" },
-      { i: ShieldCheck, t: "அவசரக் கல்வி நிதி", e: "Emergency Tuition Aid", d: "பாதிக்கப்பட்ட வணிகர்களின் குழந்தைகளின் பள்ளி/கல்லூரி கட்டண ஆதரவு.", de: "Urgent tuition fee coverage for students of deceased or disabled traders.", modalType: "welfare" },
+      { i: HeartPulse, t: "சுகாதார காப்பீடு", e: "Health Insurance", d: "உறுப்பினர்கள் மற்றும் குடும்பத்தினருக்கு ₹2 லட்சம் வரை மருத்துவக் காப்பீடு.", de: "Group cover up to ₹2 lakh for members and family.", modalType: "welfare" },
+      { i: GraduationCap, t: "கல்வி உதவித்தொகை", e: "Scholarships", d: "பதிவுசெய்யப்பட்ட வணிகர்களின் குழந்தைகளுக்கு ஆண்டு கல்வி உதவித்தொகை.", de: "Annual scholarships for children of registered traders.", modalType: "welfare" },
+      { i: ShieldCheck, t: "அவசர நிவாரண நிதி", e: "Emergency Aid", d: "48 மணி நேரத்திற்குள் தீ, வெள்ளம் மற்றும் இயற்கை பேரிடர் ஆதரவு.", de: "Fire, flood and bereavement support within 48 hours.", modalType: "welfare" },
     ],
   },
   {
@@ -433,7 +433,7 @@ function Services() {
                       <form onSubmit={handleWelfareSubmit} className="space-y-4">
                         <div className="p-3.5 bg-rose-50 border border-rose-100 rounded-xl text-xs text-rose-800 flex items-start gap-2">
                           <ShieldAlert className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
-                          <p>Scholarship applications require a minimum of 6 months active association membership to get processed.</p>
+                          <p>Claims require a minimum of 6 months active association membership to get processed.</p>
                         </div>
                         <div className="space-y-1.5">
                           <label className="text-xs font-semibold text-slate-700 font-tamil">உறுப்பினர் எண் / EPIC ID *</label>
@@ -481,7 +481,7 @@ function Services() {
                           {loading ? (
                             <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                           ) : (
-                            <>Submit Scholarship Application <Check className="w-4 h-4" /></>
+                            <>Submit Welfare Application <Check className="w-4 h-4" /></>
                           )}
                         </button>
                       </form>
@@ -494,10 +494,10 @@ function Services() {
                         </div>
                         <h4 className="font-display font-semibold text-lg text-emerald-800">Application Submitted! (விண்ணப்பம் சமர்ப்பிக்கப்பட்டது)</h4>
                         <div className="bg-slate-50 p-4 border border-slate-150 rounded-xl max-w-sm mx-auto text-left text-xs space-y-1 text-slate-700">
-                          <div><strong>Application ID:</strong> TNVS-SCH-{Math.floor(Math.random() * 90000) + 10000}</div>
+                          <div><strong>Application ID:</strong> TNVS-WEL-{Math.floor(Math.random() * 90000) + 10000}</div>
                           <div><strong>Service:</strong> {modal.subject}</div>
                           <div><strong>Trader Name:</strong> {formInput.name}</div>
-                          <div className="pt-2 border-t border-slate-200 mt-2 text-muted-foreground">Our regional Scholarship Committee will verify your documents and update your status in the Dashboard within 4-5 business days.</div>
+                          <div className="pt-2 border-t border-slate-200 mt-2 text-muted-foreground">Our regional Welfare Council will verify your documents and update your status in the Dashboard within 4-5 business days.</div>
                         </div>
                         <button onClick={closeModal} className="bg-primary text-white px-5 py-2 rounded-lg text-xs font-semibold hover:bg-primary/95 transition shadow mt-3">
                           Close Dashboard
