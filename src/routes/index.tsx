@@ -301,7 +301,7 @@ function Home() {
       {/* OFFICIAL BADGES & CERTIFICATIONS */}
       <Section className="py-10">
         <ScrollReveal direction="up" blur>
-          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+          <div className="bg-linear-to-br from-slate-900 to-slate-800 rounded-2xl p-6 md:p-8 text-white shadow-lg">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="text-center md:text-left">
                 <div className="flex items-center justify-center md:justify-start gap-2 mb-2">

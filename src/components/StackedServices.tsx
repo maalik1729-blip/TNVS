@@ -177,7 +177,7 @@ export function StackedServices({ services }: StackedServicesProps) {
               <div className="block md:hidden absolute inset-x-0 -top-3 h-20 bg-gradient-to-b from-card via-card to-transparent z-10" />
 
               {getCardImage(idx, s.to) === "mockup" ? (
-                <div className="w-full h-full p-6 flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-950">
+                <div className="w-full h-full p-6 flex items-center justify-center bg-linear-to-br from-slate-900 to-slate-950">
                   <div className="w-full max-w-[280px] transform group-hover:scale-105 transition-transform duration-500">
                     <MockupCard />
                   </div>

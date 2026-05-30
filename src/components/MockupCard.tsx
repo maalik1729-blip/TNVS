@@ -3,7 +3,7 @@ import { Users } from "lucide-react";
 /** Decorative mock credit-card style TNVS membership card */
 export function MockupCard() {
   return (
-    <div className="relative w-full aspect-[1.586/1] bg-gradient-to-br from-slate-900 via-slate-800 to-primary text-gold rounded-xl p-4 shadow-xl border border-slate-700/50 overflow-hidden group/mockup transition-all duration-500 hover:scale-[1.03] hover:-rotate-1 select-none">
+    <div className="relative w-full aspect-[1.586/1] bg-linear-to-br from-slate-900 via-slate-800 to-primary text-gold rounded-xl p-4 shadow-xl border border-slate-700/50 overflow-hidden group/mockup transition-all duration-500 hover:scale-[1.03] hover:-rotate-1 select-none">
       {/* Background Saffron Gold Accent Corner */}
       <div className="absolute top-0 right-0 w-24 h-24 bg-gold/10 rounded-full blur-2xl" />
       {/* Header */}
