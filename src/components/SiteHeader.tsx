@@ -231,13 +231,6 @@ export function SiteHeader() {
 
             {/* Desktop only controls */}
             <Link
-              to="/membership"
-              className="hidden xl:inline-flex btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-3 py-2 min-h-[44px] items-center justify-center"
-            >
-              {language === "ta" ? "இணைவு" : "Join Now"}
-            </Link>
-
-            <Link
               to="/dashboard"
               className="hidden xl:inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
             >
@@ -256,13 +249,13 @@ export function SiteHeader() {
               <Menu className="w-5 h-5" aria-hidden="true" />
             </button>
 
-            {/* Language Toggle — always last / rightmost */}
+            {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
               aria-label={`Switch to ${language === "ta" ? "English" : "Tamil"}`}
               aria-pressed={language === "ta"}
               className={[
-                "hidden xl:inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold border transition min-h-[44px] ml-[25px]",
+                "hidden xl:inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold border transition min-h-[44px]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer shrink-0",
                 language === "ta"
                   ? "bg-primary text-white border-primary"
@@ -272,6 +265,14 @@ export function SiteHeader() {
               <Globe className="w-4 h-4" aria-hidden="true" />
               <span>{language === "ta" ? "தமிழ்" : "English"}</span>
             </button>
+
+            {/* Join Now — absolute right corner */}
+            <Link
+              to="/membership"
+              className="hidden xl:inline-flex btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-4 py-2.5 min-h-[44px] items-center justify-center ml-[25px]"
+            >
+              {language === "ta" ? "இணைவு" : "Join Now"}
+            </Link>
           </div>
         </div>
       </header>
