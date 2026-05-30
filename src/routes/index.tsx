@@ -171,7 +171,7 @@ function Home() {
             </SectionLabel>
 
             <h1 className="mt-4 sm:mt-5 font-display font-semibold leading-[1.06] text-ink"
-               style={{ fontSize: 'clamp(1.75rem, 5vw + 0.5rem, 3.75rem)' }}>
+               style={{ fontSize: language === "ta" ? "clamp(1.5rem, 4.2vw + 0.3rem, 3rem)" : "clamp(1.75rem, 5vw + 0.5rem, 3.75rem)" }}>
               {language === "ta" ? (
                 <>
                   தமிழ்நாடு வணிகர்களின்{" "}

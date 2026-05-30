@@ -205,11 +205,11 @@
     font-family: 'Noto Serif Tamil', serif;
     line-height: 1.25 !important;
   }
-  /* Ensure Tamil font sizes match English exactly */
-  h1:lang(ta) { font-size: clamp(1.75rem, 5vw, 3.75rem); }
-  h2:lang(ta) { font-size: clamp(1.375rem, 3.5vw, 2.25rem); }
-  h3:lang(ta) { font-size: clamp(1.125rem, 2.5vw, 1.5rem); }
-  h4:lang(ta) { font-size: clamp(1rem, 2vw, 1.25rem); }
+  /* Scale down Tamil headings to align with script visual density and prevent arbitrary word breaking */
+  h1:lang(ta) { font-size: clamp(1.5rem, 4.2vw, 2.75rem); }
+  h2:lang(ta) { font-size: clamp(1.25rem, 3vw, 1.875rem); }
+  h3:lang(ta) { font-size: clamp(1.1rem, 2.2vw, 1.375rem); }
+  h4:lang(ta) { font-size: clamp(0.95rem, 1.8vw, 1.15rem); }
   p:lang(ta), span:lang(ta), div:lang(ta) { font-size: inherit; }
   /* Ensure inputs and buttons are touch-friendly by default */
   input, textarea, select, button {
@@ -759,7 +759,8 @@
   [lang="ta"], .font-tamil {
     font-family: var(--font-tamil);
     line-height: 1.8;
-    word-break: break-word;
+    word-break: normal;
+    overflow-wrap: break-word;
   }
 
   /* === WORD SWAPPER ANIMATION (CSS fallback) === */
