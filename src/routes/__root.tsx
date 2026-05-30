@@ -128,12 +128,12 @@ function RootInner() {
         Header height breakdown:
           gov-stripe:   3px
           ticker bar:   ~32px on desktop, ~30px on mobile
-          nav row:      ~52px
-        Total:          ~87px desktop / ~83px mobile
-        We use pt-[83px] sm:pt-[87px] with a safe fallback.
+          nav row:      h-16 = 64px
+        Total:          ~99px desktop / ~99px mobile
+        We use pt-[99px] with a safe fallback.
         Bottom nav adds 60px on mobile, so we add pb-[60px] for mobile.
       */}
-      <div className="min-h-screen flex flex-col pt-[83px] sm:pt-[87px] pb-[60px] xl:pb-0">
+      <div className="min-h-screen flex flex-col pt-[99px] pb-[60px] xl:pb-0">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium">
           Skip to main content
         </a>

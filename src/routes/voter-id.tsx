@@ -477,7 +477,14 @@ function VoterIdPage() {
                   </p>
                   <p className="mt-2 text-sm font-tamil" lang={language === "ta" ? "ta" : "en"}>
                     {t("இன்னும் உறுப்பினர் இல்லையா?", "Not a member yet?")}{" "}
-                    <Link to="/membership" className="text-primary font-semibold hover:underline">
+                    <Link
+                      to="/membership"
+                      search={{
+                        name: !/^[a-zA-Z]{3}\d{7}$/i.test(searchQuery.trim()) ? searchQuery.trim() : undefined,
+                        epic: /^[a-zA-Z]{3}\d{7}$/i.test(searchQuery.trim()) ? searchQuery.trim().toUpperCase() : undefined,
+                      }}
+                      className="text-primary font-semibold hover:underline"
+                    >
                       {t("இப்போதே இணையுங்கள் →", "Join now →")}
                     </Link>
                   </p>

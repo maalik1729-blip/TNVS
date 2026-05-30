@@ -10,7 +10,6 @@ const NAV = [
   { to: "/services",  label: "சேவைகள்",     en: "Services" },
   { to: "/wings",     label: "அலகுகள்",   en: "Wings" },
   { to: "/membership",label: "இணைவு",       en: "Join" },
-  { to: "/analytics", label: "விவரங்கள்",   en: "Analytics" },
   { to: "/assistant", label: "ஆதரவு", en: "Support" },
 ] as const;
 
@@ -164,30 +163,30 @@ export function SiteHeader() {
           </div>
         </div>
 
-        {/* Brand + Nav row */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6 py-2 flex items-center justify-between gap-2 sm:gap-4 w-full">
+        {/* Brand + Nav row — 3-col grid: [logo | nav | controls] */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6 h-16 w-full grid grid-cols-[1fr_auto_1fr] items-center">
 
-          {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Tamil Nadu Vanigargalin Sangamam — Home">
+          {/* Col 1 — Brand Logo */}
+          <Link to="/" className="flex items-center gap-2.5 group min-w-0" aria-label="Tamil Nadu Vanigargalin Sangamam — Home">
             <img
               src={templeLogo}
               alt="TNVS Logo"
-              className="w-10 h-10 object-contain transition-transform group-hover:scale-105 duration-300"
+              className="w-10 h-10 object-contain shrink-0 transition-transform group-hover:scale-105 duration-300"
               width={40}
               height={40}
             />
-            <div className="leading-tight min-w-0 flex flex-col justify-center">
-              <div className="font-display font-bold text-slate-800 text-sm md:text-[15px] truncate">
+            <div className="leading-tight hidden md:flex flex-col justify-center">
+              <div className="font-display font-bold text-slate-800 text-[13px] xl:text-[14px]">
                 Tamil Nadu Vanigargalin Sangamam
               </div>
-              <div className="font-tamil text-xs text-slate-500 mt-0.5 truncate">
+              <div className="font-tamil text-[11px] text-slate-500 mt-0.5">
                 தமிழ்நாடு வணிகர்களின் சங்கமம்
               </div>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden xl:flex items-center gap-0.5 lg:gap-1 min-w-0 flex-1 justify-center h-full" aria-label="Main navigation">
+          {/* Col 2 — Desktop Navigation (always truly centered) */}
+          <nav className="hidden xl:flex items-center gap-0.5 justify-center" aria-label="Main navigation">
             {NAV.map((n) => {
               const active = loc.pathname === n.to;
               return (
@@ -196,14 +195,14 @@ export function SiteHeader() {
                   to={n.to}
                   aria-current={active ? "page" : undefined}
                   className={[
-                    "relative px-2 sm:px-3 lg:px-4 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center justify-center rounded-lg whitespace-nowrap group",
+                    "relative px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[44px] inline-flex items-center justify-center rounded-lg whitespace-nowrap group",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                     active
                       ? "text-primary font-bold"
                       : "text-slate-500 hover:text-primary hover:bg-slate-50/60",
                   ].join(" ")}
                 >
-                  <span className="relative z-10 text-xs sm:text-sm">{language === "ta" ? n.label : n.en}</span>
+                  <span className="relative z-10 text-sm">{language === "ta" ? n.label : n.en}</span>
                   
                   {active ? (
                     <motion.div
@@ -227,31 +226,43 @@ export function SiteHeader() {
             })}
           </nav>
 
-          {/* Desktop Right Controls */}
-          <div className="hidden xl:flex items-center gap-1 lg:gap-2 shrink-0 ml-2 h-full">
+          {/* Col 3 — Right Controls + Mobile Hamburger */}
+          <div className="flex items-center gap-1 lg:gap-2 justify-end">
+
+            {/* Desktop only controls */}
+            <Link
+              to="/membership"
+              className="hidden xl:inline-flex btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-3 py-2 min-h-[44px] items-center justify-center"
+            >
+              {language === "ta" ? "இணைவு" : "Join Now"}
+            </Link>
 
             <Link
               to="/dashboard"
-              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
+              className="hidden xl:inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 hover:text-primary transition min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg whitespace-nowrap"
             >
               <User className="w-3.5 h-3.5" aria-hidden="true" />
               {language === "ta" ? "எனது கணக்கு" : "My Account"}
             </Link>
 
-            <Link
-              to="/membership"
-              className="btn-primary select-none cursor-pointer whitespace-nowrap text-sm px-3 py-2 min-h-[44px] inline-flex items-center justify-center"
+            {/* Mobile Hamburger */}
+            <button
+              className="xl:hidden p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-600 border border-slate-200/80 rounded-[10px] bg-white/60 backdrop-blur-sm hover:bg-white/90 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              onClick={() => setOpen(true)}
+              aria-label="Open navigation menu"
+              aria-expanded={open}
+              aria-haspopup="dialog"
             >
-              {language === "ta" ? "இணைவு" : "Join Now"}
-            </Link>
+              <Menu className="w-5 h-5" aria-hidden="true" />
+            </button>
 
-            {/* Language Toggle - Prominent */}
+            {/* Language Toggle — always last / rightmost */}
             <button
               onClick={toggleLanguage}
               aria-label={`Switch to ${language === "ta" ? "English" : "Tamil"}`}
               aria-pressed={language === "ta"}
               className={[
-                "inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold border transition min-h-[44px]",
+                "hidden xl:inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold border transition min-h-[44px] ml-[25px]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer shrink-0",
                 language === "ta"
                   ? "bg-primary text-white border-primary"
@@ -262,17 +273,6 @@ export function SiteHeader() {
               <span>{language === "ta" ? "தமிழ்" : "English"}</span>
             </button>
           </div>
-
-          {/* Mobile Hamburger */}
-          <button
-            className="xl:hidden p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-600 border border-slate-200/80 rounded-[10px] bg-white/60 backdrop-blur-sm hover:bg-white/90 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            onClick={() => setOpen(true)}
-            aria-label="Open navigation menu"
-            aria-expanded={open}
-            aria-haspopup="dialog"
-          >
-            <Menu className="w-5 h-5" aria-hidden="true" />
-          </button>
         </div>
       </header>
 

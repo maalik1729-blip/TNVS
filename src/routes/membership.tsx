@@ -65,8 +65,8 @@ export const Route = createFileRoute("/membership")({
 const STEPS = [
   {
     n: 1,
-    t: "Personal & Contact",
-    ta: "தனிநபர் & தொடர்பு",
+    t: "Personal & Contact Details",
+    ta: "தனிநபர் & தொடர்பு விவரங்கள்",
     icon: User,
     desc: "Your name, mobile number, email, and district",
     descTa: "உங்கள் பெயர், கைபேசி, மின்னஞ்சல் மற்றும் மாவட்டம்",
@@ -242,6 +242,7 @@ function Membership() {
     } else {
       localStorage.removeItem("tnvs_form_step");
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
 
   const clearDraft = () => {
@@ -296,7 +297,7 @@ function Membership() {
     localStorage.setItem("tnvs_last_epic", epic);
     localStorage.removeItem("tnvs_form_data");
     localStorage.removeItem("tnvs_form_step");
-    setStep(5);
+    setStep(4);
   };
 
   const downloadCertificate = () => {
@@ -419,7 +420,7 @@ function Membership() {
     { k: "bizProof", icon: FileCheck, l: "Business Proof (GST / License)", ta: "வணிக சான்று", accept: "image/*,application/pdf" },
   ];
 
-  const cardMaxWidth = step === 4 || step === 5 ? "max-w-4xl" : "max-w-3xl";
+  const cardMaxWidth = step === 4 ? "max-w-4xl" : "max-w-3xl";
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50/50 pb-12">
@@ -444,7 +445,7 @@ function Membership() {
             </h1>
             <p className="font-tamil text-xs text-slate-400 mt-1">5 நிமிடங்களில் உறுப்பினராகப் பதிவு செய்யுங்கள்.</p>
           </div>
-          {step < 5 && (
+          {step < 4 && (
             <button
               onClick={clearDraft}
               className="inline-flex items-center gap-1.5 border border-slate-700 bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer self-start sm:self-center backdrop-blur-xs shadow-sm hover:scale-[1.02] active:scale-98"
@@ -541,9 +542,9 @@ function Membership() {
                   </div>
                   <div>
                     <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
-                      {currentStep.t} Details
+                      {currentStep.t}
                     </h2>
-                    <p className="font-tamil text-xs text-slate-500 mt-0.5">{currentStep.ta} விவரங்கள்</p>
+                    <p className="font-tamil text-xs text-slate-500 mt-0.5">{currentStep.ta}</p>
                   </div>
                 </div>
                 
@@ -653,12 +654,17 @@ function Membership() {
                   <div className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="md:col-span-2">
-                        <FloatingInput
-                          label="Shop / Business Name (கடை பெயர்)"
-                          value={form.shop}
-                          onChange={e => upd("shop", e.target.value)}
-                          className="h-[52px]"
-                        />
+                        <div className="relative group">
+                          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-200 text-slate-350 group-focus-within:text-primary">
+                            <Building2 className="w-4 h-4" />
+                          </div>
+                          <FloatingInput
+                            label="Shop / Business Name (கடை பெயர்)"
+                            value={form.shop}
+                            onChange={e => upd("shop", e.target.value)}
+                            className="pl-10 h-[52px]"
+                          />
+                        </div>
                       </div>
                       <FloatingSelect
                         label="Business Type / வகை"
@@ -670,13 +676,20 @@ function Membership() {
                           <option key={d}>{d}</option>
                         ))}
                       </FloatingSelect>
-                      <FloatingInput
-                        label="Years in Business (அனுபவம்)"
-                        value={form.years}
-                        onChange={e => upd("years", e.target.value)}
-                        inputMode="numeric"
-                        className="h-[52px]"
-                      />
+                      <div className="relative group">
+                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-200 text-slate-350 group-focus-within:text-primary">
+                          <Briefcase className="w-4 h-4" />
+                        </div>
+                        <FloatingInput
+                          label="Years in Business (அனுபவம்)"
+                          value={form.years}
+                          onChange={e => upd("years", e.target.value)}
+                          type="number"
+                          min="0"
+                          max="100"
+                          className="pl-10 h-[52px]"
+                        />
+                      </div>
                       <div className="md:col-span-2">
                         <FloatingSelect
                           label="Wing / பிரிவு"
@@ -727,6 +740,16 @@ function Membership() {
                                 ? "border-emerald-300 bg-emerald-50/40"
                                 : "border-dashed border-slate-200 hover:border-primary/50 hover:bg-slate-50/50 hover:scale-[1.01]"
                             }`}
+                            onDragOver={!doc.webcam ? e => e.preventDefault() : undefined}
+                            onDrop={!doc.webcam ? e => {
+                              e.preventDefault();
+                              const file = e.dataTransfer.files?.[0];
+                              if (file) {
+                                if (file.size > 5 * 1024 * 1024) { toast.error("File must be under 5MB"); return; }
+                                setDocs(prev => ({ ...prev, [doc.k]: file }));
+                                toast.success(`${file.name} uploaded ✓`);
+                              }
+                            } : undefined}
                           >
                             <div className="p-5 flex flex-col justify-between h-full min-h-[160px]">
                               {/* Header */}
@@ -811,23 +834,6 @@ function Membership() {
                                 )}
                               </div>
                             </div>
-
-                            {/* Drag overlay for non-webcam items */}
-                            {!doc.webcam && (
-                              <div
-                                className="absolute inset-0 opacity-0 cursor-pointer"
-                                onDragOver={e => e.preventDefault()}
-                                onDrop={e => {
-                                  e.preventDefault();
-                                  const file = e.dataTransfer.files?.[0];
-                                  if (file) {
-                                    if (file.size > 5 * 1024 * 1024) { toast.error("File must be under 5MB"); return; }
-                                    setDocs(prev => ({ ...prev, [doc.k]: file }));
-                                    toast.success(`${file.name} uploaded ✓`);
-                                  }
-                                }}
-                              />
-                            )}
                           </div>
                         );
                       })}
@@ -1143,7 +1149,7 @@ function Membership() {
             </AnimatePresence>
 
             {/* ── Navigation Buttons ── */}
-            {step < 5 && (
+            {step < 4 && (
               <div className="mt-8 pt-6 border-t border-slate-150 flex justify-between items-center">
                 <button
                   onClick={back}
@@ -1155,13 +1161,13 @@ function Membership() {
 
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={step === 4 ? handlePaySubmit : next}
+                    onClick={step === 3 ? handlePaySubmit : next}
                     disabled={submitting}
                     className="btn-primary py-2.5 px-5 rounded-xl text-xs font-bold cursor-pointer hover:shadow-md transition duration-200 flex items-center gap-1.5"
                   >
                     {submitting ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
-                    ) : step === 4 ? (
+                    ) : step === 3 ? (
                       <>Pay ₹500 & Submit <ArrowRight className="w-4 h-4" /></>
                     ) : (
                       <>Continue <ArrowRight className="w-4 h-4" /></>

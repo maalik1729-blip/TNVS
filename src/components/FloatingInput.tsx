@@ -69,7 +69,7 @@ export function FloatingInput({ label, error, success, value, onChange, classNam
       <label
         htmlFor={id}
         className={[
-          "absolute left-4 font-medium pointer-events-none select-none",
+          `absolute ${className.includes("pl-") ? "left-10" : "left-4"} font-medium pointer-events-none select-none`,
           "transition-all duration-200 ease-in-out",
           floated
             ? "top-[8px] text-[10px] tracking-wide font-semibold " +
@@ -123,7 +123,7 @@ export function FloatingTextarea({ label, error, value, onChange, className = ""
       <label
         htmlFor={id}
         className={[
-          "absolute left-4 font-medium pointer-events-none select-none",
+          `absolute ${className.includes("pl-") ? "left-10" : "left-4"} font-medium pointer-events-none select-none`,
           "transition-all duration-200 ease-in-out",
           floated
             ? "top-[8px] text-[10px] tracking-wide font-semibold " +
@@ -178,7 +178,7 @@ export function FloatingSelect({ label, error, value, onChange, children, classN
       <label
         htmlFor={id}
         className={[
-          "absolute left-4 font-semibold pointer-events-none select-none",
+          `absolute ${className.includes("pl-") ? "left-10" : "left-4"} font-semibold pointer-events-none select-none`,
           "transition-all duration-200 top-[8px] text-[10px] tracking-wide",
           focused ? "text-primary" : "text-slate-400",
         ].join(" ")}
