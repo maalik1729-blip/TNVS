@@ -6,7 +6,7 @@ import {
   LogOut, ArrowLeft, Copy, Award, Users, Smartphone, Play,
   CheckCircle2, UserPlus, Sparkles, Clock, AlertCircle,
   Coins, Store, Rocket, ArrowRight, X,
-  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight, Search
+  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight, Search, GraduationCap
 } from "lucide-react";
 import {
   growthData, wingMetrics, districtStats, welfareDistribution
@@ -179,7 +179,7 @@ function Dashboard() {
 
   // Welfare Scheme Portal states
   const [welfarePortalTab, setWelfarePortalTab] = useState<"apply" | "track">("apply");
-  const [welfareSchemeType, setWelfareSchemeType] = useState<"health" | "loan" | "scholarship" | null>(null);
+  const [welfareSchemeType, setWelfareSchemeType] = useState<"higher_edu" | "loan" | "scholarship" | null>(null);
   const [welfareFormStep, setWelfareFormStep] = useState(1); // 1: Select/Fill, 2: Upload, 3: Success
   const [welfareFormInputs, setWelfareFormInputs] = useState({
     shopName: "Senthil Traders",
@@ -200,7 +200,7 @@ function Dashboard() {
   const [isWelfareUploading, setIsWelfareUploading] = useState(false);
   const [welfareClaims, setWelfareClaims] = useState<Array<{
     id: string;
-    type: "health" | "loan" | "scholarship";
+    type: "higher_edu" | "loan" | "scholarship";
     title: string;
     description: string;
     date: string;
@@ -210,13 +210,13 @@ function Dashboard() {
   }>>([
     {
       id: "TNVS-WEL-88301",
-      type: "health",
-      title: "Group Health Cover (₹2 Lakh)",
-      description: "Annual Health Policy Coverage for Family",
+      type: "scholarship",
+      title: "Educational Merit Scholarship",
+      description: "Class 12 Merit Reward · ₹15,000",
       date: "08 May 2026",
       status: "approved",
       step: 3,
-      docs: ["AadharCard.pdf", "ShopLicense.pdf"]
+      docs: ["AadharCard.pdf", "Marksheet_Class12.pdf"]
     },
     {
       id: "TNVS-WEL-41102",
@@ -232,10 +232,10 @@ function Dashboard() {
 
   const startSimulatedWelfareUpload = () => {
     setIsWelfareUploading(true);
-    const files = welfareSchemeType === "health" 
+    const files = welfareSchemeType === "higher_edu" 
       ? [
-          { name: "AadharCard.pdf", size: "1.2 MB", progress: 0, status: "uploading" as const },
-          { name: "Family_RationCard.pdf", size: "2.4 MB", progress: 0, status: "uploading" as const }
+          { name: "Student_AadharCard.pdf", size: "1.2 MB", progress: 0, status: "uploading" as const },
+          { name: "College_Admission_Letter.pdf", size: "2.4 MB", progress: 0, status: "uploading" as const }
         ]
       : welfareSchemeType === "scholarship"
       ? [
@@ -283,13 +283,13 @@ function Dashboard() {
     const newApp = {
       id: `TNVS-WEL-${Math.floor(Math.random() * 90000) + 10000}`,
       type: welfareSchemeType,
-      title: welfareSchemeType === "health" 
-        ? "Group Health Cover (₹2 Lakh)" 
+      title: welfareSchemeType === "higher_edu" 
+        ? "Higher Education Grant (₹25,000)" 
         : welfareSchemeType === "scholarship"
         ? "Educational Scholarship"
         : `Interest-Free Loan (₹${Number(welfareFormInputs.amount).toLocaleString()})`,
-      description: welfareSchemeType === "health" 
-        ? `Family Policy Enrollment` 
+      description: welfareSchemeType === "higher_edu" 
+        ? `${welfareFormInputs.studentName} · ${welfareFormInputs.studentClass}` 
         : welfareSchemeType === "scholarship"
         ? `${welfareFormInputs.studentName} · ${welfareFormInputs.studentClass}`
         : `Working Capital · ${welfareFormInputs.tenure} Months`,
@@ -462,7 +462,7 @@ function Dashboard() {
           <div className="flex bg-slate-105 p-1.5 rounded-2xl border border-slate-200/50 w-full sm:w-auto overflow-x-auto scrollbar-none">
             {[
               { id: "overview", label: "Overview", labelTa: "முன்னோட்டம்", icon: Store },
-              { id: "welfare", label: "Welfare & Loans", labelTa: "நலன் & கடன்கள்", icon: HeartPulse },
+              { id: "welfare", label: "Scholarship & Loans", labelTa: "கல்வி உதவித்தொகை & கடன்கள்", icon: GraduationCap },
               { id: "recruiter", label: "Recruiter Hub", labelTa: "ஒருங்கிணைப்பாளர்", icon: Users },
               { id: "tools", label: "Tools & Apps", labelTa: "டிஜிட்டல் சேவைகள்", icon: Smartphone }
             ].map((tab) => {
@@ -813,9 +813,9 @@ function Dashboard() {
                       {/* Card Header */}
                       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div className="flex items-center gap-2">
-                          <HeartPulse className="w-5 h-5 text-emerald-600 animate-pulse" />
+                          <GraduationCap className="w-5 h-5 text-emerald-600 animate-pulse" />
                           <h3 className="font-display font-bold text-sm text-slate-800">
-                            {t("நலத்திட்டங்கள் & நிதியுதவி மையம்", "Member Welfare & Credit Portal")}
+                            {t("கல்வி உதவித்தொகை & நிதியுதவி மையம்", "Member Scholarship & Credit Portal")}
                           </h3>
                         </div>
                         <span className="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
@@ -835,7 +835,7 @@ function Dashboard() {
                             welfarePortalTab === "apply" ? "bg-white text-emerald-800 shadow-xs border border-slate-200/20" : "text-slate-500 hover:text-slate-700"
                           }`}
                         >
-                          {t("விண்ணப்பிக்கும் தளம்", "Apply for Welfare")}
+                          {t("விண்ணப்பிக்கும் தளம்", "Apply for Scholarship / Loan")}
                         </button>
                         <button
                           type="button"
@@ -862,22 +862,22 @@ function Dashboard() {
                               {/* Scheme Cards Selection */}
                               {!welfareSchemeType ? (
                                 <div className="space-y-3">
-                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Select a Welfare Scheme</span>
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Select a Scholarship or Loan Scheme</span>
                                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     <div 
                                       onClick={() => {
-                                        setWelfareSchemeType("health");
-                                        setWelfareFormInputs(prev => ({ ...prev, aadhaar: "", nomineeName: "" }));
+                                        setWelfareSchemeType("higher_edu");
+                                        setWelfareFormInputs(prev => ({ ...prev, studentName: "", studentClass: "Undergraduate", instituteName: "", gpa: "" }));
                                       }}
                                       className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
                                     >
                                       <div>
                                         <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                                          <HeartPulse className="w-5 h-5" />
+                                          <GraduationCap className="w-5 h-5" />
                                         </div>
-                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">₹2 Lakh Group Insurance</h4>
+                                        <h4 className="text-xs font-bold text-slate-800 font-tamil leading-tight">Higher Education Grant</h4>
                                         <p className="text-[10px] text-slate-500 mt-1 leading-normal font-tamil">
-                                          Family health cover including cashless hospitalizations.
+                                          Financial assistance of up to ₹25,000 for children entering college.
                                         </p>
                                       </div>
                                       <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-3 flex items-center gap-0.5 group-hover:translate-x-1 transition">
@@ -944,8 +944,41 @@ function Dashboard() {
                                   </div>
 
                                   {/* Render inputs dynamically based on scheme */}
-                                  {welfareSchemeType === "health" && (
+                                  {welfareSchemeType === "higher_edu" && (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Student Full Name *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="As per admission letter"
+                                          value={welfareFormInputs.studentName}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentName: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">College / University Name *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="Name of college or university"
+                                          value={welfareFormInputs.instituteName}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, instituteName: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
+                                      <div className="space-y-1">
+                                        <label className="font-bold text-slate-600 block">Course / Degree *</label>
+                                        <input 
+                                          type="text" 
+                                          required 
+                                          placeholder="e.g. B.E. Computer Science, B.Com"
+                                          value={welfareFormInputs.studentClass}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentClass: e.target.value })}
+                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
+                                        />
+                                      </div>
                                       <div className="space-y-1">
                                         <label className="font-bold text-slate-600 block">Aadhaar Card Number *</label>
                                         <input 
@@ -954,17 +987,6 @@ function Dashboard() {
                                           placeholder="12 Digit UID Number"
                                           value={welfareFormInputs.aadhaar}
                                           onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, aadhaar: e.target.value })}
-                                          className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
-                                        />
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="font-bold text-slate-600 block">Nominee Full Name *</label>
-                                        <input 
-                                          type="text" 
-                                          required 
-                                          placeholder="Family beneficiary nominee"
-                                          value={welfareFormInputs.nomineeName}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, nomineeName: e.target.value })}
                                           className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
                                         />
                                       </div>
@@ -1042,8 +1064,8 @@ function Dashboard() {
                                           type="text" 
                                           required 
                                           placeholder="Name of school or college"
-                                          value={welfareFormInputs.studentName}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, studentName: e.target.value })}
+                                          value={welfareFormInputs.instituteName}
+                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, instituteName: e.target.value })}
                                           className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
                                         />
                                       </div>
@@ -1256,21 +1278,21 @@ function Dashboard() {
                                       </div>
                                       <div className="text-xxs text-left -mt-0.5">
                                         <p className={`font-bold ${claim.step >= 4 ? "text-slate-700" : "text-slate-400"}`}>
-                                          {claim.type === "health" 
-                                            ? "Coverage Card Dispatched" 
+                                          {claim.type === "higher_edu" 
+                                            ? "Grant Disbursed" 
                                             : claim.type === "scholarship"
                                             ? "Scholarship Disbursed"
                                             : "Credit Disbursed"}
                                         </p>
-                                        <p className="text-slate-400">
+                                        <p className="text-slate-405">
                                           {claim.step >= 4 
-                                            ? (claim.type === "health" 
-                                                ? "Group Policy Card sent to shop address." 
+                                            ? (claim.type === "higher_edu" 
+                                                ? "Higher Education grant transferred via Direct Benefit Transfer (DBT)." 
                                                 : claim.type === "scholarship"
                                                 ? "Scholarship amount transferred via Direct Benefit Transfer (DBT)."
                                                 : "Credit funds transferred to primary bank account.")
-                                            : (claim.type === "health" 
-                                                ? "Awaiting Policy Card dispatch." 
+                                            : (claim.type === "higher_edu" 
+                                                ? "Awaiting direct grant disbursement." 
                                                 : claim.type === "scholarship"
                                                 ? "Awaiting direct scholarship disbursement."
                                                 : "Awaiting final credit transfer.")}
@@ -1283,9 +1305,9 @@ function Dashboard() {
                             </div>
                           ) : (
                             <EmptyState 
-                              icon={HeartPulse}
+                              icon={GraduationCap}
                               title={t("சமர்ப்பிக்கப்பட்ட விண்ணப்பங்கள் இல்லை", "No Active Applications")} 
-                              subtitle={t("விண்ணப்பம் செய்ய அப்ளை டேபிற்கு செல்லவும்.", "Apply for welfare schemes or credit aid above.")} 
+                              subtitle={t("விண்ணப்பம் செய்ய அப்ளை டேபிற்கு செல்லவும்.", "Apply for scholarship schemes or credit aid above.")} 
                             />
                           )}
                         </div>
